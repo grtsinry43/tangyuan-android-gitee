@@ -16,6 +16,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
 
+/*
+ *
+ *  在科学上没有平坦的大道，
+ *  只有不畏劳苦沿着陡峭山路攀登的人，
+ *  才有希望达到光辉的顶点。
+ *              ——卡尔·马克思
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -26,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        //设置内容
         setContentView(binding.getRoot());
 
 
