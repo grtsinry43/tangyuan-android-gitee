@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         //设置内容
         setContentView(binding.getRoot());
 
-
         setSupportActionBar(binding.appBarMain.toolbar);
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override

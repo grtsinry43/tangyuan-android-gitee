@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tangyuan</string>
+    <string name="nav_header_subtitle">Admire what\'s different.</string>
+    <string name="menu_normalchat">Normal Chat</string>
+    <string name="menu_chitchat">Chitchat</string>
+</resources>
