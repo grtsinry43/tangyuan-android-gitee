@@ -3,23 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/nav_home">
+    app:startDestination="@id/nav_normalchat">
 
     <fragment
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_normalchat"
         android:name="com.qingshuige.tangyuan.ui.normalchat.NormalChatFragment"
         android:label="@string/menu_normalchat"
         tools:layout="@layout/fragment_normalchat" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.qingshuige.tangyuan.ui.gallery.GalleryFragment"
+        android:id="@+id/nav_chitchat"
+        android:name="com.qingshuige.tangyuan.ui.chitchat.ChitchatFragment"
         android:label="@string/menu_chitchat"
-        tools:layout="@layout/fragment_gallery" />
-
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.qingshuige.tangyuan.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_chitchat" />
 </navigation>

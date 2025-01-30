@@ -1,25 +1,22 @@
-package com.qingshuige.tangyuan.ui.normalchat;
+package com.qingshuige.tangyuan.ui.chitchat;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;
+import com.qingshuige.tangyuan.databinding.FragmentChitchatBinding;
 
-public class NormalChatFragment extends Fragment {
+public class ChitchatFragment extends Fragment {
 
-    private FragmentNormalchatBinding binding;
+    private FragmentChitchatBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-        binding = FragmentNormalchatBinding.inflate(inflater, container, false);
+        binding = FragmentChitchatBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         return root;
     }
