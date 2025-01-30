@@ -23,4 +23,10 @@ public class NormalChatFragment extends Fragment {
         View root = binding.getRoot();
         return root;
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
