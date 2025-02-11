@@ -2,6 +2,10 @@ package com.qingshuige.tangyuan.models;
 
 import java.util.Date;
 
+
+/**
+ * 帖子元数据（不含正文）
+ */
 public class PostMetadata {
     /**
      * 帖子唯一ID
