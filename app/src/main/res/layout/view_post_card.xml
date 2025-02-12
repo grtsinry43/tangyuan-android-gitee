@@ -16,6 +16,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"/>
         <TextView
+            android:id="@+id/nicknameView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textFontWeight="500"
@@ -24,6 +25,7 @@
             android:text="线粒体XianlitiCN"/>
     </LinearLayout>
     <TextView
+        android:id="@+id/postPreviewView"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

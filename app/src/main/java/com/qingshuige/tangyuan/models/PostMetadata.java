@@ -2,7 +2,6 @@ package com.qingshuige.tangyuan.models;
 
 import java.util.Date;
 
-
 /**
  * 帖子元数据（不含正文）
  */
