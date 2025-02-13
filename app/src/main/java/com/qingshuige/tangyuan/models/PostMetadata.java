@@ -41,4 +41,11 @@ public class PostMetadata {
     public int getSectionId() {
         return sectionId;
     }
+
+    public PostMetadata(int postId, int userId, Date postDate, int sectionId){
+        this.postId = postId;
+        this.userId = userId;
+        this.postDate = postDate;
+        this.sectionId = sectionId;
+    }
 }

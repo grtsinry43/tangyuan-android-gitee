@@ -31,12 +31,15 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         PostMetadata p=postMetadataList.get(position);
 
         //UI
-        holder.getNicknameView().setText(p.getUserId());
+        //holder.getNicknameView().setText(p.getUserId());
+        holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
+        holder.getNicknameView().setText("线粒体XianlitiCN");
+        holder.getPostPreviewView().setText("当务之急是找到关键的问题，关键的问题是什么呢？是我们要找到问题的关键，如果在关键的问题，关键的领域，关键的这个环节上，我们找不到那个关键，我们把握抓手不在关键上，我们等于就是说无法解决关键。");
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return postMetadataList.size();
     }
 
     public PostCardAdapter(){
@@ -45,6 +48,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     public void appendData(List<PostMetadata> data){
         postMetadataList.addAll(data);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
