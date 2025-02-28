@@ -1,6 +1,5 @@
 package com.qingshuige.tangyuan;
 
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.qingshuige.tangyuan.models.PostMetadata;
+import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHolder> {
 
-    private List<PostMetadata> postMetadataList;
+    private List<PostInfo> postInfoList;
 
     @NonNull
     @Override
@@ -28,26 +27,25 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull PostCardAdapter.ViewHolder holder, int position) {
-        PostMetadata p=postMetadataList.get(position);
+        PostInfo p= postInfoList.get(position);
 
         //UI
-        //holder.getNicknameView().setText(p.getUserId());
+        holder.getNicknameView().setText(p.getUserNickname());
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
-        holder.getNicknameView().setText("线粒体XianlitiCN");
-        holder.getPostPreviewView().setText("当务之急是找到关键的问题，关键的问题是什么呢？是我们要找到问题的关键，如果在关键的问题，关键的领域，关键的这个环节上，我们找不到那个关键，我们把握抓手不在关键上，我们等于就是说无法解决关键。");
+        holder.getPostPreviewView().setText(p.getTextContent());
     }
 
     @Override
     public int getItemCount() {
-        return postMetadataList.size();
+        return postInfoList.size();
     }
 
     public PostCardAdapter(){
-        postMetadataList=new ArrayList<PostMetadata>();
+        postInfoList =new ArrayList<PostInfo>();
     }
 
-    public void appendData(List<PostMetadata> data){
-        postMetadataList.addAll(data);
+    public void appendData(List<PostInfo> data){
+        postInfoList.addAll(data);
         notifyDataSetChanged();
     }
 

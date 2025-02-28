@@ -1,24 +1,32 @@
 package com.qingshuige.tangyuan.ui.normalchat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
+import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;
-import com.qingshuige.tangyuan.models.PostMetadata;
+import com.qingshuige.tangyuan.network.PostBody;
+import com.qingshuige.tangyuan.network.PostMetadata;
+import com.qingshuige.tangyuan.network.User;
+import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NormalChatFragment extends Fragment {
 
@@ -36,16 +44,36 @@ public class NormalChatFragment extends Fragment {
         PostCardAdapter adapter=new PostCardAdapter();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        ArrayList<PostMetadata> metadataList=new ArrayList<>();
-        metadataList.add(new PostMetadata(2,7,new Date(),1));
-        adapter.appendData(metadataList);
+        try {
+            updateRecyclerView();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         return root;
     }
 
-    private void updateRecyclerView()
-    {
+    private void updateRecyclerView() throws IOException {
+        TangyuanApplication.getApi().getPostMetadata(1).enqueue(new Callback<PostMetadata>() {
+            @Override
+            public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
+                Log.i("RETR",response.body().postDateTime);
+            }
 
+            @Override
+            public void onFailure(Call<PostMetadata> call, Throwable throwable) {
+                Log.i("RETR",throwable.getMessage());
+            }
+        });
+        //TODO:以上只是一个单元测试
+        /*
+        PostBody b=TangyuanApplication.getApi().getPostBody(1).execute().body();
+        User u=TangyuanApplication.getApi().getUser(1).execute().body();
+        PostInfo info=new PostInfo(md.postId,u.nickName,md.postDateTime,b.textContent);
+        List<PostInfo> list=new ArrayList<>();
+        list.add(info);
+        ((PostCardAdapter)recyclerView.getAdapter()).appendData(list);
+        */
     }
 
     @Override

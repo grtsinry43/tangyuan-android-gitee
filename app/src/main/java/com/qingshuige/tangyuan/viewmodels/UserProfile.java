@@ -1,4 +1,4 @@
-package com.qingshuige.tangyuan.models;
+package com.qingshuige.tangyuan.viewmodels;
 
 
 /**
