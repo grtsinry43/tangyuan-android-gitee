@@ -43,6 +43,11 @@ public class NormalChatFragment extends Fragment {
         return root;
     }
 
+    private void updateRecyclerView()
+    {
+
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
