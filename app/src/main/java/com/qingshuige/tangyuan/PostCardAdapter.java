@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PostCardAdapter.ViewHolder holder, int position) {
         PostInfo p= postInfoList.get(position);
-
+        Log.i("TY","Binding data: PostId "+p.getPostId());
         //UI
         holder.getNicknameView().setText(p.getUserNickname());
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
@@ -46,6 +47,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     public void appendData(List<PostInfo> data){
         postInfoList.addAll(data);
+        Log.i("TY","Appending data: "+data.size());
         notifyDataSetChanged();
     }
 

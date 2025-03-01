@@ -54,26 +54,51 @@ public class NormalChatFragment extends Fragment {
     }
 
     private void updateRecyclerView() throws IOException {
+        //三层嵌套回调，用以收集三项信息
+        //我承认这些代码是非常丑陋的，但我想不出更好的方法
         TangyuanApplication.getApi().getPostMetadata(1).enqueue(new Callback<PostMetadata>() {
             @Override
             public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
-                Log.i("RETR",response.body().postDateTime.toString());
+                PostMetadata metadata=response.body();
+                TangyuanApplication.getApi().getUser(metadata.userId).enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        User user= response.body();
+                        TangyuanApplication.getApi().getPostBody(metadata.postId).enqueue(new Callback<PostBody>() {
+                            @Override
+                            public void onResponse(Call<PostBody> call, Response<PostBody> response) {
+                                PostBody body=response.body();
+                                PostInfo info=new PostInfo(metadata.postId, user.nickName,metadata.postDateTime, body.textContent);
+                                Log.i("TY",info.getUserNickname());
+                                Log.i("TY",response.raw().header("Content-Type"));
+                                List<PostInfo> pl=new ArrayList<>();
+                                pl.add(info);
+                                getActivity().runOnUiThread(()->{
+                                    Log.i("TY","runOnUiThread() called.");
+                                    ((PostCardAdapter)recyclerView.getAdapter()).appendData(pl);
+                                    Log.i("TY","appendData() finished.");
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(Call<PostBody> call, Throwable throwable) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable throwable) {
+
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<PostMetadata> call, Throwable throwable) {
-                Log.i("RETR",throwable.getMessage());
+
             }
         });
-        //TODO:以上只是一个单元测试
-        /*
-        PostBody b=TangyuanApplication.getApi().getPostBody(1).execute().body();
-        User u=TangyuanApplication.getApi().getUser(1).execute().body();
-        PostInfo info=new PostInfo(md.postId,u.nickName,md.postDateTime,b.textContent);
-        List<PostInfo> list=new ArrayList<>();
-        list.add(info);
-        ((PostCardAdapter)recyclerView.getAdapter()).appendData(list);
-        */
     }
 
     @Override
