@@ -45,10 +45,15 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         postInfoList =new ArrayList<PostInfo>();
     }
 
-    public void appendData(List<PostInfo> data){
-        postInfoList.addAll(data);
-        Log.i("TY","Appending data: "+data.size());
+    public boolean appendData(PostInfo data){
+        for (PostInfo i:postInfoList) {
+            if(i.getPostId()==data.getPostId()){
+                return false;
+            }
+        }
+        postInfoList.add(data);
         notifyDataSetChanged();
+        return true;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

@@ -2,6 +2,8 @@ package com.qingshuige.tangyuan.network;
 
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,5 +19,8 @@ public interface ApiInterface {
 
     @GET("user/{id}")
     Call<User> getUser(@Path("id")int id);
+
+    @GET("post/metadata/random/{count}")
+    Call<List<PostMetadata>> getRandomPostMetadata(@Path("count")int count);
 
 }
