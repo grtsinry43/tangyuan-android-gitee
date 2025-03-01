@@ -6,7 +6,7 @@ import java.util.Date;
 public class PostMetadata {
     public int postId;
     public int userId;
-    public String postDateTime;
+    public Date postDateTime;
     public int sectionId;
     public boolean isVisible;
 }

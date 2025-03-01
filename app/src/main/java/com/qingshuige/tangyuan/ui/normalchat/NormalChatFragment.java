@@ -57,7 +57,7 @@ public class NormalChatFragment extends Fragment {
         TangyuanApplication.getApi().getPostMetadata(1).enqueue(new Callback<PostMetadata>() {
             @Override
             public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
-                Log.i("RETR",response.body().postDateTime);
+                Log.i("RETR",response.body().postDateTime.toString());
             }
 
             @Override
