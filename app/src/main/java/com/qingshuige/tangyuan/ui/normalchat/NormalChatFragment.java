@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan.ui.normalchat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,9 +9,12 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.MainActivity;
+import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
@@ -47,6 +51,7 @@ public class NormalChatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         LinearLayoutManager rcvLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rcvLayoutManager);
+        ///监听器
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -59,10 +64,20 @@ public class NormalChatFragment extends Fragment {
                 if (dy > 0 && lastVisibleItem == totalItemCount - 1) {
                     // 用户滑动到列表底部
                     updateRecyclerView(5);
-                    Log.i("TY","OnScrolled() executed.");
                 }
             }
         });
+        adapter.setOnItemClickListener(new PostCardAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent=new Intent(getActivity(), PostActivity.class);
+                startActivity(intent);
+            }
+        });
+        ///装饰线
+        DividerItemDecoration divider=new DividerItemDecoration(getActivity(),rcvLayoutManager.getOrientation());
+        recyclerView.addItemDecoration(divider);
+        ///首次更新
         updateRecyclerView(10);
 
         return root;

@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHolder> {
 
     private List<PostInfo> postInfoList;
+    private OnItemClickListener listener;
 
     @NonNull
     @Override
@@ -39,12 +41,19 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
         holder.getPostPreviewView().setText(p.getTextContent());
         ///时间处理
-        Date date=p.getPostDate();
-        ZonedDateTime zdt=date.toInstant().atZone(ZoneId.of("UTC"));
-        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
-        ZonedDateTime localdt=zdt.withZoneSameInstant(ZoneId.systemDefault());
-        String datetimeString=localdt.format(formatter);
+        Date date = p.getPostDate();
+        ZonedDateTime zdt = date.toInstant().atZone(ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
+        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+        String datetimeString = localdt.format(formatter);
         holder.getDateTimeView().setText(datetimeString);
+        ///点击事件
+        holder.getView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClick(position);
+            }
+        });
     }
 
     @Override
@@ -54,6 +63,14 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     public PostCardAdapter() {
         postInfoList = new ArrayList<PostInfo>();
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener callback){
+        this.listener=callback;
     }
 
     public boolean appendData(PostInfo data) {
@@ -72,6 +89,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
+        private final View view;
 
         public ViewHolder(View view) {
             super(view);
@@ -80,6 +98,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
+            this.view=view;
         }
 
         public ImageView getAvatarView() {
@@ -96,6 +115,10 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         public TextView getDateTimeView() {
             return dateTimeView;
+        }
+
+        public View getView() {
+            return view;
         }
     }
 }
