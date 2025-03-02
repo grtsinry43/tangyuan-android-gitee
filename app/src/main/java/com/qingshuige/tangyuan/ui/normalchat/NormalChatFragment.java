@@ -41,15 +41,29 @@ public class NormalChatFragment extends Fragment {
         binding = FragmentNormalchatBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        //RecyclerView
         recyclerView = (RecyclerView) root.findViewById(R.id.normalchat_recyclerview);
         PostCardAdapter adapter = new PostCardAdapter();
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        try {
-            updateRecyclerView(5);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        LinearLayoutManager rcvLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(rcvLayoutManager);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastVisibleItem = rcvLayoutManager.findLastVisibleItemPosition();
+                int totalItemCount = rcvLayoutManager.getItemCount();
+
+                // 滑动到底部
+                if (dy > 0 && lastVisibleItem == totalItemCount - 1) {
+                    // 用户滑动到列表底部
+                    updateRecyclerView(5);
+                    Log.i("TY","OnScrolled() executed.");
+                }
+            }
+        });
+        updateRecyclerView(10);
 
         return root;
     }
@@ -59,7 +73,7 @@ public class NormalChatFragment extends Fragment {
      * @param expectedCount 预期更新的帖子条数，不代表最终更新的条数。
      * @throws IOException
      */
-    private void updateRecyclerView(int expectedCount) throws IOException {
+    private void updateRecyclerView(int expectedCount) {
         TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
