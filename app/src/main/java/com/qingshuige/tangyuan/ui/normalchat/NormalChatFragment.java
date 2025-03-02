@@ -69,8 +69,9 @@ public class NormalChatFragment extends Fragment {
         });
         adapter.setOnItemClickListener(new PostCardAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onItemClick(int postId) {
                 Intent intent=new Intent(getActivity(), PostActivity.class);
+                intent.putExtra("postId",postId);
                 startActivity(intent);
             }
         });

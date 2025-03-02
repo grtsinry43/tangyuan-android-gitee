@@ -15,7 +15,6 @@
             android:id="@+id/avatarView"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:background="@drawable/ic_launcher_background"
             android:scaleType="fitXY"/>
         <TextView
             android:id="@+id/nicknameView"

@@ -1,7 +1,5 @@
 package com.qingshuige.tangyuan;
 
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +49,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         holder.getView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onItemClick(position);
+                listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId());
             }
         });
     }
@@ -65,12 +63,12 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         postInfoList = new ArrayList<PostInfo>();
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(int position);
+    public interface OnItemClickListener {
+        void onItemClick(int postId);
     }
 
-    public void setOnItemClickListener(OnItemClickListener callback){
-        this.listener=callback;
+    public void setOnItemClickListener(OnItemClickListener callback) {
+        this.listener = callback;
     }
 
     public boolean appendData(PostInfo data) {
@@ -98,7 +96,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
-            this.view=view;
+            this.view = view;
         }
 
         public ImageView getAvatarView() {
