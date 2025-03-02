@@ -12,7 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHolder> {
@@ -29,12 +33,18 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull PostCardAdapter.ViewHolder holder, int position) {
         PostInfo p = postInfoList.get(position);
-        Log.i("TY", "Binding data: PostId " + p.getPostId());
+
         //UI
         holder.getNicknameView().setText(p.getUserNickname());
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
         holder.getPostPreviewView().setText(p.getTextContent());
-        holder.getDateTimeView().setText(p.getPostDate().toLocaleString());
+        ///时间处理
+        Date date=p.getPostDate();
+        ZonedDateTime zdt=date.toInstant().atZone(ZoneId.of("UTC"));
+        DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
+        ZonedDateTime localdt=zdt.withZoneSameInstant(ZoneId.systemDefault());
+        String datetimeString=localdt.format(formatter);
+        holder.getDateTimeView().setText(datetimeString);
     }
 
     @Override

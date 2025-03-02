@@ -13,8 +13,8 @@
         android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/avatarView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@drawable/ic_launcher_background"
             android:scaleType="fitXY"/>
         <TextView
@@ -24,6 +24,7 @@
             android:textStyle="bold"
             android:gravity="center_vertical"
             android:layout_marginStart="10dp"
+            android:textColor="@color/imperial_primer"
             android:text="杨慎"/>
     </LinearLayout>
     <TextView
@@ -31,11 +32,14 @@
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/imperial_primer"
         android:text="@string/lorel_ipsum"/>
     <TextView
         android:id="@+id/postDateTimeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textColor="@color/purple_700"/>
+        android:textColor="@color/fuel_town"
+        android:textSize="12sp"
+        android:text="2025年3月1日"/>
 </LinearLayout>
