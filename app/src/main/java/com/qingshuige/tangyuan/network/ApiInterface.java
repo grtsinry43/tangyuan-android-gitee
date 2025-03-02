@@ -28,4 +28,7 @@ public interface ApiInterface {
     @POST("post/metadata")
     Call<Map<String,Integer>> postPostMetadata(CreatPostMetadataDto metadata);
 
+    @POST("post/body")
+    Call<String> postPostBody(PostBody body);
+
 }

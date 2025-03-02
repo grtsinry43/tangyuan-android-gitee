@@ -3,7 +3,7 @@ package com.qingshuige.tangyuan.viewmodels;
 import java.util.Date;
 
 /**
- * 帖子元数据（不含正文）
+ * 一篇帖子的所有信息。
  */
 public class PostInfo {
     /**

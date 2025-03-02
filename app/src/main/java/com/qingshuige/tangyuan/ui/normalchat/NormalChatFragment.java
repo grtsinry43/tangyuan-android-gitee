@@ -15,6 +15,7 @@ import com.qingshuige.tangyuan.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;
+import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostBody;
 import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
@@ -59,50 +60,16 @@ public class NormalChatFragment extends Fragment {
      * @throws IOException
      */
     private void updateRecyclerView(int expectedCount) throws IOException {
-        //三层嵌套回调，用以收集三项信息
-        //我承认这些代码是非常丑陋的，但我想不出更好的方法
-
-        //第一层：获取随机帖子集合
         TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                Log.i("TY",response.toString());
+                Log.i("TY", response.toString());
                 List<PostMetadata> metadatas = response.body();
                 //对于每一条帖子……
                 for (PostMetadata m : metadatas) {
-                    //第二层：获取用户信息
-                    TangyuanApplication.getApi().getUser(m.userId).enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(Call<User> call, Response<User> response) {
-                            User user = response.body();
-                            //第三层：获取正文信息
-                            TangyuanApplication.getApi().getPostBody(m.postId).enqueue(new Callback<PostBody>() {
-                                @Override
-                                public void onResponse(Call<PostBody> call, Response<PostBody> response) {
-                                    PostBody body = response.body();
-                                    //汇总
-                                    PostInfo info = new PostInfo(m.postId, user.nickName, m.postDateTime, body.textContent);
-                                    Log.i("TY", info.getUserNickname());
-                                    Log.i("TY", response.raw().header("Content-Type"));
-                                    getActivity().runOnUiThread(() -> {
-                                        Log.i("TY", "runOnUiThread() called.");
-                                        ((PostCardAdapter) recyclerView.getAdapter()).appendData(info);
-                                        Log.i("TY", "appendData() finished.");
-                                    });
-                                }
-
-                                @Override
-                                public void onFailure(Call<PostBody> call, Throwable throwable) {
-                                    //TODO
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onFailure(Call<User> call, Throwable throwable) {
-                            //TODO
-                        }
-                    });
+                    ApiHelper.getPostInfoByIdAsync(m.postId, result ->
+                            getActivity().runOnUiThread(() ->
+                                    ((PostCardAdapter) recyclerView.getAdapter()).appendData(result)));
                 }
             }
 
