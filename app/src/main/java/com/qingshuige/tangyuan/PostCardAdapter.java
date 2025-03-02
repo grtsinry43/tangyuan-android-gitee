@@ -22,18 +22,19 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
     @NonNull
     @Override
     public PostCardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v= LayoutInflater.from(parent.getContext()).inflate(R.layout.view_post_card,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_post_card, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PostCardAdapter.ViewHolder holder, int position) {
-        PostInfo p= postInfoList.get(position);
-        Log.i("TY","Binding data: PostId "+p.getPostId());
+        PostInfo p = postInfoList.get(position);
+        Log.i("TY", "Binding data: PostId " + p.getPostId());
         //UI
         holder.getNicknameView().setText(p.getUserNickname());
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
         holder.getPostPreviewView().setText(p.getTextContent());
+        holder.getDateTimeView().setText(p.getPostDate().toLocaleString());
     }
 
     @Override
@@ -41,13 +42,13 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         return postInfoList.size();
     }
 
-    public PostCardAdapter(){
-        postInfoList =new ArrayList<PostInfo>();
+    public PostCardAdapter() {
+        postInfoList = new ArrayList<PostInfo>();
     }
 
-    public boolean appendData(PostInfo data){
-        for (PostInfo i:postInfoList) {
-            if(i.getPostId()==data.getPostId()){
+    public boolean appendData(PostInfo data) {
+        for (PostInfo i : postInfoList) {
+            if (i.getPostId() == data.getPostId()) {
                 return false;
             }
         }
@@ -56,29 +57,35 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         return true;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView avatar;
         private final TextView nicknameView;
         private final TextView postPreviewView;
+        private final TextView dateTimeView;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             super(view);
 
-            avatar=(ImageView)view.findViewById(R.id.avatarView);
-            nicknameView=(TextView) view.findViewById(R.id.nicknameView);
-            postPreviewView=(TextView) view.findViewById(R.id.postPreviewView);
+            avatar = (ImageView) view.findViewById(R.id.avatarView);
+            nicknameView = (TextView) view.findViewById(R.id.nicknameView);
+            postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
+            dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
         }
 
-        public ImageView getAvatarView(){
+        public ImageView getAvatarView() {
             return avatar;
         }
 
-        public TextView getNicknameView(){
+        public TextView getNicknameView() {
             return nicknameView;
         }
 
         public TextView getPostPreviewView() {
             return postPreviewView;
+        }
+
+        public TextView getDateTimeView() {
+            return dateTimeView;
         }
     }
 }
