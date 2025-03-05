@@ -70,13 +70,13 @@ public class NormalChatFragment extends Fragment {
         adapter.setOnItemClickListener(new PostCardAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int postId) {
-                Intent intent=new Intent(getActivity(), PostActivity.class);
-                intent.putExtra("postId",postId);
+                Intent intent = new Intent(getActivity(), PostActivity.class);
+                intent.putExtra("postId", postId);
                 startActivity(intent);
             }
         });
         ///装饰线
-        DividerItemDecoration divider=new DividerItemDecoration(getActivity(),rcvLayoutManager.getOrientation());
+        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), rcvLayoutManager.getOrientation());
         recyclerView.addItemDecoration(divider);
         ///首次更新
         updateRecyclerView(10);
@@ -93,7 +93,6 @@ public class NormalChatFragment extends Fragment {
         TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                Log.i("TY", response.toString());
                 List<PostMetadata> metadatas = response.body();
                 //对于每一条帖子……
                 for (PostMetadata m : metadatas) {
@@ -105,7 +104,7 @@ public class NormalChatFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                //TODO
+                Log.i("TY","Error: "+throwable.toString());
             }
         });
     }

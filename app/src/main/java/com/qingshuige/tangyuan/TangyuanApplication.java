@@ -1,6 +1,7 @@
 package com.qingshuige.tangyuan;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.google.gson.*;
 import com.qingshuige.tangyuan.network.ApiInterface;
@@ -25,6 +26,7 @@ public class TangyuanApplication extends Application {
                 .baseUrl(coreDomain + "api/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
+        Log.i("TY", "BaseURL: " + retrofit.baseUrl());
         api = retrofit.create(ApiInterface.class);
     }
 

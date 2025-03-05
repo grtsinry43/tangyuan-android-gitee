@@ -1,9 +1,11 @@
 package com.qingshuige.tangyuan;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,23 +40,33 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         //UI
         holder.getNicknameView().setText(p.getUserNickname());
-        holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
+        Picasso.get()
+                .load(ApiHelper.getFullImageURL(p.getUserAvatarGUID()))
+                .into(holder.getAvatarView());
         holder.getPostPreviewView().setText(p.getTextContent());
         ///图片处理
+        holder.getImageLayout().setVisibility(View.GONE);
+        ////这句主要是考虑ViewHolder的复用问题，
+        ////假设拿到的是一个被复用的ViewHolder，恰好之前又填充过图片，那么就有可能出现
+        ////图片出现在没有图片的帖子上，因此要重置可见性
         if (p.getImage1GUID() != null) {
+            Log.i("TY", "Binding image to PostID " + p.getPostId() + " position " + position);
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
                     .into(holder.getImageView1());
+            holder.imageLayout.setVisibility(ViewGroup.VISIBLE);
         }
         if (p.getImage2GUID() != null) {
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage2GUID()))
-                    .into(holder.getImageView1());
+                    .into(holder.getImageView2());
+            holder.getImageView2().setVisibility(View.VISIBLE);
         }
         if (p.getImage3GUID() != null) {
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage3GUID()))
-                    .into(holder.getImageView1());
+                    .into(holder.getImageView3());
+            holder.getImageView3().setVisibility(View.VISIBLE);
         }
         ///时间处理
         Date date = p.getPostDate();
@@ -96,7 +108,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             }
         }
         postInfoList.add(data);
-        notifyDataSetChanged();
+        notifyItemInserted(postInfoList.size() - 1);
         return true;
     }
 
@@ -105,6 +117,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
+        private final LinearLayout imageLayout;
         private final ImageView imageView1;
         private final ImageView imageView2;
         private final ImageView imageView3;
@@ -117,6 +130,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
+            imageLayout = (LinearLayout) view.findViewById(R.id.imageLayout);
             imageView1 = (ImageView) view.findViewById(R.id.imageView1);
             imageView2 = (ImageView) view.findViewById(R.id.imageView2);
             imageView3 = (ImageView) view.findViewById(R.id.imageView3);
@@ -153,6 +167,10 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         public ImageView getImageView3() {
             return imageView3;
+        }
+
+        public LinearLayout getImageLayout() {
+            return imageLayout;
         }
     }
 }
