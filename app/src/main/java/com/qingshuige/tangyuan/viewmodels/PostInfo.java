@@ -16,6 +16,8 @@ public class PostInfo {
      */
     private String userNickname;
 
+    private String userAvatarGUID;
+
     /**
      * 发帖时间
      */
@@ -45,9 +47,10 @@ public class PostInfo {
         return postDate;
     }
 
-    public PostInfo(int postId, String userNickname, Date postDate, String textContent, String image1GUID, String image2GUID, String image3GUID){
+    public PostInfo(int postId, String userNickname, String userAvatarGUID, Date postDate, String textContent, String image1GUID, String image2GUID, String image3GUID){
         this.postId = postId;
         this.userNickname = userNickname;
+        this.userAvatarGUID = userAvatarGUID;
         this.postDate = postDate;
         this.textContent = textContent;
         this.image1GUID = image1GUID;
@@ -69,5 +72,9 @@ public class PostInfo {
 
     public String getImage3GUID() {
         return image3GUID;
+    }
+
+    public String getUserAvatarGUID() {
+        return userAvatarGUID;
     }
 }

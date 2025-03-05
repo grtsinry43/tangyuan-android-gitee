@@ -34,6 +34,7 @@ public class ApiHelper {
                                 PostInfo info = new PostInfo(
                                         postId,
                                         user.nickName,
+                                        user.avatarGuid,
                                         metadata.postDateTime,
                                         body.textContent,
                                         body.image1UUID,
