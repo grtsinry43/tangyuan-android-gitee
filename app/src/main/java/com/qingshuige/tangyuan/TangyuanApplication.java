@@ -12,22 +12,23 @@ public class TangyuanApplication extends Application {
 
     private static Retrofit retrofit;
     private static ApiInterface api;
+    private static final String coreDomain = "https://ty.qingshuige.ink/";
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
 
         Gson gson = new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss") // 匹配 "2024-04-08T00:00:00"
                 .create();
-        retrofit=new Retrofit.Builder()
-                .baseUrl("https://ty.qingshuige.ink/api/")
+        retrofit = new Retrofit.Builder()
+                .baseUrl(coreDomain + "api/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        api=retrofit.create(ApiInterface.class);
+        api = retrofit.create(ApiInterface.class);
     }
 
-    public static Retrofit getRetrofit(){
+    public static Retrofit getRetrofit() {
         return retrofit;
     }
 
@@ -35,4 +36,7 @@ public class TangyuanApplication extends Application {
         return api;
     }
 
+    public static String getCoreDomain() {
+        return coreDomain;
+    }
 }

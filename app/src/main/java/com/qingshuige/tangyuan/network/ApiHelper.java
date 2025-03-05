@@ -14,7 +14,8 @@ public class ApiHelper {
 
     /**
      * 根据给定PostID，返回PostInfo，然后呼叫回调并传送PostInfo对象。此方法可以立即返回。
-     * @param postId 需要获取的PostID。
+     *
+     * @param postId   需要获取的PostID。
      * @param callback 取得PostID后呼叫的回调，接受获取的PostInfo对象。
      */
     public static void getPostInfoByIdAsync(int postId, ApiCallback<PostInfo> callback) {
@@ -34,7 +35,10 @@ public class ApiHelper {
                                         postId,
                                         user.nickName,
                                         metadata.postDateTime,
-                                        body.textContent);
+                                        body.textContent,
+                                        body.image1UUID,
+                                        body.image2UUID,
+                                        body.image3UUID);
                                 callback.onComplete(info);
                             }
 
@@ -57,6 +61,10 @@ public class ApiHelper {
                 //TODO
             }
         });
+    }
+
+    public static String getFullImageURL(String imageGuid) {
+        return TangyuanApplication.getCoreDomain() + "images/" + imageGuid + ".jpg";
     }
 
     public interface ApiCallback<T> {

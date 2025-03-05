@@ -9,7 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
+import com.squareup.picasso.Picasso;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -38,6 +40,22 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         holder.getNicknameView().setText(p.getUserNickname());
         holder.getAvatarView().setImageResource(R.drawable.xianliticn_avatar);
         holder.getPostPreviewView().setText(p.getTextContent());
+        ///图片处理
+        if (p.getImage1GUID() != null) {
+            Picasso.get()
+                    .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
+                    .into(holder.getImageView1());
+        }
+        if (p.getImage2GUID() != null) {
+            Picasso.get()
+                    .load(ApiHelper.getFullImageURL(p.getImage2GUID()))
+                    .into(holder.getImageView1());
+        }
+        if (p.getImage3GUID() != null) {
+            Picasso.get()
+                    .load(ApiHelper.getFullImageURL(p.getImage3GUID()))
+                    .into(holder.getImageView1());
+        }
         ///时间处理
         Date date = p.getPostDate();
         ZonedDateTime zdt = date.toInstant().atZone(ZoneId.of("UTC"));
@@ -87,6 +105,9 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
+        private final ImageView imageView1;
+        private final ImageView imageView2;
+        private final ImageView imageView3;
         private final View view;
 
         public ViewHolder(View view) {
@@ -96,6 +117,9 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
+            imageView1 = (ImageView) view.findViewById(R.id.imageView1);
+            imageView2 = (ImageView) view.findViewById(R.id.imageView2);
+            imageView3 = (ImageView) view.findViewById(R.id.imageView3);
             this.view = view;
         }
 
@@ -117,6 +141,18 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         public View getView() {
             return view;
+        }
+
+        public ImageView getImageView1() {
+            return imageView1;
+        }
+
+        public ImageView getImageView2() {
+            return imageView2;
+        }
+
+        public ImageView getImageView3() {
+            return imageView3;
         }
     }
 }
