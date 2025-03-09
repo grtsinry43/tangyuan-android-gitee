@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
@@ -81,22 +84,40 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_new_post_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.image_button) {
+            //假如imageView有空闲
+            if (imageView1.getDrawable() == null ||
+                    imageView2.getDrawable() == null ||
+                    imageView3.getDrawable() == null) {
+                //选择图片
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 1);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case 1://选择图片
                 if (resultCode == RESULT_OK && data != null) {
                     //轮流填充三个imageView
-                    if (imageView1.getDrawable().getConstantState() ==
-                            AppCompatResources.getDrawable(this, R.drawable.image_alt).getConstantState()) {
+                    if (imageView1.getDrawable() == null) {
                         imageView1.setImageURI(data.getData());
                         break;
-                    } else if (imageView2.getDrawable().getConstantState() ==
-                            AppCompatResources.getDrawable(this, R.drawable.image_alt).getConstantState()) {
+                    } else if (imageView2.getDrawable() == null){
                         imageView2.setImageURI(data.getData());
                         break;
-                    } else if (imageView3.getDrawable().getConstantState() ==
-                            AppCompatResources.getDrawable(this, R.drawable.image_alt).getConstantState()) {
+                    } else if (imageView3.getDrawable() == null) {
                         imageView3.setImageURI(data.getData());
                         break;
                     }
@@ -111,13 +132,8 @@ public class NewPostActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             imageView = (ImageView) view;
-
-            //假如imageView显示的还是image_alt，也就是还没选图片
-            if (imageView.getDrawable().getConstantState() ==
-                    AppCompatResources.getDrawable(view.getContext(), R.drawable.image_alt).getConstantState()) {
-                //选择图片
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
+            if (imageView.getDrawable() != null) {
+                imageView.setImageDrawable(null);
             }
         }
     }

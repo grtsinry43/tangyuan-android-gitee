@@ -14,4 +14,6 @@
     <string name="title_activity_post">PostActivity</string>
     <string name="new_post">发帖</string>
     <string name="new_post_beginning">今天晚上，很好的月光……</string>
+    <string name="send_post">发帖</string>
+    <string name="select_image">选择图片</string>
 </resources>
