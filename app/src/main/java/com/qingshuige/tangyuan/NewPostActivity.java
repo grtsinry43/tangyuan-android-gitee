@@ -122,18 +122,14 @@ public class NewPostActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //选择图片
         if (item.getItemId() == R.id.image_button) {
-            //TODO:修复后端静态图片Bug，再开放发图片帖功能
-            Toast.makeText(this, "后端目前有图片帖Bug，因此暂不开放发图片帖功能。", Toast.LENGTH_LONG)
-                    .show();
-            return super.onOptionsItemSelected(item);
-//            //假如imageView有空闲
-//            if (imageView1.getDrawable() == null ||
-//                    imageView2.getDrawable() == null ||
-//                    imageView3.getDrawable() == null) {
-//                //选择图片
-//                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                startActivityForResult(intent, 1);
-//            }
+            //假如imageView有空闲
+            if (imageView1.getDrawable() == null ||
+                    imageView2.getDrawable() == null ||
+                    imageView3.getDrawable() == null) {
+                //选择图片
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 1);
+            }
         }
 
         //发帖
