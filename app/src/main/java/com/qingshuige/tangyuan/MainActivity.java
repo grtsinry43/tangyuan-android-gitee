@@ -18,6 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /*
  *
  *  在科学上没有平坦的大道，
@@ -55,6 +60,24 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        //蒲公英更新
+        //apiKey:133d8c604b4d0772723a007a9ad213f7
+        //appKey:123a9eba5d424ab9088069505ffeb1de
+        TangyuanApplication.getApi().getFromUrl("https://api.pgyer.com/apiv2/app/install?" +
+                        "_api_key=133d8c604b4d0772723a007a9ad213f7" +
+                        "&appKey=123a9eba5d424ab9088069505ffeb1de")
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                    }
+                });
     }
 
     @Override
