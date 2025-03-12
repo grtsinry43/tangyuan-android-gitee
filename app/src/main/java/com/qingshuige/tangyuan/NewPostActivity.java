@@ -190,11 +190,11 @@ public class NewPostActivity extends AppCompatActivity {
                 body.textContent = textEdit.getText().toString();
                 if (!guids.isEmpty()) {
                     body.image1UUID = guids.get(0);
-                    if (guids.get(1) != null) {
-                        body.image1UUID = guids.get(1);
+                    if (guids.size() >= 2) {
+                        body.image2UUID = guids.get(1);
                     }
-                    if (guids.get(2) != null) {
-                        body.image1UUID = guids.get(2);
+                    if (guids.size() == 3) {
+                        body.image3UUID = guids.get(2);
                     }
                 }
                 Log.i("TY", "PostBody is: " +
