@@ -2,6 +2,7 @@ package com.qingshuige.tangyuan;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -17,6 +18,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
+
+import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -70,12 +73,12 @@ public class MainActivity extends AppCompatActivity {
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
+                        Log.i("TY", String.valueOf(response.code()));
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                        Log.i("TY", throwable.getMessage());
                     }
                 });
     }
