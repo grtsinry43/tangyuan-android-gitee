@@ -46,7 +46,10 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         holder.getPostPreviewView().setText(p.getTextContent());
         ///图片处理
         holder.getImageLayout().setVisibility(View.GONE);
-        ////这句主要是考虑ViewHolder的复用问题，
+        holder.getImageView1().setVisibility(View.GONE);
+        holder.getImageView2().setVisibility(View.GONE);
+        holder.getImageView3().setVisibility(View.GONE);
+        ////这些主要是考虑ViewHolder的复用问题，
         ////假设拿到的是一个被复用的ViewHolder，恰好之前又填充过图片，那么就有可能出现
         ////图片出现在没有图片的帖子上，因此要重置可见性
         if (p.getImage1GUID() != null) {
@@ -55,6 +58,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                     .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
                     .into(holder.getImageView1());
             holder.imageLayout.setVisibility(ViewGroup.VISIBLE);
+            holder.getImageView1().setVisibility(View.VISIBLE);
         }
         if (p.getImage2GUID() != null) {
             Picasso.get()
@@ -68,6 +72,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                     .into(holder.getImageView3());
             holder.getImageView3().setVisibility(View.VISIBLE);
         }
+        //有一种手动控制引用计数的美
         ///时间处理
         Date date = p.getPostDate();
         ZonedDateTime zdt = date.toInstant().atZone(ZoneId.of("UTC"));
