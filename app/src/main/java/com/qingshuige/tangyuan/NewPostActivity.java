@@ -2,12 +2,16 @@ package com.qingshuige.tangyuan;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,7 +34,9 @@ import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -225,6 +231,11 @@ public class NewPostActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1://选择图片
                 if (resultCode == RESULT_OK && data != null) {
+                    //判断大小
+                    if (getImageSize(this, data.getData()) >= 5 * 1024 * 1024) {
+                        Toast.makeText(this, "图片超过5MB，无法发送。", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                     //轮流填充三个imageView
                     if (imageView1.getDrawable() == null) {
                         imageView1.setImageURI(data.getData());
@@ -251,5 +262,33 @@ public class NewPostActivity extends AppCompatActivity {
                 imageView.setImageDrawable(null);
             }
         }
+    }
+
+
+    /**
+     * @param context
+     * @param uri
+     * @return 图片大小Byte数。
+     */
+    static long getImageSize(Context context, Uri uri) {
+        Cursor cursor = null;
+        try {
+            // 查询文件大小的列
+            String[] projection = {OpenableColumns.SIZE};
+            cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int sizeColumnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (sizeColumnIndex >= 0) {
+                    return cursor.getLong(sizeColumnIndex); // 返回文件大小（字节）
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return -1; // 获取失败返回-1
     }
 }

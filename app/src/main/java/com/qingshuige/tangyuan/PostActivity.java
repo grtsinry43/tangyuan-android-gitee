@@ -66,6 +66,7 @@ public class PostActivity extends AppCompatActivity {
                     ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
                     ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
                     ((TextView) findViewById(R.id.dateTimeView)).setText(postInfo.getPostDate().toLocaleString());
+                    ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());
                     ///Gallery
                     if (postInfo.getImage1GUID() != null) {
                         //gallery可见化
