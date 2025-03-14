@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/new_post_button"
+    <item
+        android:id="@+id/login_button"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="登录"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/new_post_button"
         android:icon="@drawable/ic_menu_camera"
         android:title="@string/new_post"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
+
 </menu>

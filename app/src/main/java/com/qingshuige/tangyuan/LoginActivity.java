@@ -3,6 +3,7 @@ package com.qingshuige.tangyuan;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import java.security.GeneralSecurityException;
 
 import javax.crypto.EncryptedPrivateKeyInfo;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,25 +70,30 @@ public class LoginActivity extends AppCompatActivity {
         LoginDto dto = new LoginDto();
         dto.phoneNumber = TangyuanApplication.getSharedPreferences().getString("phoneNumber", null);
         dto.password = TangyuanApplication.getSharedPreferences().getString("password", null);
-        TangyuanApplication.getApi().login(dto).enqueue(new Callback<String>() {
+        TangyuanApplication.getApi().login(dto).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.code() == 400) {
                     //Permission denied
                     Toast.makeText(LoginActivity.this, getString(R.string.phone_number_password_not_match), Toast.LENGTH_SHORT).show();
                 } else {
-                    TangyuanApplication.getSharedPreferences().edit()
-                            .putString("JwtToken", response.body())
-                            .apply();
-                    new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle("JWT Token")
-                            .setMessage(response.body())
-                            .show();
+                    //TODO:修改后端接口返回JSON
+                    try {
+                        TangyuanApplication.getSharedPreferences().edit()
+                                .putString("JwtToken", response.body().string())
+                                .apply();
+                        new AlertDialog.Builder(LoginActivity.this)
+                                .setTitle("JWT Token")
+                                .setMessage(response.body().string())
+                                .show();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable throwable) {
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
 
             }
         });
