@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -64,23 +65,17 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        ((ImageView) findViewById(R.id.navAvatarView)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //蒲公英更新
         //apiKey:133d8c604b4d0772723a007a9ad213f7
         //appKey:123a9eba5d424ab9088069505ffeb1de
-        TangyuanApplication.getApi().getFromUrl("https://api.pgyer.com/apiv2/app/install?" +
-                        "_api_key=133d8c604b4d0772723a007a9ad213f7" +
-                        "&appKey=123a9eba5d424ab9088069505ffeb1de")
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        Log.i("TY", String.valueOf(response.code()));
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                        Log.i("TY", throwable.getMessage());
-                    }
-                });
     }
 
     @Override
