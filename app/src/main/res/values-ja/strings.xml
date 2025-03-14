@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">糖原</string>
+    <string name="nav_header_title">糖原</string>
+    <string name="nav_header_subtitle">異なる人间の花火を楽しむ</string>
+    <string name="menu_normalchat">ちょっとおしゃべり</string>
+    <string name="menu_chitchat">気楽に語る</string>
+    <string name="lorel_ipsum">滔滔たる長江は東へ流れ去り、波濤は英雄をすべて洗い流す。成否も是非も振り返れば空しく、青山は依然として在り、幾度かの夕陽が赤く染まる。白髪の漁師と樵は江のほとりに立ち、秋の月と春の風を慣れ親しんで見る。一壺の濁り酒で喜び合い、古今幾多の事は、みな笑いものに帰す。</string>
+    <string name="new_post">投稿する</string>
+    <string name="new_post_beginning">今夜、素晴らしい月光が……</string>
+    <string name="send_post">投稿する</string>
+    <string name="select_image">写真を選ぶ</string>
+    <string name="post_sent">投稿成功！</string>
+    <string name="login">ログイン</string>
+    <string name="password">パスワード</string>
+    <string name="phoneNumber">携帯番号</string>
+    <string name="phone_number_password_not_match">ユーザーが存在しないか、パスワードが間違っています。</string>
+</resources>

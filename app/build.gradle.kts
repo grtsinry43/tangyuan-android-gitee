@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.activity)
     implementation(libs.picasso)
+    implementation(libs.security.crypto)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

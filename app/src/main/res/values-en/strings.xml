@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tangyuan</string>
+    <string name="nav_header_title">Tangyuan</string>
     <string name="nav_header_subtitle">Admire what\'s different.</string>
     <string name="menu_normalchat">Normal Chat</string>
     <string name="menu_chitchat">Chitchat</string>
     <string name="lorel_ipsum">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="new_post">New Post</string>
-    <string name="new_post_beginning">今天晚上，很好的月光……</string>
-    <string name="send_post">发帖</string>
-    <string name="select_image">选择图片</string>
+    <string name="new_post_beginning">It was a bright cold day in April...</string>
+    <string name="send_post">Send Post</string>
+    <string name="select_image">Select Image</string>
     <string name="post_sent">Post sent!</string>
-    <string name="login">登录</string>
-    <string name="password">密码</string>
-    <string name="phoneNumber">手机号码</string>
+    <string name="login">Log In</string>
+    <string name="password">Password</string>
+    <string name="phoneNumber">Phone</string>
+    <string name="phone_number_password_not_match">User does not exist or password is incorrect.</string>
 </resources>
