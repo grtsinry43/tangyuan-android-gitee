@@ -42,7 +42,7 @@ public interface ApiInterface {
     Call<Map<String, String>> postImage(@Part MultipartBody.Part file);
 
     @POST("auth/login")
-    Call<ResponseBody> login(@Body LoginDto loginDto);
+    Call<Map<String, String>> login(@Body LoginDto loginDto);
 
     @GET
     Call<ResponseBody> getFromUrl(@Url String Url);
