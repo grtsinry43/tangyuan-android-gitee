@@ -30,6 +30,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
 
@@ -38,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +67,8 @@ public class NewPostActivity extends AppCompatActivity {
     private ExecutorService es;
     private Handler handler;
 
+    private TokenManager tm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +93,7 @@ public class NewPostActivity extends AppCompatActivity {
 
         es = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
+        tm = TangyuanApplication.getTokenManager();
 
         textEdit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -178,7 +185,7 @@ public class NewPostActivity extends AppCompatActivity {
                 //2.上传元数据
                 int postId;
                 CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
-                metadataDto.userId = 1;//TODO:修改后端使用JWT获取UserID
+                metadataDto.userId = decodeJwtPayloadUserId(tm.getToken());
                 metadataDto.postDateTime = new Date();
                 metadataDto.sectionId = 1;
                 metadataDto.isVisible = true;
@@ -289,5 +296,20 @@ public class NewPostActivity extends AppCompatActivity {
             }
         }
         return -1; // 获取失败返回-1
+    }
+
+    static int decodeJwtPayloadUserId(String jwt) {
+        // 分割 JWT，获取 payload（第二部分）
+        String[] parts = jwt.split("\\.");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Invalid JWT format");
+        }
+
+        // 解码 Base64 URL 编码的 payload
+        String payload = parts[1];
+        String decodedPayload = new String(Base64.getUrlDecoder().decode(payload));
+        Log.i("TY", decodedPayload);
+        JsonObject jsonObject = JsonParser.parseString(decodedPayload).getAsJsonObject();
+        return jsonObject.get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").getAsInt();
     }
 }
