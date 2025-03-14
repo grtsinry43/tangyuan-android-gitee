@@ -10,4 +10,7 @@
     <string name="send_post">发帖</string>
     <string name="select_image">选择图片</string>
     <string name="post_sent">Post sent!</string>
+    <string name="login">登录</string>
+    <string name="password">密码</string>
+    <string name="phoneNumber">手机号码</string>
 </resources>

@@ -78,7 +78,6 @@ public class NewPostActivity extends AppCompatActivity {
         setSupportActionBar(findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.new_post);
 
         textEdit = (EditText) findViewById(R.id.textEdit);
         byteCounter = (TextView) findViewById(R.id.byteCounter);
