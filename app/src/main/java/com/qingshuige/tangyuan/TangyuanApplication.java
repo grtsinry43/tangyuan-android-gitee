@@ -13,6 +13,7 @@ import com.qingshuige.tangyuan.network.ApiInterface;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -22,19 +23,11 @@ public class TangyuanApplication extends Application {
     private static ApiInterface api;
     private static final String coreDomain = "https://ty.qingshuige.ink/";
     private static SharedPreferences sharedPreferences;
+    private static TokenManager tokenManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        Gson gson = new GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss") // 匹配 "2024-04-08T00:00:00"
-                .create();
-        retrofit = new Retrofit.Builder()
-                .baseUrl(coreDomain + "api/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-        api = retrofit.create(ApiInterface.class);
 
         try {
             sharedPreferences = EncryptedSharedPreferences
@@ -49,6 +42,27 @@ public class TangyuanApplication extends Application {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        tokenManager = new TokenManager();
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss") // 匹配 "2024-04-08T00:00:00"
+                .create();
+        Retrofit pureRetrofit = new Retrofit.Builder()
+                .baseUrl(coreDomain + "api/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        ApiInterface pureApi = pureRetrofit.create(ApiInterface.class);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new JwtInterceptor(tokenManager))
+                .authenticator(new JwtAuthenticator(tokenManager, pureApi))
+                .build();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(coreDomain + "api/")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        api = retrofit.create(ApiInterface.class);
+
     }
 
     public static Retrofit getRetrofit() {
@@ -65,5 +79,9 @@ public class TangyuanApplication extends Application {
 
     public static SharedPreferences getSharedPreferences() {
         return sharedPreferences;
+    }
+
+    public static TokenManager getTokenManager() {
+        return tokenManager;
     }
 }

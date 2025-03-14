@@ -178,7 +178,7 @@ public class NewPostActivity extends AppCompatActivity {
                 //2.上传元数据
                 int postId;
                 CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
-                metadataDto.userId = 1;//TODO:用户系统
+                metadataDto.userId = 1;//TODO:修改后端使用JWT获取UserID
                 metadataDto.postDateTime = new Date();
                 metadataDto.sectionId = 1;
                 metadataDto.isVisible = true;

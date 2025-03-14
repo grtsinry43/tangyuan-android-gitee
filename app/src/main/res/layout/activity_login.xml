@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".LoginActivity">
 
@@ -32,10 +33,10 @@
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginTop="30dp"
             android:layout_gravity="center"
+            android:layout_marginTop="30dp"
             android:background="@drawable/ic_launcher_background"
-            android:foreground="@mipmap/ic_launcher"/>
+            android:foreground="@mipmap/ic_launcher" />
 
         <EditText
             android:id="@+id/editTextPhone"
@@ -59,9 +60,9 @@
             android:id="@+id/buttonLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:layout_gravity="end"
-            android:text="@string/login"/>
+            android:layout_marginTop="40dp"
+            android:text="@string/login" />
 
     </LinearLayout>
 

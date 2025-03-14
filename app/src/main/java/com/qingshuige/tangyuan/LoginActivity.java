@@ -81,10 +81,8 @@ public class LoginActivity extends AppCompatActivity {
                     TangyuanApplication.getSharedPreferences().edit()
                             .putString("JwtToken", response.body().values().iterator().next())
                             .apply();
-                    new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle("JWT Token")
-                            .setMessage(response.body().values().iterator().next())
-                            .show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_LONG).show();
+                    finish();
                 }
             }
 

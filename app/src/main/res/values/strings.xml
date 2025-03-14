@@ -21,4 +21,5 @@
     <string name="password">密码</string>
     <string name="phoneNumber">手机号码</string>
     <string name="phone_number_password_not_match">用户不存在或密码错误。</string>
+    <string name="login_success">登录成功</string>
 </resources>

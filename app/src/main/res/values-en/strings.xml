@@ -15,4 +15,5 @@
     <string name="password">Password</string>
     <string name="phoneNumber">Phone</string>
     <string name="phone_number_password_not_match">User does not exist or password is incorrect.</string>
+    <string name="login_success">登录成功</string>
 </resources>
