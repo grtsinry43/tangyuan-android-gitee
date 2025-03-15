@@ -37,6 +37,9 @@ public interface ApiInterface {
     @POST("post/body")
     Call<ResponseBody> postPostBody(@Body PostBody body);
 
+    @POST("user")
+    Call<ResponseBody> postUser(@Body CreateUserDto user);
+
     @Multipart
     @POST("image/uploadjpg")
     Call<Map<String, String>> postImage(@Part MultipartBody.Part file);

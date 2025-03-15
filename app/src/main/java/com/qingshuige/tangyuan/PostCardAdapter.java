@@ -53,7 +53,6 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         ////假设拿到的是一个被复用的ViewHolder，恰好之前又填充过图片，那么就有可能出现
         ////图片出现在没有图片的帖子上，因此要重置可见性
         if (p.getImage1GUID() != null) {
-            Log.i("TY", "Binding image to PostID " + p.getPostId() + " position " + position);
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
                     .into(holder.getImageView1());
