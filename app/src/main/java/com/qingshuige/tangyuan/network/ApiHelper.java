@@ -3,6 +3,8 @@ package com.qingshuige.tangyuan.network;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+import java.util.Map;
+
 import retrofit2.*;
 
 /**
@@ -66,6 +68,30 @@ public class ApiHelper {
 
     public static String getFullImageURL(String imageGuid) {
         return TangyuanApplication.getCoreDomain() + "images/" + imageGuid + ".jpg";
+    }
+
+    public static void judgeIfUserExistsAsync(String phoneNumber, ApiCallback<Boolean> callback) {
+        LoginDto dto = new LoginDto();
+        dto.phoneNumber = phoneNumber;
+        dto.password = "d25402a3-83b3-4e7f-a17e-2fa6dbda3d92";//谁设这个密码也是天才级别的
+        api.login(dto).enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                switch (response.code()) {
+                    case 400:
+                        callback.onComplete(true);
+                        break;
+                    case 404:
+                        callback.onComplete(false);
+                        break;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
+                //TODO
+            }
+        });
     }
 
     public interface ApiCallback<T> {

@@ -48,13 +48,24 @@
             android:inputType="phone" />
 
         <EditText
-            android:id="@+id/editTextTextPassword"
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:autofillHints="password"
             android:hint="@string/password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/editTextNickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:autofillHints="username"
+            android:hint="@string/nickname"
+            android:inputType="text"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/buttonLogin"

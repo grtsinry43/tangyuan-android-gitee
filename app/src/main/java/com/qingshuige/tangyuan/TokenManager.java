@@ -24,4 +24,11 @@ public class TokenManager {
     public void setToken(String token) {
         prefs.edit().putString("JwtToken", token).apply();
     }
+
+    public void setPhoneNumberAndPassword(String phoneNumber, String password) {
+        prefs.edit()
+                .putString("phoneNumber", phoneNumber)
+                .putString("password", password)
+                .apply();
+    }
 }
