@@ -104,7 +104,7 @@ public class NormalChatFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                Log.i("TY","Error: "+throwable.toString());
+                Log.i("TY", "Error: " + throwable.toString());
             }
         });
     }

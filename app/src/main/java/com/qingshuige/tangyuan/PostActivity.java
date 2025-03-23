@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -54,39 +55,43 @@ public class PostActivity extends AppCompatActivity {
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(gallery);
 
-        ApiHelper.getPostInfoByIdAsync(postId, new ApiHelper.ApiCallback<PostInfo>() {
-            @Override
-            public void onComplete(PostInfo result) {
-                postInfo = result;
-                runOnUiThread(() -> {
-                    //UI
-                    Picasso.get()
-                            .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
-                            .into(((ImageView) findViewById(R.id.avatarView)));
-                    ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
-                    ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
-                    ((TextView) findViewById(R.id.dateTimeView)).setText(postInfo.getPostDate().toLocaleString());
-                    ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());
-                    ///Gallery
-                    if (postInfo.getImage1GUID() != null) {
-                        //gallery可见化
-                        gallery.setVisibility(View.VISIBLE);
-                        //沉浸状态栏
-                        ((ScrollView) findViewById(R.id.main)).setFitsSystemWindows(false);
-                        ((ScrollView) findViewById(R.id.main)).requestLayout();
-                        ArrayList<String> images = new ArrayList<>();
-                        images.add(postInfo.getImage1GUID());
-                        if (postInfo.getImage2GUID() != null) {
-                            images.add(postInfo.getImage2GUID());
-                            if (postInfo.getImage3GUID() != null) {
-                                images.add(postInfo.getImage3GUID());
-                            }
+        ApiHelper.getPostInfoByIdAsync(postId, result -> {
+            postInfo = result;
+            runOnUiThread(() -> {
+                //UI
+                Picasso.get()
+                        .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
+                        .into(((ImageView) findViewById(R.id.avatarView)));
+                ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
+                ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
+                ((TextView) findViewById(R.id.dateTimeView)).setText(postInfo.getPostDate().toLocaleString());
+                ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());
+                ///Gallery
+                if (postInfo.getImage1GUID() != null) {
+                    //gallery可见化
+                    gallery.setVisibility(View.VISIBLE);
+                    //沉浸状态栏
+                    ((ScrollView) findViewById(R.id.main)).setFitsSystemWindows(false);
+                    ((ScrollView) findViewById(R.id.main)).requestLayout();
+                    ArrayList<String> images = new ArrayList<>();
+                    images.add(postInfo.getImage1GUID());
+                    if (postInfo.getImage2GUID() != null) {
+                        images.add(postInfo.getImage2GUID());
+                        if (postInfo.getImage3GUID() != null) {
+                            images.add(postInfo.getImage3GUID());
                         }
-                        gallery.setAdapter(new GalleryAdapter(images));
                     }
+                    gallery.setAdapter(new GalleryAdapter(images));
+                }
+                ///Avatar
+                findViewById(R.id.userBar).setOnClickListener(view -> {
+                    Intent intent = new Intent(PostActivity.this, UserActivity.class);
+                    intent.putExtra("userId", postInfo.getUserId());
+                    startActivity(intent);
                 });
-            }
+            });
         });
+
     }
 
     @Override

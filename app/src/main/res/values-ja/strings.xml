@@ -15,4 +15,9 @@
     <string name="password">パスワード</string>
     <string name="phoneNumber">携帯番号</string>
     <string name="phone_number_password_not_match">ユーザーが存在しないか、パスワードが間違っています。</string>
+    <string name="login_success">ログインに成功しました！</string>
+    <string name="nickname">ニックネーム</string>
+    <string name="signup_login_success">登録とログインに成功しました！</string>
+    <string name="bio_example">運命の暴虐が放つ毒矢に黙って耐えるか、この世の果てしない不幸に立ち向かい、闘いによってそれを一掃するか。</string>
+    <string name="user_profile">ユーザープロファイル</string>
 </resources>

@@ -39,6 +39,7 @@ public class ApiHelper {
                                 User user = response.body();
                                 PostInfo info = new PostInfo(
                                         postId,
+                                        user.userId,
                                         user.nickName,
                                         user.avatarGuid,
                                         metadata.postDateTime,
