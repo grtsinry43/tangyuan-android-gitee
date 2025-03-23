@@ -1,20 +1,28 @@
 package com.qingshuige.tangyuan;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +67,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void initializeUI(int userId) {
+        //显示基本资料
         TangyuanApplication.getApi().getUser(userId).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -69,14 +78,62 @@ public class UserActivity extends AppCompatActivity {
                     bioView.setText(user.bio);
                     regionButton.setText(user.isoRegionName);
                     mailButton.setText(user.email);
-
-                    //TODO:postList
                 });
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable throwable) {
 
+            }
+        });
+        //显示所发帖子
+        PostCardAdapter adapter = new PostCardAdapter();
+        adapter.setOnItemClickListener(postId -> {
+            Intent intent = new Intent(this, PostActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        postList.addItemDecoration(div);
+        postList.setLayoutManager(new LinearLayoutManager(this));
+        postList.setAdapter(adapter);
+        ///触底刷新
+        postList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                int totalItemCount = layoutManager.getItemCount();
+
+                // 滑动到底部
+                if (dy > 0 && lastVisibleItem == totalItemCount - 1) {
+                    // 用户滑动到列表底部
+                    updateRecyclerView(5);
+                }
+            }
+        });
+        ///初始刷新
+        updateRecyclerView(5);
+    }
+
+    private void updateRecyclerView(int expectedCount) {
+        TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
+            @Override
+            public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
+                List<PostMetadata> metadatas = response.body();
+                //对于每一条帖子……
+                for (PostMetadata m : metadatas) {
+                    ApiHelper.getPostInfoByIdAsync(m.postId, result ->
+                            runOnUiThread(() ->
+                                    ((PostCardAdapter) postList.getAdapter()).appendData(result)));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
+                Log.i("TY", "Error: " + throwable.toString());
             }
         });
     }

@@ -5,70 +5,77 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingTop="20dp"
-    android:paddingStart="20dp"
-    android:paddingEnd="20dp"
     android:paddingBottom="20dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/avatarView"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY" />
+
         <TextView
             android:id="@+id/nicknameView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textStyle="bold"
-            android:gravity="center_vertical"
             android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
+            android:text="杨慎"
             android:textColor="@color/imperial_primer"
-            android:text="杨慎"/>
+            android:textStyle="bold" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/postPreviewView"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="3"
+        android:layout_marginTop="10dp"
         android:ellipsize="end"
-        android:textColor="@color/imperial_primer"
-        android:text="@string/lorel_ipsum"/>
+        android:maxLines="3"
+        android:text="@string/lorel_ipsum"
+        android:textColor="@color/imperial_primer" />
+
     <LinearLayout
         android:id="@+id/imageLayout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
+
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:scaleType="centerCrop" />
+
         <ImageView
             android:id="@+id/imageView2"
-            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/imageView3"
-            android:visibility="gone"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
     </LinearLayout>
+
     <TextView
         android:id="@+id/postDateTimeView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:text="2025年3月1日"
         android:textColor="@color/fuel_town"
-        android:textSize="12sp"
-        android:text="2025年3月1日"/>
+        android:textSize="12sp" />
 </LinearLayout>
