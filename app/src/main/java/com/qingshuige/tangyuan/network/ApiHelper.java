@@ -1,5 +1,7 @@
 package com.qingshuige.tangyuan.network;
 
+import android.util.Log;
+
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
@@ -29,6 +31,8 @@ public class ApiHelper {
                     @Override
                     public void onResponse(Call<PostBody> call, Response<PostBody> response) {
                         PostBody body = response.body();
+                        Log.i("TY", String.valueOf(metadata.postId));
+                        Log.i("TY", body.textContent);
                         api.getUser(metadata.userId).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {

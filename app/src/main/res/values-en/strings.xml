@@ -18,4 +18,5 @@
     <string name="login_success">登录成功</string>
     <string name="nickname">昵称</string>
     <string name="signup_login_success">注册并登录成功！</string>
+    <string name="bio_example">生存还是毁灭，这是一个值得考虑的问题；默然忍受命运的暴虐的毒箭，或是挺身反抗人世的无涯的苦难，通过斗争把它们扫清，这两种行为，哪一种更高贵？</string>
 </resources>
