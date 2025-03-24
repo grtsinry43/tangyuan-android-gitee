@@ -98,28 +98,12 @@ public class UserActivity extends AppCompatActivity {
         postList.addItemDecoration(div);
         postList.setLayoutManager(new LinearLayoutManager(this));
         postList.setAdapter(adapter);
-        ///触底刷新
-        postList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
-                int totalItemCount = layoutManager.getItemCount();
-
-                // 滑动到底部
-                if (dy > 0 && lastVisibleItem == totalItemCount - 1) {
-                    // 用户滑动到列表底部
-                    updateRecyclerView(5);
-                }
-            }
-        });
         ///初始刷新
-        updateRecyclerView(5);
+        updateRecyclerView(userId);
     }
 
-    private void updateRecyclerView(int expectedCount) {
-        TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
+    private void updateRecyclerView(int userId) {
+        TangyuanApplication.getApi().getMetadatasByUserID(userId).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 List<PostMetadata> metadatas = response.body();

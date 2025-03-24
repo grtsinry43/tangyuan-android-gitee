@@ -19,6 +19,8 @@ composeBom = "2024.04.01"
 activity = "1.8.0"
 picasso = "2.71828"
 securityCrypto = "1.1.0-alpha06"
+compressor = "3.0.1"
+luban = "1.1.8"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -46,6 +48,8 @@ material3 = { group = "androidx.compose.material3", name = "material3" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+compressor = { group = "id.zelory", name = "compressor", version.ref = "compressor" }
+luban = { group = "top.zibin", name = "Luban", version.ref = "luban" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -153,80 +153,83 @@ public class NewPostActivity extends AppCompatActivity {
     }
 
     private void sendPostAsync(Context context) {
-        es.execute(new Runnable() {
-            @Override
-            public void run() {
-                //1.上传图片
-                List<String> guids = new ArrayList<>();
-                List<ImageView> imageViewList = new ArrayList<>();
-                imageViewList.add(imageView1);
-                imageViewList.add(imageView2);
-                imageViewList.add(imageView3);//这个List只是为了foreach方便
-                for (ImageView v : imageViewList) {
-                    if (v.getDrawable() != null) {
-                        Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte[] bytes = stream.toByteArray();
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
-                        MultipartBody.Part part =
-                                MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
-                        try {
-                            String guid =
-                                    new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
-                                            .get(0);
-                            guids.add(guid);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+        //检查必要条件
+        if (!(textEdit.getText().length() > 0)) {
+            Toast.makeText(context, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!(textEdit.getText().length() < 200)) {
+            Toast.makeText(context, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        es.execute(() -> {
+            //1.上传图片
+            List<String> guids = new ArrayList<>();
+            List<ImageView> imageViewList = new ArrayList<>();
+            imageViewList.add(imageView1);
+            imageViewList.add(imageView2);
+            imageViewList.add(imageView3);//这个List只是为了foreach方便
+            for (ImageView v : imageViewList) {
+                if (v.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] bytes = stream.toByteArray();
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
+                    MultipartBody.Part part =
+                            MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
+                    try {
+                        String guid =
+                                new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
+                                        .get(0);
+                        guids.add(guid);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                 }
-
-                //2.上传元数据
-                int postId;
-                CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
-                metadataDto.userId = decodeJwtPayloadUserId(tm.getToken());
-                metadataDto.postDateTime = new Date();
-                metadataDto.sectionId = 1;
-                metadataDto.isVisible = true;
-                try {
-                    postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
-                            .get(0);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                //3.上传Body
-                PostBody body = new PostBody();
-                body.postId = postId;
-                body.textContent = textEdit.getText().toString();
-                if (!guids.isEmpty()) {
-                    body.image1UUID = guids.get(0);
-                    if (guids.size() >= 2) {
-                        body.image2UUID = guids.get(1);
-                    }
-                    if (guids.size() == 3) {
-                        body.image3UUID = guids.get(2);
-                    }
-                }
-                Log.i("TY", "PostBody is: " +
-                        new GsonBuilder().serializeNulls().create().toJson(body));
-                try {
-                    TangyuanApplication.getApi().postPostBody(body).execute();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                //4.完成
-                finish();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show();
-                        context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
-                    }
-                });
             }
+
+            //2.上传元数据
+            int postId;
+            CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
+            metadataDto.userId = decodeJwtPayloadUserId(tm.getToken());
+            metadataDto.postDateTime = new Date();
+            metadataDto.sectionId = 1;
+            metadataDto.isVisible = true;
+            try {
+                postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
+                        .get(0);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            //3.上传Body
+            PostBody body = new PostBody();
+            body.postId = postId;
+            body.textContent = textEdit.getText().toString();
+            if (!guids.isEmpty()) {
+                body.image1UUID = guids.get(0);
+                if (guids.size() >= 2) {
+                    body.image2UUID = guids.get(1);
+                }
+                if (guids.size() == 3) {
+                    body.image3UUID = guids.get(2);
+                }
+            }
+            Log.i("TY", "PostBody is: " +
+                    new GsonBuilder().serializeNulls().create().toJson(body));
+            try {
+                TangyuanApplication.getApi().postPostBody(body).execute();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            //4.完成
+            finish();
+            handler.post(() -> {
+                Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show();
+                context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
+            });
         });
 
     }
@@ -237,11 +240,6 @@ public class NewPostActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1://选择图片
                 if (resultCode == RESULT_OK && data != null) {
-                    //判断大小
-                    if (getImageSize(this, data.getData()) >= 5 * 1024 * 1024) {
-                        Toast.makeText(this, "图片超过5MB，无法发送。", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
                     //轮流填充三个imageView
                     if (imageView1.getDrawable() == null) {
                         imageView1.setImageURI(data.getData());

@@ -28,6 +28,9 @@ public interface ApiInterface {
     @GET("user/{id}")
     Call<User> getUser(@Path("id") int id);
 
+    @GET("post/metadata/user/{id}")
+    Call<List<PostMetadata>> getMetadatasByUserID(@Path("id") int userId);
+
     @GET("post/metadata/random/{count}")
     Call<List<PostMetadata>> getRandomPostMetadata(@Path("count") int count);
 
