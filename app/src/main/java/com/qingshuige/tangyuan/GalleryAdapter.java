@@ -32,6 +32,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Picasso.get()
                 .load(ApiHelper.getFullImageURL(imageGuids.get(position)))
+                .resize(1280, 0)
+                .centerInside()
+                .placeholder(R.drawable.anim_loading)
                 .into(holder.getImageView());
     }
 

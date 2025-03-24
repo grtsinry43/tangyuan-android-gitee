@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 public class PostActivity extends AppCompatActivity {
 
     private PostInfo postInfo;
+    private RecyclerView gallery;
+    private ProgressBar pgBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,9 @@ public class PostActivity extends AppCompatActivity {
 
         int postId = getIntent().getIntExtra("postId", 1);
 
-        RecyclerView gallery = findViewById(R.id.imageGallery);
+        gallery = findViewById(R.id.imageGallery);
+        pgBar = findViewById(R.id.progressBar);
+
         gallery.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 Resources.getSystem().getDisplayMetrics().widthPixels * 3 / 4));
         //以4:3比例设置gallery
@@ -59,10 +64,15 @@ public class PostActivity extends AppCompatActivity {
         PagerSnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(gallery);
 
+        initializeUI(postId);
+    }
+
+    private void initializeUI(int postId) {
         ApiHelper.getPostInfoByIdAsync(postId, result -> {
             postInfo = result;
             runOnUiThread(() -> {
                 //UI
+                pgBar.setVisibility(View.GONE);
                 Picasso.get()
                         .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
                         .into(((ImageView) findViewById(R.id.avatarView)));
@@ -95,7 +105,6 @@ public class PostActivity extends AppCompatActivity {
                 });
             });
         });
-
     }
 
     @Override
