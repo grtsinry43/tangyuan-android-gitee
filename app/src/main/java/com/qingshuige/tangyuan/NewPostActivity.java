@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.input.InputManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -155,6 +157,13 @@ public class NewPostActivity extends AppCompatActivity {
 
         //发帖
         if (item.getItemId() == R.id.send_post_button) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                View view = getCurrentFocus();
+                if (view != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
             sendPostAsync(this);
         }
 
@@ -194,14 +203,10 @@ public class NewPostActivity extends AppCompatActivity {
                         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
                         MultipartBody.Part part =
                                 MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
-                        try {
-                            String guid =
-                                    new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
-                                            .get(0);
-                            guids.add(guid);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        String guid =
+                                new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
+                                        .get(0);
+                        guids.add(guid);
                     }
                 }
 
@@ -212,12 +217,8 @@ public class NewPostActivity extends AppCompatActivity {
                 metadataDto.postDateTime = new Date();
                 metadataDto.sectionId = 1;
                 metadataDto.isVisible = true;
-                try {
-                    postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
-                            .get(0);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
+                        .get(0);
 
                 //3.上传Body
                 PostBody body = new PostBody();
@@ -241,11 +242,13 @@ public class NewPostActivity extends AppCompatActivity {
                     context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
                 });
             } catch (Exception e) {
-                Snackbar.make(findViewById(R.id.main),
-                        R.string.send_post_error + "\n" + e.getLocalizedMessage(),
-                        BaseTransientBottomBar.LENGTH_LONG).show();
-                menu.findItem(R.id.send_post_button).setEnabled(true);
-                pgBar.setVisibility(View.GONE);
+                handler.post(() -> {
+                    Snackbar.make(findViewById(R.id.imageLayout),
+                            getString(R.string.send_post_error) + "\n" + e.getLocalizedMessage(),
+                            BaseTransientBottomBar.LENGTH_LONG).show();
+                    menu.findItem(R.id.send_post_button).setEnabled(true);
+                    pgBar.setVisibility(View.GONE);
+                });
             }
         });
 
