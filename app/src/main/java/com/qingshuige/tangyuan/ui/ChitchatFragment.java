@@ -1,4 +1,4 @@
-package com.qingshuige.tangyuan.ui.chitchat;
+package com.qingshuige.tangyuan.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

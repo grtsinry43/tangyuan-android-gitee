@@ -11,7 +11,7 @@
     <string name="menu_chitchat">侃一侃</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="lorel_ipsum">滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢，古今多少事， 都付笑谈中。滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢，古今多少事， 都付笑谈中。滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢，古今多少事， 都付笑谈中。</string>
-    <string name="title_activity_post">PostActivity</string>
+    <string name="title_activity_post">帖子</string>
     <string name="new_post">发帖</string>
     <string name="new_post_beginning">今天晚上，很好的月光……</string>
     <string name="send_post">发帖</string>
@@ -29,4 +29,11 @@
     <string name="text_is_empty">请输入文本。</string>
     <string name="send_post_error">发帖失败。</string>
     <string name="text_is_too_long">文本过长。</string>
+    <string name="login_or_signup">登录或注册</string>
+    <string name="about">关于</string>
+    <string name="unknown_version">未知版本</string>
+    <string name="development_team">开发团队</string>
+    <string name="all_members_joined_developing">所有成员皆参与了开发过程的全部工作。</string>
+    <string name="special_commemoration">特别纪念</string>
+    <string name="test_on_mi5">糖原在一台序列号为6a34145e的小米5上完成调试。</string>
 </resources>

@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="40dp"
-            android:text="@string/login" />
+            android:text="@string/login_or_signup" />
 
     </LinearLayout>
 

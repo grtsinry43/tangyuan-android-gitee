@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_normalchat, R.id.nav_chitchat)
+                R.id.nav_normalchat, R.id.nav_chitchat, R.id.nav_about)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
             } else {
-                Log.i("TY", tm.getToken());
                 Intent intent = new Intent(this, NewPostActivity.class);
                 startActivity(intent);
             }

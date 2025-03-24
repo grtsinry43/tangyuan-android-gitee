@@ -44,6 +44,10 @@ public class PostActivity extends AppCompatActivity {
         });
         */
 
+        setSupportActionBar(findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         int postId = getIntent().getIntExtra("postId", 1);
 
         RecyclerView gallery = findViewById(R.id.imageGallery);

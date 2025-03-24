@@ -1,4 +1,4 @@
-package com.qingshuige.tangyuan.ui.normalchat;
+package com.qingshuige.tangyuan.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,20 +13,15 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.qingshuige.tangyuan.MainActivity;
 import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;
 import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.PostBody;
 import com.qingshuige.tangyuan.network.PostMetadata;
-import com.qingshuige.tangyuan.network.User;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
