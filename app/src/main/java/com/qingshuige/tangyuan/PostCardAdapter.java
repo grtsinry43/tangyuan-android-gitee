@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,23 +54,32 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         ////假设拿到的是一个被复用的ViewHolder，恰好之前又填充过图片，那么就有可能出现
         ////图片出现在没有图片的帖子上，因此要重置可见性
         if (p.getImage1GUID() != null) {
-            Picasso.get()
-                    .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
-                    .into(holder.getImageView1());
             holder.imageLayout.setVisibility(ViewGroup.VISIBLE);
             holder.getImageView1().setVisibility(View.VISIBLE);
+            Picasso.get()
+                    .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
+                    .resize(800, 0)
+                    .centerCrop()
+                    .placeholder(R.drawable.image_alt)
+                    .into(holder.getImageView1());
         }
         if (p.getImage2GUID() != null) {
+            holder.getImageView2().setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage2GUID()))
+                    .resize(800, 0)
+                    .centerCrop()
+                    .placeholder(R.drawable.image_alt)
                     .into(holder.getImageView2());
-            holder.getImageView2().setVisibility(View.VISIBLE);
         }
         if (p.getImage3GUID() != null) {
+            holder.getImageView3().setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(ApiHelper.getFullImageURL(p.getImage3GUID()))
+                    .resize(800, 0)
+                    .centerCrop()
+                    .placeholder(R.drawable.image_alt)
                     .into(holder.getImageView3());
-            holder.getImageView3().setVisibility(View.VISIBLE);
         }
         //有一种手动控制引用计数的美
         ///时间处理
@@ -121,7 +131,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
-        private final LinearLayout imageLayout;
+        private final GridLayout imageLayout;
         private final ImageView imageView1;
         private final ImageView imageView2;
         private final ImageView imageView3;
@@ -134,7 +144,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
-            imageLayout = (LinearLayout) view.findViewById(R.id.imageLayout);
+            imageLayout = (GridLayout) view.findViewById(R.id.imageLayout);
             imageView1 = (ImageView) view.findViewById(R.id.imageView1);
             imageView2 = (ImageView) view.findViewById(R.id.imageView2);
             imageView3 = (ImageView) view.findViewById(R.id.imageView3);
@@ -173,7 +183,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             return imageView3;
         }
 
-        public LinearLayout getImageLayout() {
+        public GridLayout getImageLayout() {
             return imageLayout;
         }
     }
