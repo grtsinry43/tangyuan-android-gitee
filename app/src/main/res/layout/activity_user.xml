@@ -24,111 +24,109 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
-        <LinearLayout
+        <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:columnCount="2"
+            android:rowCount="1">
+
+            <ImageView
+                android:id="@+id/avatarView"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_columnWeight="0"
+                android:scaleType="centerCrop"
+                android:src="@drawable/xianliticn_avatar" />
 
             <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:rowCount="1">
+                android:layout_column="1"
+                android:layout_gravity="fill"
+                android:layout_marginStart="20dp"
+                android:columnCount="1"
+                android:rowCount="2">
 
-                <ImageView
-                    android:id="@+id/avatarView"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_columnWeight="0"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/xianliticn_avatar" />
-
-                <GridLayout
-                    android:layout_column="1"
+                <TextView
+                    android:id="@+id/nicknameTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_row="0"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
                     android:layout_gravity="fill"
-                    android:layout_marginStart="20dp"
-                    android:columnCount="1"
-                    android:rowCount="2">
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:text="线粒体XianlitiCN"
+                    android:textColor="@color/imperial_primer"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/nicknameTextView"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_row="0"
-                        android:layout_rowWeight="1"
-                        android:layout_columnWeight="1"
-                        android:layout_gravity="fill"
-                        android:gravity="center_vertical"
-                        android:maxLines="2"
-                        android:text="线粒体XianlitiCN"
-                        android:textColor="@color/imperial_primer"
-                        android:textSize="25sp"
-                        android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_height="wrap_content"
+                    android:layout_row="1"
+                    android:layout_gravity="fill"
+                    android:divider="@drawable/transparent_divider_horizontal_20dp"
+                    android:orientation="horizontal"
+                    android:showDividers="middle">
 
-                    <LinearLayout
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/regionButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_row="1"
-                        android:layout_gravity="fill"
-                        android:divider="@drawable/transparent_divider_horizontal_20dp"
-                        android:orientation="horizontal"
-                        android:showDividers="middle">
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:padding="0dp"
+                        android:text="CN"
+                        android:textColor="@color/fuel_town"
+                        android:textSize="11sp"
+                        app:icon="@drawable/icon_location"
+                        app:iconGravity="textStart"
+                        app:iconSize="13dp"
+                        app:iconTint="@color/fuel_town" />
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/regionButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:padding="0dp"
-                            android:text="CN"
-                            android:textColor="@color/fuel_town"
-                            android:textSize="11sp"
-                            app:icon="@drawable/icon_location"
-                            app:iconGravity="textStart"
-                            app:iconSize="13dp"
-                            app:iconTint="@color/fuel_town" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/mailButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:padding="0dp"
-                            android:text="982567394@qq.com"
-                            android:textAllCaps="false"
-                            android:textColor="@color/fuel_town"
-                            android:textSize="11sp"
-                            app:icon="@drawable/icon_mail"
-                            app:iconGravity="textStart"
-                            app:iconSize="13dp"
-                            app:iconTint="@color/fuel_town" />
-                    </LinearLayout>
-                </GridLayout>
-
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/mailButton"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:padding="0dp"
+                        android:text="982567394@qq.com"
+                        android:textAllCaps="false"
+                        android:textColor="@color/fuel_town"
+                        android:textSize="11sp"
+                        app:icon="@drawable/icon_mail"
+                        app:iconGravity="textStart"
+                        app:iconSize="13dp"
+                        app:iconTint="@color/fuel_town" />
+                </LinearLayout>
             </GridLayout>
 
-            <TextView
-                android:id="@+id/bioTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/bio_example"
-                android:textColor="@color/imperial_primer" />
+        </GridLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/postList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/bioTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/bio_example"
+            android:textColor="@color/imperial_primer" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/postList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp" />
     </LinearLayout>
+
 </LinearLayout>

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.CreateUserDto;
 import com.qingshuige.tangyuan.network.LoginDto;
@@ -22,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO:防护多次点击
 public class LoginActivity extends AppCompatActivity {
 
     private Button buttonLogin;
@@ -75,6 +75,11 @@ public class LoginActivity extends AppCompatActivity {
                 buttonLogin.setEnabled(false);
                 switch (stage) {
                     case REQUIRING_PHONE:
+                        if (!DataTools.isValidPhoneNumber(editTextPhone.getText().toString(), "CN")) {
+                            Toast.makeText(this, R.string.valid_phone_number, Toast.LENGTH_SHORT).show();
+                            buttonLogin.setEnabled(true);
+                            break;
+                        }
                         ApiHelper.judgeIfUserExistsAsync(editTextPhone.getText().toString(), result -> {
                             if (result) {
                                 //账号存在

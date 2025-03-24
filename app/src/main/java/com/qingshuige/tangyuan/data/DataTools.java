@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.Base64;
+import java.util.regex.Pattern;
 
 public class DataTools {
 
@@ -21,5 +22,18 @@ public class DataTools {
         String decodedPayload = new String(Base64.getUrlDecoder().decode(payload));
         JsonObject jsonObject = JsonParser.parseString(decodedPayload).getAsJsonObject();
         return jsonObject.get("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name").getAsInt();
+    }
+
+    public static boolean isValidPhoneNumber(String phoneNumber, String isoRegionName) {
+        String REGEX;
+        switch (isoRegionName) {
+            case "CN":
+                REGEX = "^1[3-9]\\d{9}$";
+                break;
+            default:
+                return false;
+        }
+
+        return Pattern.compile(REGEX).matcher(phoneNumber).matches();
     }
 }
