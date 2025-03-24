@@ -20,4 +20,7 @@
     <string name="signup_login_success">登録とログインに成功しました！</string>
     <string name="bio_example">運命の暴虐が放つ毒矢に黙って耐えるか、この世の果てしない不幸に立ち向かい、闘いによってそれを一掃するか。</string>
     <string name="user_profile">ユーザープロファイル</string>
+    <string name="text_is_empty">テキストを入力してください。</string>
+    <string name="text_is_too_long">テキストが長すぎます。</string>
+    <string name="send_post_error">投稿に失敗しました。</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +30,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.qingshuige.tangyuan.data.MediaTools;
 import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
 
@@ -59,10 +64,12 @@ public class NewPostActivity extends AppCompatActivity {
 
     private EditText textEdit;
     private TextView byteCounter;
+    private ProgressBar pgBar;
 
     private ImageView imageView1;
     private ImageView imageView2;
     private ImageView imageView3;
+    private Menu menu;
 
     private ExecutorService es;
     private Handler handler;
@@ -87,6 +94,7 @@ public class NewPostActivity extends AppCompatActivity {
 
         textEdit = (EditText) findViewById(R.id.textEdit);
         byteCounter = (TextView) findViewById(R.id.byteCounter);
+        pgBar = findViewById(R.id.progressBar);
         imageView1 = (ImageView) findViewById(R.id.imageView1);
         imageView2 = (ImageView) findViewById(R.id.imageView2);
         imageView3 = (ImageView) findViewById(R.id.imageView3);
@@ -127,6 +135,7 @@ public class NewPostActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_new_post_menu, menu);
+        this.menu = menu;
         return true;
     }
 
@@ -162,74 +171,82 @@ public class NewPostActivity extends AppCompatActivity {
             Toast.makeText(context, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
             return;
         }
+
+        menu.findItem(R.id.send_post_button).setEnabled(false);
+        pgBar.setVisibility(View.VISIBLE);
+
         es.execute(() -> {
-            //1.上传图片
-            List<String> guids = new ArrayList<>();
-            List<ImageView> imageViewList = new ArrayList<>();
-            imageViewList.add(imageView1);
-            imageViewList.add(imageView2);
-            imageViewList.add(imageView3);//这个List只是为了foreach方便
-            for (ImageView v : imageViewList) {
-                if (v.getDrawable() != null) {
-                    Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                    byte[] bytes = stream.toByteArray();
-                    RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
-                    MultipartBody.Part part =
-                            MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
-                    try {
-                        String guid =
-                                new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
-                                        .get(0);
-                        guids.add(guid);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+            try {
+                //1.上传图片
+                List<String> guids = new ArrayList<>();
+                List<ImageView> imageViewList = new ArrayList<>();
+                imageViewList.add(imageView1);
+                imageViewList.add(imageView2);
+                imageViewList.add(imageView3);//这个List只是为了foreach方便
+                for (ImageView v : imageViewList) {
+                    if (v.getDrawable() != null) {
+                        Bitmap bitmap = MediaTools.compressToSize(NewPostActivity.this,
+                                ((BitmapDrawable) v.getDrawable()).getBitmap(),
+                                0.5f);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        byte[] bytes = stream.toByteArray();
+                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
+                        MultipartBody.Part part =
+                                MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
+                        try {
+                            String guid =
+                                    new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
+                                            .get(0);
+                            guids.add(guid);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
-            }
 
-            //2.上传元数据
-            int postId;
-            CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
-            metadataDto.userId = decodeJwtPayloadUserId(tm.getToken());
-            metadataDto.postDateTime = new Date();
-            metadataDto.sectionId = 1;
-            metadataDto.isVisible = true;
-            try {
-                postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
-                        .get(0);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+                //2.上传元数据
+                int postId;
+                CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
+                metadataDto.userId = decodeJwtPayloadUserId(tm.getToken());
+                metadataDto.postDateTime = new Date();
+                metadataDto.sectionId = 1;
+                metadataDto.isVisible = true;
+                try {
+                    postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
+                            .get(0);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            //3.上传Body
-            PostBody body = new PostBody();
-            body.postId = postId;
-            body.textContent = textEdit.getText().toString();
-            if (!guids.isEmpty()) {
-                body.image1UUID = guids.get(0);
-                if (guids.size() >= 2) {
-                    body.image2UUID = guids.get(1);
+                //3.上传Body
+                PostBody body = new PostBody();
+                body.postId = postId;
+                body.textContent = textEdit.getText().toString();
+                if (!guids.isEmpty()) {
+                    body.image1UUID = guids.get(0);
+                    if (guids.size() >= 2) {
+                        body.image2UUID = guids.get(1);
+                    }
+                    if (guids.size() == 3) {
+                        body.image3UUID = guids.get(2);
+                    }
                 }
-                if (guids.size() == 3) {
-                    body.image3UUID = guids.get(2);
-                }
-            }
-            Log.i("TY", "PostBody is: " +
-                    new GsonBuilder().serializeNulls().create().toJson(body));
-            try {
                 TangyuanApplication.getApi().postPostBody(body).execute();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
 
-            //4.完成
-            finish();
-            handler.post(() -> {
-                Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show();
-                context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
-            });
+                //4.完成
+                finish();
+                handler.post(() -> {
+                    Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show();
+                    context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
+                });
+            } catch (Exception e) {
+                Snackbar.make(findViewById(R.id.main),
+                        R.string.send_post_error + "\n" + e.getLocalizedMessage(),
+                        BaseTransientBottomBar.LENGTH_LONG).show();
+                menu.findItem(R.id.send_post_button).setEnabled(true);
+                pgBar.setVisibility(View.GONE);
+            }
         });
 
     }
