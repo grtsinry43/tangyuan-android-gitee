@@ -34,7 +34,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 .load(ApiHelper.getFullImageURL(imageGuids.get(position)))
                 .resize(1280, 0)
                 .centerInside()
-                .placeholder(R.drawable.anim_loading)
+                .placeholder(R.drawable.img_placeholder)
                 .into(holder.getImageView());
     }
 

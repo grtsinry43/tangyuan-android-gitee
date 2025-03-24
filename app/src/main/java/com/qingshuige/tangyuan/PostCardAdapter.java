@@ -60,7 +60,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                     .load(ApiHelper.getFullImageURL(p.getImage1GUID()))
                     .resize(800, 0)
                     .centerCrop()
-                    .placeholder(R.drawable.anim_loading)
+                    .placeholder(R.drawable.img_placeholder)
                     .into(holder.getImageView1());
         }
         if (p.getImage2GUID() != null) {
@@ -69,7 +69,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                     .load(ApiHelper.getFullImageURL(p.getImage2GUID()))
                     .resize(800, 0)
                     .centerCrop()
-                    .placeholder(R.drawable.anim_loading)
+                    .placeholder(R.drawable.img_placeholder)
                     .into(holder.getImageView2());
         }
         if (p.getImage3GUID() != null) {
@@ -78,7 +78,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                     .load(ApiHelper.getFullImageURL(p.getImage3GUID()))
                     .resize(800, 0)
                     .centerCrop()
-                    .placeholder(R.drawable.anim_loading)
+                    .placeholder(R.drawable.img_placeholder)
                     .into(holder.getImageView3());
         }
         //有一种手动控制引用计数的美
