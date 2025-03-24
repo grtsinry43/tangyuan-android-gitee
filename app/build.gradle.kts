@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId = "com.qingshuige.tangyuan"
         minSdk = 28
-        targetSdk = 34
-        versionCode = 6
-        versionName = "0.1.6"
+        targetSdk = 35
+        versionCode = 7
+        versionName = "0.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
