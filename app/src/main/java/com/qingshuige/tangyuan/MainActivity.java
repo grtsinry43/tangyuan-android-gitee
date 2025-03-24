@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -18,7 +19,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
+import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.User;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     ///private ActivityMainBinding binding;
     private TokenManager tm;
+    private View navHeaderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        navHeaderView = navigationView.getHeaderView(0);
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -67,10 +74,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        navigationView.getHeaderView(0).findViewById(R.id.navAvatarView).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        navHeaderView.findViewById(R.id.navAvatarView).setOnClickListener(view -> {
+            if (tm.getToken() == null) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                intent.putExtra("userId", DataTools.decodeJwtTokenUserId(tm.getToken()));
                 startActivity(intent);
             }
         });
@@ -99,6 +109,40 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //更新navHeader
+        updateUserStatus();
+    }
+
+    private void updateUserStatus() {
+        if (tm.getToken() != null) {
+            int userId = DataTools.decodeJwtTokenUserId(tm.getToken());
+            TangyuanApplication.getApi().getUser(userId).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    User user = response.body();
+                    runOnUiThread(() -> {
+                        Picasso.get()
+                                .load(ApiHelper.getFullImageURL(user.avatarGuid))
+                                .resize(100, 0)
+                                .centerCrop()
+                                .into((ImageView) navHeaderView.findViewById(R.id.navAvatarView));
+                        ((TextView) navHeaderView.findViewById(R.id.navNicknameView)).setText(user.nickName);
+                        ((TextView) navHeaderView.findViewById(R.id.navBioView)).setText(user.bio);
+                    });
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable throwable) {
+
+                }
+            });
+        }
     }
 
     @Override
