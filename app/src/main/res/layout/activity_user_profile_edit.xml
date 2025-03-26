@@ -86,7 +86,8 @@
                     android:hint="@string/nickname"
                     android:inputType="textPersonName"
                     android:maxLength="13"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textAlignment="viewEnd" />
             </LinearLayout>
 
             <LinearLayout
@@ -106,10 +107,11 @@
                     android:id="@+id/editBio"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="@string/bio"
                     android:layout_weight="2"
+                    android:hint="@string/bio"
                     android:inputType="text"
-                    android:maxLength="30" />
+                    android:maxLength="30"
+                    android:textAlignment="viewEnd" />
             </LinearLayout>
 
             <LinearLayout
@@ -131,7 +133,8 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:textAlignment="viewEnd" />
             </LinearLayout>
 
             <LinearLayout

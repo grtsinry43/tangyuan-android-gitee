@@ -21,6 +21,8 @@ picasso = "2.71828"
 securityCrypto = "1.1.0-alpha06"
 compressor = "3.0.1"
 luban = "1.1.8"
+ucrop = "2.2.8"
+loggingInterceptor = "5.0.0-alpha.14"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -50,6 +52,8 @@ picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "pic
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 compressor = { group = "id.zelory", name = "compressor", version.ref = "compressor" }
 luban = { group = "top.zibin", name = "Luban", version.ref = "luban" }
+ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
+logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -8,4 +8,5 @@ public class User {
     public String email;
     public String bio;
     public String avatarGuid;
+    public String password;
 }

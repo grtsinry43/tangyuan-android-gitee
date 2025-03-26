@@ -43,4 +43,7 @@
     <string name="email">电子邮件</string>
     <string name="region">区域</string>
     <string name="ok">完成</string>
+    <string name="edit_profile_success">修改用户资料完成！</string>
+    <string name="fields_unfinished">存在未完成的字段。</string>
+    <string name="password_is_empty">密码为空。</string>
 </resources>

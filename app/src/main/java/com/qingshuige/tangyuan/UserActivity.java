@@ -156,4 +156,10 @@ public class UserActivity extends AppCompatActivity {
 
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initializeUI(userId);
+    }
 }

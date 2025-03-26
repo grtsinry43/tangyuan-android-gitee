@@ -1,12 +1,18 @@
 package com.qingshuige.tangyuan.network;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.*;
 
 /**
@@ -31,8 +37,6 @@ public class ApiHelper {
                     @Override
                     public void onResponse(Call<PostBody> call, Response<PostBody> response) {
                         PostBody body = response.body();
-                        Log.i("TY", String.valueOf(metadata.postId));
-                        Log.i("TY", body.textContent);
                         api.getUser(metadata.userId).enqueue(new Callback<User>() {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
@@ -95,6 +99,26 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
                 //TODO
+            }
+        });
+    }
+
+    public static void updateBitmapAsync(Bitmap bitmap, ApiCallback callback) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] bytes = stream.toByteArray();
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
+        MultipartBody.Part part =
+                MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
+        TangyuanApplication.getApi().postImage(part).enqueue(new Callback<Map<String, String>>() {
+            @Override
+            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                callback.onComplete(response.body().values().iterator().next());
+            }
+
+            @Override
+            public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
+
             }
         });
     }

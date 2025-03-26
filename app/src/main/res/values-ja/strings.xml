@@ -32,10 +32,13 @@
     <string name="special_commemoration">特別記念</string>
     <string name="test_on_mi5">糖原はシリアル番号6a34145eのXiaomi MI 5のデバッグを完了します。</string>
     <string name="valid_phone_number">携帯電話番号の書式が間違っています。</string>
-    <string name="edit_profile">编辑个人资料</string>
-    <string name="avatar">头像</string>
-    <string name="bio">签名</string>
-    <string name="email">电子邮件</string>
-    <string name="region">区域</string>
-    <string name="ok">完成</string>
+    <string name="edit_profile">プロフィールの編集</string>
+    <string name="avatar">アバター</string>
+    <string name="bio">パーソナル・サイン</string>
+    <string name="email">電子メール</string>
+    <string name="region">地区</string>
+    <string name="ok">完了</string>
+    <string name="edit_profile_success">ユーザープロファイルを修正して完了！</string>
+    <string name="fields_unfinished">傑出したフィールドがある。</string>
+    <string name="password_is_empty">パスワードが入力されていません。</string>
 </resources>

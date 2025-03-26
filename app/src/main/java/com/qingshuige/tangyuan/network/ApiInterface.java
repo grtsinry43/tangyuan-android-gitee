@@ -12,6 +12,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
@@ -42,6 +43,9 @@ public interface ApiInterface {
 
     @POST("user")
     Call<ResponseBody> postUser(@Body CreateUserDto user);
+
+    @PUT("user/{id}")
+    Call<ResponseBody> putUser(@Path("id") int id, @Body User userInfo);
 
     @Multipart
     @POST("image/uploadjpg")

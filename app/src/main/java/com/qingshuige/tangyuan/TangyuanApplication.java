@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -55,6 +56,7 @@ public class TangyuanApplication extends Application {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new JwtInterceptor(tokenManager))
                 .authenticator(new JwtAuthenticator(tokenManager, pureApi))
+//                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(coreDomain + "api/")

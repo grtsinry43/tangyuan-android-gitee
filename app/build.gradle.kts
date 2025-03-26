@@ -11,8 +11,8 @@ android {
         applicationId = "com.qingshuige.tangyuan"
         minSdk = 28
         targetSdk = 35
-        versionCode = 8
-        versionName = "0.1.8"
+        versionCode = 9
+        versionName = "0.1.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.picasso)
     implementation(libs.security.crypto)
     implementation(libs.compressor)
+    implementation(libs.ucrop)
+    implementation(libs.logging.interceptor)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
