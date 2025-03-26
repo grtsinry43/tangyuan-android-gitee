@@ -126,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.code() == 400) {
                     //Permission denied
                     Toast.makeText(LoginActivity.this, getString(R.string.phone_number_password_not_match), Toast.LENGTH_SHORT).show();
+                    runOnUiThread(() -> buttonLogin.setEnabled(true));
                 } else {
                     tm.setToken(response.body().values().iterator().next());
                     Toast.makeText(LoginActivity.this, getString(R.string.login_success), Toast.LENGTH_LONG).show();
