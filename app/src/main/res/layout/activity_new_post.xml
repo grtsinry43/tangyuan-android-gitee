@@ -18,9 +18,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/lynx_white"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/new_post" />
+            app:title="@string/new_post"
+            app:titleTextColor="@color/electromagnetic" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

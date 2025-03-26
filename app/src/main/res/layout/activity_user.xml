@@ -18,9 +18,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/lynx_white"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/user_profile" />
+            app:title="@string/user_profile"
+            app:titleTextColor="@color/electromagnetic" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,8 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="20dp"
         android:paddingStart="20dp"
+        android:paddingTop="20dp"
         android:paddingEnd="20dp">
 
         <GridLayout
@@ -65,7 +66,7 @@
                     android:gravity="center_vertical"
                     android:maxLines="2"
                     android:text="线粒体XianlitiCN"
-                    android:textColor="@color/imperial_primer"
+                    android:textColor="@color/electromagnetic"
                     android:textSize="25sp"
                     android:textStyle="bold" />
 
@@ -86,12 +87,12 @@
                         android:minHeight="0dp"
                         android:padding="0dp"
                         android:text="CN"
-                        android:textColor="@color/fuel_town"
+                        android:textColor="@color/chain_gang_grey"
                         android:textSize="11sp"
                         app:icon="@drawable/icon_location"
                         app:iconGravity="textStart"
                         app:iconSize="13dp"
-                        app:iconTint="@color/fuel_town" />
+                        app:iconTint="@color/chain_gang_grey" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/mailButton"
@@ -103,12 +104,12 @@
                         android:padding="0dp"
                         android:text="982567394@qq.com"
                         android:textAllCaps="false"
-                        android:textColor="@color/fuel_town"
+                        android:textColor="@color/chain_gang_grey"
                         android:textSize="11sp"
                         app:icon="@drawable/icon_mail"
                         app:iconGravity="textStart"
                         app:iconSize="13dp"
-                        app:iconTint="@color/fuel_town" />
+                        app:iconTint="@color/chain_gang_grey" />
                 </LinearLayout>
             </GridLayout>
 
@@ -120,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/bio_example"
-            android:textColor="@color/imperial_primer" />
+            android:textColor="@color/electromagnetic" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/postList"

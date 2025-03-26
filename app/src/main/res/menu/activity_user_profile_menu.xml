@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/new_post_button"
-        android:icon="@drawable/icon_add"
-        android:title="@string/new_post"
+        android:id="@+id/menuEditProfile"
+        android:icon="@drawable/icon_edit_profile"
+        android:title="@string/edit_profile"
         app:showAsAction="always" />
 
 </menu>

@@ -8,10 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <!--https://flatuicolors.com/palette/ca-->
-    <color name="light_blue_ballerina">#c8d6e5</color>
-    <color name="imperial_primer">#222f3e</color>
-    <color name="bleu_de_france">#2e86de</color>
-    <color name="fuel_town">#576574</color>
-    <color name="amour">#ee5253</color>
+    <!-- https://flatuicolors.com/palette/gb -->
+    <color name="lynx_white">#f5f6fa</color>
+    <color name="electromagnetic">#2f3640</color>
+    <color name="mazarine_blue">#273c75</color>
+    <color name="chain_gang_grey">#718093</color>
+    <color name="nanohanacha_gold">#e1b12c</color>
+    <color name="hint_of_pensive">#dcdde1</color>
 </resources>

@@ -3,6 +3,7 @@ package com.qingshuige.tangyuan;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class UserActivity extends AppCompatActivity {
     private Button mailButton;
 
     private int userId;
+
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +128,13 @@ public class UserActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
         finish();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_user_profile_menu, menu);
+        this.menu = menu;
         return true;
     }
 }

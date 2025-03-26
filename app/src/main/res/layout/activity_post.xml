@@ -22,9 +22,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                android:background="@color/lynx_white"
                 app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-                app:title="@string/title_activity_post"/>
+                app:title="@string/title_activity_post"
+                app:titleTextColor="@color/electromagnetic" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -32,9 +33,9 @@
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminate="true"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="20dp"
+            android:indeterminate="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/imageGallery"
@@ -66,7 +67,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
                     android:gravity="center_vertical"
-                    android:textColor="@color/imperial_primer"
+                    android:textColor="@color/electromagnetic"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -75,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textColor="@color/imperial_primer" />
+                android:textColor="@color/electromagnetic" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -88,7 +89,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:textColor="@color/fuel_town"
+                    android:textColor="@color/chain_gang_grey"
                     android:textSize="12sp" />
 
                 <TextView
@@ -98,7 +99,7 @@
                     android:layout_weight="1"
                     android:fontFamily="monospace"
                     android:textAlignment="viewEnd"
-                    android:textColor="@color/fuel_town"
+                    android:textColor="@color/chain_gang_grey"
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>

@@ -26,7 +26,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:text="@string/app_name"
-            android:textColor="@color/imperial_primer"
+            android:textColor="@color/electromagnetic"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:fontFamily="monospace"
-            android:textColor="@color/fuel_town"
+            android:textColor="@color/chain_gang_grey"
             android:textStyle="bold" />
 
         <TextView
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="@string/development_team"
-            android:textColor="@color/imperial_primer"
+            android:textColor="@color/electromagnetic"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -52,40 +52,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lead Developer: 线粒体XianliticCN"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Algorithm: 南木, 浩瀚之渺"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Business Manager: なかのみく"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Test: NukeCirno, 嘉木, 猕猴桃教教主"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/all_members_joined_developing"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="@string/special_commemoration"
-            android:textColor="@color/imperial_primer"
+            android:textColor="@color/electromagnetic"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -93,6 +93,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/test_on_mi5"
-            android:textColor="@color/fuel_town" />
+            android:textColor="@color/chain_gang_grey" />
     </LinearLayout>
 </ScrollView>
