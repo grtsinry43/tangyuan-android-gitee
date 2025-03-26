@@ -2,10 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menuEditProfile"
-        android:icon="@drawable/icon_edit_profile"
-        android:title="@string/edit_profile"
-        android:visible="false"
+        android:id="@+id/menuOk"
+        android:icon="@drawable/icon_ok"
+        android:title="@string/ok"
         app:showAsAction="always" />
-
 </menu>

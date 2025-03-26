@@ -33,4 +33,9 @@
     <string name="test_on_mi5">Tangyuan finished debugging on a Xiaomi MI 5 with serial number 6a34145e.</string>
     <string name="valid_phone_number">The cell phone number is in the wrong format.</string>
     <string name="edit_profile">编辑个人资料</string>
+    <string name="avatar">头像</string>
+    <string name="bio">签名</string>
+    <string name="email">电子邮件</string>
+    <string name="region">区域</string>
+    <string name="ok">完成</string>
 </resources>

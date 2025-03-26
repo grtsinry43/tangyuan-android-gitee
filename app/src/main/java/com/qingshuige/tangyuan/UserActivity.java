@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
@@ -39,6 +41,7 @@ public class UserActivity extends AppCompatActivity {
     private Button mailButton;
 
     private int userId;
+    private TokenManager tm;
 
     private Menu menu;
 
@@ -65,6 +68,7 @@ public class UserActivity extends AppCompatActivity {
         mailButton = findViewById(R.id.mailButton);
 
         userId = getIntent().getIntExtra("userId", 0);
+        tm = TangyuanApplication.getTokenManager();
 
         initializeUI(userId);
     }
@@ -132,9 +136,24 @@ public class UserActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menuEditProfile) {
+            Intent intent = new Intent(this, UserProfileEditActivity.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_user_profile_menu, menu);
         this.menu = menu;
+        if (tm.getToken() != null && DataTools.decodeJwtTokenUserId(tm.getToken()) == userId) {
+            menu.findItem(R.id.menuEditProfile).setVisible(true);
+        }
+
         return true;
     }
 }

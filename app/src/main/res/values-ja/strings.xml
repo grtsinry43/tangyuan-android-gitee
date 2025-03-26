@@ -33,4 +33,9 @@
     <string name="test_on_mi5">糖原はシリアル番号6a34145eのXiaomi MI 5のデバッグを完了します。</string>
     <string name="valid_phone_number">携帯電話番号の書式が間違っています。</string>
     <string name="edit_profile">编辑个人资料</string>
+    <string name="avatar">头像</string>
+    <string name="bio">签名</string>
+    <string name="email">电子邮件</string>
+    <string name="region">区域</string>
+    <string name="ok">完成</string>
 </resources>

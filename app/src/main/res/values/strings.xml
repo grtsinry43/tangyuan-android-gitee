@@ -38,4 +38,9 @@
     <string name="test_on_mi5">糖原在一台序列号为6a34145e的小米5上完成调试。</string>
     <string name="valid_phone_number">手机号码格式错误。</string>
     <string name="edit_profile">编辑个人资料</string>
+    <string name="avatar">头像</string>
+    <string name="bio">签名</string>
+    <string name="email">电子邮件</string>
+    <string name="region">区域</string>
+    <string name="ok">完成</string>
 </resources>
