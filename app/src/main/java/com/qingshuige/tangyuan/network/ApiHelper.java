@@ -1,13 +1,13 @@
 package com.qingshuige.tangyuan.network;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.qingshuige.tangyuan.TangyuanApplication;
+import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -71,6 +71,48 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<PostMetadata> call, Throwable throwable) {
                 //TODO
+            }
+        });
+    }
+
+    public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
+        api.getComment(commentId).enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                Comment comment = response.body();
+                api.getUser(comment.userId).enqueue(new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        User user = response.body();
+                        api.getSubComment(commentId).enqueue(new Callback<List<Comment>>() {
+                            @Override
+                            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                                CommentInfo info = new CommentInfo(user.avatarGuid,
+                                        user.nickName,
+                                        comment.content,
+                                        comment.commentDateTime,
+                                        commentId,
+                                        response.code() != 404);
+                                callback.onComplete(info);
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Comment>> call, Throwable throwable) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable throwable) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable throwable) {
+
             }
         });
     }

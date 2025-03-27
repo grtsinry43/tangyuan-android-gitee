@@ -41,4 +41,7 @@
     <string name="edit_profile_success">Modify user profile to complete!</string>
     <string name="fields_unfinished">There are outstanding fields.</string>
     <string name="password_is_empty">The password is empty.</string>
+    <string name="see_replies">查看回复</string>
+    <string name="comment_hint">The tongue has the power of life and death.</string>
+    <string name="comment_sent">评论已发送。</string>
 </resources>

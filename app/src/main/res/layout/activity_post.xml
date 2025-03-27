@@ -1,108 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".PostActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.Tangyuan.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/lynx_white"
+            app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
+            app:title="@string/title_activity_post"
+            app:titleTextColor="@color/electromagnetic" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:indeterminate="true" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/imageGallery"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp">
+
+                <LinearLayout
+                    android:id="@+id/userBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/avatarView"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:scaleType="fitXY" />
+
+                    <TextView
+                        android:id="@+id/nicknameView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/electromagnetic"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/contentView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/electromagnetic" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/dateTimeView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textColor="@color/chain_gang_grey"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tidView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="monospace"
+                        android:textAlignment="viewEnd"
+                        android:textColor="@color/chain_gang_grey"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@color/lynx_white"
+        android:elevation="15dp"
+        android:padding="10dp"
+        android:translationZ="15dp">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/editComment"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.Tangyuan.AppBarOverlay">
+            android:layout_weight="1"
+            android:hint="@string/comment_hint"
+            android:inputType="textMultiLine"
+            android:maxLength="100" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/lynx_white"
-                app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-                app:title="@string/title_activity_post"
-                app:titleTextColor="@color/electromagnetic" />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:indeterminate="true" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/imageGallery"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/userBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/avatarView"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:scaleType="fitXY" />
-
-                <TextView
-                    android:id="@+id/nicknameView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/electromagnetic"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/contentView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/electromagnetic" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/dateTimeView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:textColor="@color/chain_gang_grey"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tidView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="monospace"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/chain_gang_grey"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSendComment"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="@color/transparent"
+            app:icon="@drawable/icon_send"
+            app:iconGravity="start"
+            app:iconTint="@color/mazarine_blue" />
     </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

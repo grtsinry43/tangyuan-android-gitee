@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="3">
+
+        <ImageView
+            android:id="@+id/avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_rowSpan="3"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/textNickname"
+            android:layout_column="1"
+            android:layout_gravity="fill"
+            android:layout_marginStart="10dp"
+            android:gravity="center_vertical"
+            android:text="李鸿章"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textCommentText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/lorel_ipsum" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSeeReplies"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_columnSpan="2"
+            android:layout_marginStart="10dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:text="@string/see_replies"
+            android:textColor="@color/mazarine_blue" />
+
+        <TextView
+            android:id="@+id/textDateTime"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="10dp"
+            android:text="2025-3-27 14:30"
+            android:textColor="@color/chain_gang_grey" />
+    </GridLayout>
+</LinearLayout>

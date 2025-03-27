@@ -1,11 +1,16 @@
 package com.qingshuige.tangyuan.data;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class DataTools {
@@ -35,5 +40,14 @@ public class DataTools {
         }
 
         return Pattern.compile(REGEX).matcher(phoneNumber).matches();
+    }
+
+    public static String getLocalFriendlyDateTime(Date utcDate) {
+        ZonedDateTime zdt = utcDate.toInstant().atZone(ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
+        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+        String datetimeString = localdt.format(formatter);
+
+        return datetimeString;
     }
 }

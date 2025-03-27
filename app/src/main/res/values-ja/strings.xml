@@ -41,4 +41,7 @@
     <string name="edit_profile_success">ユーザープロファイルを修正して完了！</string>
     <string name="fields_unfinished">傑出したフィールドがある。</string>
     <string name="password_is_empty">パスワードが入力されていません。</string>
+    <string name="see_replies">查看回复</string>
+    <string name="comment_hint">言は心の使なり...</string>
+    <string name="comment_sent">评论已发送。</string>
 </resources>

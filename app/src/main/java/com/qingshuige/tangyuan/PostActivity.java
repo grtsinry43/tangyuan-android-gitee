@@ -1,38 +1,67 @@
 package com.qingshuige.tangyuan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.Comment;
+import com.qingshuige.tangyuan.network.CreateCommentDto;
+import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PostActivity extends AppCompatActivity {
 
     private PostInfo postInfo;
+    private int postId;
     private RecyclerView gallery;
+    private RecyclerView commentsRcv;
     private ProgressBar pgBar;
+    private EditText editComment;
+    private Button buttonSendComment;
+
+    CommentCardAdapter commentAdapter;
+    TokenManager tm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +80,15 @@ public class PostActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        int postId = getIntent().getIntExtra("postId", 1);
+        postId = getIntent().getIntExtra("postId", 1);
 
         gallery = findViewById(R.id.imageGallery);
+        commentsRcv = findViewById(R.id.commentRecyclerView);
         pgBar = findViewById(R.id.progressBar);
+        editComment = findViewById(R.id.editComment);
+        buttonSendComment = findViewById(R.id.buttonSendComment);
+
+        tm = TangyuanApplication.getTokenManager();
 
         gallery.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 Resources.getSystem().getDisplayMetrics().widthPixels * 3 / 4));
@@ -68,6 +102,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void initializeUI(int postId) {
+        //正文区
         ApiHelper.getPostInfoByIdAsync(postId, result -> {
             postInfo = result;
             runOnUiThread(() -> {
@@ -85,8 +120,7 @@ public class PostActivity extends AppCompatActivity {
                     //gallery可见化
                     gallery.setVisibility(View.VISIBLE);
                     //沉浸状态栏
-                    ((ScrollView) findViewById(R.id.main)).setFitsSystemWindows(false);
-                    ((ScrollView) findViewById(R.id.main)).requestLayout();
+                    findViewById(R.id.main).requestLayout();
                     ArrayList<String> images = new ArrayList<>();
                     images.add(postInfo.getImage1GUID());
                     if (postInfo.getImage2GUID() != null) {
@@ -105,7 +139,88 @@ public class PostActivity extends AppCompatActivity {
                 });
             });
         });
+
+        //评论区
+        commentAdapter = new CommentCardAdapter();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        commentsRcv.setLayoutManager(layoutManager);
+        commentsRcv.setAdapter(commentAdapter);
+        commentsRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
+        updateComment();
+
+        //输入评论区
+        buttonSendComment.setOnClickListener(view -> {
+            trySendComment();
+        });
     }
+
+    private void trySendComment() {
+        CreateCommentDto dto = new CreateCommentDto();
+
+        if (tm.getToken() != null) {
+            if (TextUtils.isEmpty(editComment.getText())) {
+                Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
+            dto.imageGuid = null;//发图功能后期可以加
+            dto.commentDateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+            dto.postId = postId;
+            dto.parentCommentId = 0;
+            dto.content = editComment.getText().toString();
+            TangyuanApplication.getApi().postComment(dto).enqueue(new Callback<Map<String, String>>() {
+                @Override
+                public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                    if (response.code() == 200) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(PostActivity.this, R.string.comment_sent, Toast.LENGTH_SHORT).show();
+                            editComment.setText("");
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
+                            updateComment();
+                        });
+                    } else {
+                        Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
+
+                }
+            });
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private void updateComment() {
+        commentAdapter.clearData();
+        TangyuanApplication.getApi().getCommentForPost(postId).enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                if (response.code() != 404) {
+                    //有评论
+                    for (Comment m : response.body()) {
+                        ApiHelper.getCommentInfoByIdAsync(m.commentId, info -> {
+                            runOnUiThread(() -> {
+                                if (m.parentCommentId == 0) { //如果是一级评论则显示
+                                    commentAdapter.appendData(info);
+                                }
+                            });
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable throwable) {
+
+            }
+        });
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

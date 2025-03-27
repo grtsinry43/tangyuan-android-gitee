@@ -47,12 +47,24 @@ public interface ApiInterface {
     @PUT("user/{id}")
     Call<ResponseBody> putUser(@Path("id") int id, @Body User userInfo);
 
+    @GET("comment/post/{postId}")
+    Call<List<Comment>> getCommentForPost(@Path("postId") int postId);
+
+    @GET("comment/{id}")
+    Call<Comment> getComment(@Path("id") int id);
+
+    @GET("comment/sub/{parentCommentId}")
+    Call<List<Comment>> getSubComment(@Path("parentCommentId") int parentCommentId);
+
     @Multipart
     @POST("image/uploadjpg")
     Call<Map<String, String>> postImage(@Part MultipartBody.Part file);
 
     @POST("auth/login")
     Call<Map<String, String>> login(@Body LoginDto loginDto);
+
+    @POST("comment")
+    Call<Map<String, String>> postComment(@Body CreateCommentDto dto);
 
     @GET
     Call<ResponseBody> getFromUrl(@Url String Url);

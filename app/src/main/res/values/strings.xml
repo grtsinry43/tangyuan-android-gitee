@@ -46,4 +46,8 @@
     <string name="edit_profile_success">修改用户资料完成！</string>
     <string name="fields_unfinished">存在未完成的字段。</string>
     <string name="password_is_empty">密码为空。</string>
+    <string name="see_replies">查看回复</string>
+    <string name="comment_hint">君子欲讷于言而敏于行……</string>
+    <string name="comment_sent">评论已发送。</string>
+    <string name="send_comment_error">发送评论失败。</string>
 </resources>

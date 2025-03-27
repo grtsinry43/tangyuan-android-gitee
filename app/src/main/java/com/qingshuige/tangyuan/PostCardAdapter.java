@@ -90,12 +90,8 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         String datetimeString = localdt.format(formatter);
         holder.getDateTimeView().setText(datetimeString);
         ///点击事件
-        holder.getView().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId());
-            }
-        });
+        holder.getView().setOnClickListener(view ->
+                listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId()));
     }
 
     @Override
