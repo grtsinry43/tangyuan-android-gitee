@@ -111,11 +111,20 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/textCommentCounter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/no_comment"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/commentRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
                     android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </LinearLayout>
@@ -147,5 +156,13 @@
             app:icon="@drawable/icon_send"
             app:iconGravity="start"
             app:iconTint="@color/mazarine_blue" />
+
+        <ProgressBar
+            android:id="@+id/progressBarCommentSend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+
     </LinearLayout>
 </LinearLayout>

@@ -50,4 +50,8 @@
     <string name="comment_hint">君子欲讷于言而敏于行……</string>
     <string name="comment_sent">评论已发送。</string>
     <string name="send_comment_error">发送评论失败。</string>
+    <string name="comment">评论</string>
+    <string name="loading_comments">加载评论……</string>
+    <string name="of_comments">条评论</string>
+    <string name="no_comment">无评论</string>
 </resources>

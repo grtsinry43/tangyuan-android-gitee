@@ -57,8 +57,10 @@ public class PostActivity extends AppCompatActivity {
     private RecyclerView gallery;
     private RecyclerView commentsRcv;
     private ProgressBar pgBar;
+    private ProgressBar pgBarCommentSend;
     private EditText editComment;
     private Button buttonSendComment;
+    private TextView textCommentCounter;
 
     CommentCardAdapter commentAdapter;
     TokenManager tm;
@@ -87,6 +89,8 @@ public class PostActivity extends AppCompatActivity {
         pgBar = findViewById(R.id.progressBar);
         editComment = findViewById(R.id.editComment);
         buttonSendComment = findViewById(R.id.buttonSendComment);
+        textCommentCounter = findViewById(R.id.textCommentCounter);
+        pgBarCommentSend = findViewById(R.id.progressBarCommentSend);
 
         tm = TangyuanApplication.getTokenManager();
 
@@ -155,13 +159,17 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void trySendComment() {
-        CreateCommentDto dto = new CreateCommentDto();
-
         if (tm.getToken() != null) {
+            CreateCommentDto dto = new CreateCommentDto();
+
             if (TextUtils.isEmpty(editComment.getText())) {
                 Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            buttonSendComment.setVisibility(View.GONE);
+            pgBarCommentSend.setVisibility(View.VISIBLE);
+
             dto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
             dto.imageGuid = null;//发图功能后期可以加
             dto.commentDateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
@@ -174,6 +182,8 @@ public class PostActivity extends AppCompatActivity {
                     if (response.code() == 200) {
                         runOnUiThread(() -> {
                             Toast.makeText(PostActivity.this, R.string.comment_sent, Toast.LENGTH_SHORT).show();
+                            buttonSendComment.setVisibility(View.VISIBLE);
+                            pgBarCommentSend.setVisibility(View.GONE);
                             editComment.setText("");
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
@@ -181,6 +191,8 @@ public class PostActivity extends AppCompatActivity {
                         });
                     } else {
                         Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
+                        buttonSendComment.setVisibility(View.VISIBLE);
+                        pgBarCommentSend.setVisibility(View.GONE);
                     }
                 }
 
@@ -197,6 +209,7 @@ public class PostActivity extends AppCompatActivity {
 
     private void updateComment() {
         commentAdapter.clearData();
+        textCommentCounter.setText(R.string.loading_comments);
         TangyuanApplication.getApi().getCommentForPost(postId).enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
@@ -211,6 +224,13 @@ public class PostActivity extends AppCompatActivity {
                             });
                         });
                     }
+                    runOnUiThread(() -> {
+                        textCommentCounter.setText(response.body().size() + getString(R.string.of_comments));
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        textCommentCounter.setText(R.string.no_comment);
+                    });
                 }
             }
 
