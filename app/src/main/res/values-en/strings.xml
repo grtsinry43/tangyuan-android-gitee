@@ -53,4 +53,5 @@
     <string name="no_reply">No reply</string>
     <string name="of_replies">" replies"</string>
     <string name="reply_sent">The reply has been sent.</string>
+    <string name="logo_design">Logo Designer</string>
 </resources>

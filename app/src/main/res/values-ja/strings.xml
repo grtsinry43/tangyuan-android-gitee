@@ -53,4 +53,5 @@
     <string name="no_reply">返信なし</string>
     <string name="of_replies">" 件の返信"</string>
     <string name="reply_sent">返信が送信されました。</string>
+    <string name="logo_design">ロゴデザイナー</string>
 </resources>
