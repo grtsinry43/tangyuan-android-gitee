@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lynx_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/titleReply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/reply_to"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pgBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="20dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/replyRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lynx_white"
+        android:elevation="15dp"
+        android:padding="10dp"
+        android:translationZ="15dp">
+
+        <EditText
+            android:id="@+id/editReply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/comment_hint"
+            android:inputType="textMultiLine"
+            android:maxLength="100" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSendReply"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="@color/transparent"
+            app:icon="@drawable/icon_send"
+            app:iconGravity="start"
+            app:iconTint="@color/mazarine_blue" />
+
+        <ProgressBar
+            android:id="@+id/progressBarCommentSend"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</LinearLayout>

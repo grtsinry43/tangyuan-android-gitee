@@ -41,11 +41,16 @@
     <string name="edit_profile_success">Modify user profile to complete!</string>
     <string name="fields_unfinished">There are outstanding fields.</string>
     <string name="password_is_empty">The password is empty.</string>
-    <string name="see_replies">查看回复</string>
+    <string name="see_replies">View reply</string>
     <string name="comment_hint">The tongue has the power of life and death.</string>
-    <string name="comment_sent">评论已发送。</string>
-    <string name="comment">评论</string>
-    <string name="loading_comments">加载评论……</string>
-    <string name="of_comments">条评论</string>
-    <string name="no_comment">无评论</string>
+    <string name="comment_sent">Comments have been sent.</string>
+    <string name="send_comment_error">Failed to send comment.</string>
+    <string name="comment">Comments</string>
+    <string name="loading_comments">Loading comments ......</string>
+    <string name="of_comments">" comments"</string>
+    <string name="no_comment">No comment</string>
+    <string name="reply_to">"Reply to: "</string>
+    <string name="no_reply">No reply</string>
+    <string name="of_replies">" replies"</string>
+    <string name="reply_sent">The reply has been sent.</string>
 </resources>

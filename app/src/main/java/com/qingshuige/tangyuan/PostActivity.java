@@ -31,6 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
@@ -61,6 +63,8 @@ public class PostActivity extends AppCompatActivity {
     private EditText editComment;
     private Button buttonSendComment;
     private TextView textCommentCounter;
+
+    private BottomSheetDialog replyDialog;
 
     CommentCardAdapter commentAdapter;
     TokenManager tm;
@@ -147,52 +151,59 @@ public class PostActivity extends AppCompatActivity {
         //评论区
         commentAdapter = new CommentCardAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        commentAdapter.setOnReplyButtonClickListener(this::showReplyBottomSheet);
+        commentAdapter.setOnTextClickListener(this::showReplyBottomSheet);
         commentsRcv.setLayoutManager(layoutManager);
         commentsRcv.setAdapter(commentAdapter);
         commentsRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
         updateComment();
 
         //输入评论区
-        buttonSendComment.setOnClickListener(view -> {
-            trySendComment();
-        });
+        buttonSendComment.setOnClickListener(view -> trySendComment(editComment, buttonSendComment, pgBar, null));
     }
 
-    private void trySendComment() {
+    private void trySendComment(EditText input, Button sendButton, ProgressBar pgBar, CommentInfo parentCommentInfo) {
         if (tm.getToken() != null) {
             CreateCommentDto dto = new CreateCommentDto();
 
-            if (TextUtils.isEmpty(editComment.getText())) {
+            if (TextUtils.isEmpty(input.getText())) {
                 Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            buttonSendComment.setVisibility(View.GONE);
-            pgBarCommentSend.setVisibility(View.VISIBLE);
+            sendButton.setVisibility(View.GONE);
+            pgBar.setVisibility(View.VISIBLE);
 
             dto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
             dto.imageGuid = null;//发图功能后期可以加
             dto.commentDateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
             dto.postId = postId;
-            dto.parentCommentId = 0;
-            dto.content = editComment.getText().toString();
+            dto.parentCommentId = parentCommentInfo == null ? 0 : parentCommentInfo.getCommentId();
+            dto.content = input.getText().toString();
             TangyuanApplication.getApi().postComment(dto).enqueue(new Callback<Map<String, String>>() {
                 @Override
                 public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                     if (response.code() == 200) {
                         runOnUiThread(() -> {
-                            Toast.makeText(PostActivity.this, R.string.comment_sent, Toast.LENGTH_SHORT).show();
-                            buttonSendComment.setVisibility(View.VISIBLE);
-                            pgBarCommentSend.setVisibility(View.GONE);
-                            editComment.setText("");
+                            Toast.makeText(PostActivity.this,
+                                    parentCommentInfo == null ? R.string.comment_sent : R.string.reply_sent,
+                                    Toast.LENGTH_SHORT).show();
+                            sendButton.setVisibility(View.VISIBLE);
+                            pgBar.setVisibility(View.GONE);
+                            input.setText("");
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(editComment.getWindowToken(), 0);
-                            updateComment();
+                            imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                            if (parentCommentInfo == null) {
+                                updateComment();
+                            } else {
+                                replyDialog.dismiss();
+                                showReplyBottomSheet(parentCommentInfo);
+                            }
                         });
                     } else {
                         Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
-                        buttonSendComment.setVisibility(View.VISIBLE);
-                        pgBarCommentSend.setVisibility(View.GONE);
+                        sendButton.setVisibility(View.VISIBLE);
+                        pgBar.setVisibility(View.GONE);
                     }
                 }
 
@@ -239,6 +250,55 @@ public class PostActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void showReplyBottomSheet(CommentInfo info) {
+        replyDialog = new BottomSheetDialog(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_comment_layout, null);
+        replyDialog.setContentView(dialogView);
+
+        replyDialog.setCancelable(true);
+        replyDialog.setCanceledOnTouchOutside(true);
+
+        ProgressBar pgBar = dialogView.findViewById(R.id.pgBar);
+
+        RecyclerView replyRcv = dialogView.findViewById(R.id.replyRecyclerView);
+        CommentCardAdapter adapter = new CommentCardAdapter();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        replyRcv.setAdapter(adapter);
+        replyRcv.setLayoutManager(layoutManager);
+        replyRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
+        pgBar.setVisibility(View.VISIBLE);
+        TangyuanApplication.getApi().getSubComment(info.getCommentId()).enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                if (response.code() != 404) {
+                    runOnUiThread(() ->
+                            ((TextView) dialogView.findViewById(R.id.titleReply)).setText(response.body().size() + getString(R.string.of_replies)));
+                    for (Comment c : response.body()) {
+                        ApiHelper.getCommentInfoByIdAsync(c.commentId, adapter::appendData);
+                    }
+
+                } else {
+                    ((TextView) dialogView.findViewById(R.id.titleReply)).setText(R.string.no_reply);
+                }
+                pgBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable throwable) {
+
+            }
+        });
+
+        dialogView.findViewById(R.id.buttonSendReply).setOnClickListener(view ->
+                trySendComment(dialogView.findViewById(R.id.editReply),
+                        dialogView.findViewById(R.id.buttonSendReply),
+                        dialogView.findViewById(R.id.pgBar),
+                        info));
+
+        ((EditText) dialogView.findViewById(R.id.editReply)).setHint(getString(R.string.reply_to) + info.getCommentText());
+        replyDialog.show();
     }
 
 

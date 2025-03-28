@@ -52,6 +52,10 @@
     <string name="send_comment_error">发送评论失败。</string>
     <string name="comment">评论</string>
     <string name="loading_comments">加载评论……</string>
-    <string name="of_comments">条评论</string>
+    <string name="of_comments">" 条评论"</string>
     <string name="no_comment">无评论</string>
+    <string name="reply_to">回复：</string>
+    <string name="no_reply">无回复</string>
+    <string name="of_replies">" 条回复"</string>
+    <string name="reply_sent">回复已发送。</string>
 </resources>

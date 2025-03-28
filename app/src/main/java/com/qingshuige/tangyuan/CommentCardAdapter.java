@@ -20,6 +20,8 @@ import java.util.List;
 
 public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.ViewHolder> {
     private List<CommentInfo> comments;
+    private OnItemClickListener onReplyButtonClickListener;
+    private OnItemClickListener onTextClickListener;
 
     public CommentCardAdapter() {
         comments = new ArrayList<>();
@@ -47,8 +49,18 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
         holder.getTextNickname().setText(info.getUserNickname());
         //Text
         holder.getTextComment().setText(info.getCommentText());
+        holder.getTextComment().setOnClickListener(view -> {
+            if (onTextClickListener != null) {
+                onTextClickListener.onItemClick(info);
+            }
+        });
         //Replies
         holder.getButtonSeeReplies().setVisibility(info.isHasReplies() ? View.VISIBLE : View.GONE);
+        holder.getButtonSeeReplies().setOnClickListener(view -> {
+            if (onReplyButtonClickListener != null) {
+                onReplyButtonClickListener.onItemClick(info);
+            }
+        });
         //DateTime
         holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getCommentDateTime()));
     }
@@ -72,6 +84,18 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
         int size = comments.size();
         comments.clear();
         notifyItemRangeRemoved(0, size);
+    }
+
+    public void setOnReplyButtonClickListener(OnItemClickListener listener) {
+        onReplyButtonClickListener = listener;
+    }
+
+    public void setOnTextClickListener(OnItemClickListener onTextClickListener) {
+        this.onTextClickListener = onTextClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(CommentInfo info);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

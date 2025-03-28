@@ -41,11 +41,16 @@
     <string name="edit_profile_success">ユーザープロファイルを修正して完了！</string>
     <string name="fields_unfinished">傑出したフィールドがある。</string>
     <string name="password_is_empty">パスワードが入力されていません。</string>
-    <string name="see_replies">查看回复</string>
+    <string name="see_replies">返信を見る</string>
     <string name="comment_hint">言は心の使なり...</string>
-    <string name="comment_sent">评论已发送。</string>
-    <string name="comment">评论</string>
-    <string name="loading_comments">加载评论……</string>
-    <string name="of_comments">条评论</string>
-    <string name="no_comment">无评论</string>
+    <string name="comment_sent">コメントは送信済み。</string>
+    <string name="send_comment_error">コメントの送信に失敗しました。</string>
+    <string name="comment">コメント</string>
+    <string name="loading_comments">コメント読み込み中 ....</string>
+    <string name="of_comments">" 件のコメント"</string>
+    <string name="no_comment">ノーコメント</string>
+    <string name="reply_to">"返信先: "</string>
+    <string name="no_reply">返信なし</string>
+    <string name="of_replies">" 件の返信"</string>
+    <string name="reply_sent">返信が送信されました。</string>
 </resources>
