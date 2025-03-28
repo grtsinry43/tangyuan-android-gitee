@@ -1,6 +1,10 @@
 package com.qingshuige.tangyuan;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,18 +23,26 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.JsonObject;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.User;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.FieldMap;
 
 /*
  *
@@ -88,6 +100,38 @@ public class MainActivity extends AppCompatActivity {
         //蒲公英更新
         //apiKey:133d8c604b4d0772723a007a9ad213f7
         //appKey:123a9eba5d424ab9088069505ffeb1de
+        Map<String, String> params = new HashMap<>();
+        params.put("_api_key", "133d8c604b4d0772723a007a9ad213f7");
+        params.put("appKey", "123a9eba5d424ab9088069505ffeb1de");
+        try {
+            params.put("buildVersion", getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        TangyuanApplication.getApi().checkUpdate(params).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.body().getAsJsonObject("data").get("buildHaveNewVersion").getAsBoolean()) {
+                    runOnUiThread(() -> {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("糖原内测阶段")
+                                .setMessage("检测到新版本，请及时更新。")
+                                .setPositiveButton("下载", (dialogInterface, i) -> {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.setData(Uri.parse(response.body().getAsJsonObject("data").get("downloadURL").getAsString()));
+                                    // 启动浏览器
+                                    startActivity(intent);
+                                })
+                                .show();
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable throwable) {
+
+            }
+        });
     }
 
     @Override

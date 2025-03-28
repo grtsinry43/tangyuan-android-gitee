@@ -2,6 +2,9 @@ package com.qingshuige.tangyuan.network;
 
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
+
+import com.google.gson.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +12,8 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -68,5 +73,9 @@ public interface ApiInterface {
 
     @GET
     Call<ResponseBody> getFromUrl(@Url String Url);
+
+    @FormUrlEncoded
+    @POST("https://api.pgyer.com/apiv2/app/check")
+    Call<JsonObject> checkUpdate(@FieldMap Map<String, String> params);
 
 }
