@@ -1,5 +1,7 @@
 package com.qingshuige.tangyuan;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -228,8 +230,9 @@ public class NewPostActivity extends AppCompatActivity {
             } catch (Exception e) {
                 handler.post(() -> {
                     Snackbar.make(findViewById(R.id.imageLayout),
-                            getString(R.string.send_post_error) + "\n" + e.getLocalizedMessage(),
+                            getString(R.string.send_post_error),
                             BaseTransientBottomBar.LENGTH_LONG).show();
+                    ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("error", e.getLocalizedMessage()));
                     menu.findItem(R.id.send_post_button).setEnabled(true);
                     pgBar.setVisibility(View.GONE);
                 });
