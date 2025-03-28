@@ -50,7 +50,7 @@ public class MediaTools {
 
         // 创建缩放后的Bitmap
         //处理横竖图片
-        if (width > height) {
+        if (bitmap.getWidth() > bitmap.getHeight()) {
             compressedBitmap = Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true);
         } else {
             compressedBitmap = Bitmap.createScaledBitmap(bitmap, scaledHeight, scaledWidth, true);

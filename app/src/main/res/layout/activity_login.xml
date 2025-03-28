@@ -19,9 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/lynx_white"
-            app:titleTextColor="@color/electromagnetic"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/login" />
+            app:title="@string/login"
+            app:titleTextColor="@color/electromagnetic" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -36,8 +36,8 @@
             android:layout_height="80dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:background="@drawable/ic_launcher_background"
-            android:foreground="@mipmap/ic_launcher" />
+            android:background="@drawable/ic_launcher_bg"
+            android:foreground="@drawable/ic_launcher_fg" />
 
         <EditText
             android:id="@+id/editTextPhone"
