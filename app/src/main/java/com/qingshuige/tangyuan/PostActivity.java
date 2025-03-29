@@ -1,13 +1,13 @@
 package com.qingshuige.tangyuan;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -16,23 +16,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.*;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
@@ -43,11 +38,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,6 +60,7 @@ public class PostActivity extends AppCompatActivity {
     private TextView textCommentCounter;
 
     private BottomSheetDialog replyDialog;
+    private Menu menu;
 
     CommentCardAdapter commentAdapter;
     TokenManager tm;
@@ -145,6 +141,10 @@ public class PostActivity extends AppCompatActivity {
                     intent.putExtra("userId", postInfo.getUserId());
                     startActivity(intent);
                 });
+                //菜单栏
+                if ((!(tm.getToken() == null)) && DataTools.decodeJwtTokenUserId(tm.getToken()) == postInfo.getUserId()) {
+                    menu.findItem(R.id.menuDelete).setVisible(true);
+                }
             });
         });
 
@@ -158,8 +158,8 @@ public class PostActivity extends AppCompatActivity {
         commentsRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
         updateComment();
 
-        //输入评论区
-        buttonSendComment.setOnClickListener(view -> trySendComment(editComment, buttonSendComment, pgBar, null));
+        //评论输入区
+        buttonSendComment.setOnClickListener(view -> trySendComment(editComment, buttonSendComment, pgBarCommentSend, null));
     }
 
     private void trySendComment(EditText input, Button sendButton, ProgressBar pgBar, CommentInfo parentCommentInfo) {
@@ -301,10 +301,46 @@ public class PostActivity extends AppCompatActivity {
         replyDialog.show();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menuDelete) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.delete_post)
+                    .setMessage(R.string.confirm_delete_post)
+                    .setPositiveButton(R.string.yes, (dialogInterface, i) ->
+                            TangyuanApplication.getApi().deletePost(postId).enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.code() == 200) {
+                                        runOnUiThread(() -> {
+                                            finish();
+                                            Toast.makeText(PostActivity.this, R.string.post_deleted, Toast.LENGTH_SHORT).show();
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                                }
+                            }))
+                    .setNegativeButton(R.string.no, null)
+                    .create().show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
         finish();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_post_menu, menu);
+        this.menu = menu;
         return true;
     }
 }

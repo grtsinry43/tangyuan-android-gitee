@@ -54,4 +54,10 @@
     <string name="of_replies">" replies"</string>
     <string name="reply_sent">The reply has been sent.</string>
     <string name="logo_design">Logo Designer</string>
+    <string name="delete">删除</string>
+    <string name="post_deleted">帖子已删除</string>
+    <string name="delete_post">删除帖子</string>
+    <string name="confirm_delete_post">确定要删除这条帖子吗？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
 </resources>

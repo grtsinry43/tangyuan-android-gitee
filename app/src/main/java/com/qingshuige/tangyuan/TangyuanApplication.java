@@ -56,7 +56,7 @@ public class TangyuanApplication extends Application {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new JwtInterceptor(tokenManager))
                 .authenticator(new JwtAuthenticator(tokenManager, pureApi))
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+//                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(coreDomain + "api/")

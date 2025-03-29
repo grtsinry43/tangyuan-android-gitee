@@ -12,6 +12,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -48,6 +49,9 @@ public interface ApiInterface {
 
     @POST("user")
     Call<ResponseBody> postUser(@Body CreateUserDto user);
+
+    @DELETE("post/{id}")
+    Call<ResponseBody> deletePost(@Path("id") int postId);
 
     @PUT("user/{id}")
     Call<ResponseBody> putUser(@Path("id") int id, @Body User userInfo);
