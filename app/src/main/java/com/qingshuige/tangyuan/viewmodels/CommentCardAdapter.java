@@ -16,6 +16,7 @@ import com.qingshuige.tangyuan.network.ApiHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.ViewHolder> {
@@ -78,6 +79,17 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
         }
         comments.add(info);
         notifyItemInserted(comments.size() - 1);
+        sortByDateAscending();
+    }
+
+    public void sortByDateAscending() {
+        comments.sort(new Comparator<CommentInfo>() {
+            @Override
+            public int compare(CommentInfo commentInfo, CommentInfo t1) {
+                return commentInfo.getCommentDateTime().compareTo(t1.getCommentDateTime());
+            }
+        });
+        notifyDataSetChanged();
     }
 
     public void clearData() {

@@ -46,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -258,17 +259,15 @@ public class PostActivity extends AppCompatActivity {
                 if (response.code() != 404) {
                     //有评论
                     for (Comment m : response.body()) {
-                        ApiHelper.getCommentInfoByIdAsync(m.commentId, info -> {
-                            runOnUiThread(() -> {
-                                if (m.parentCommentId == 0) { //如果是一级评论则显示
-                                    commentAdapter.appendData(info);
-                                }
-                            });
-                        });
+                        ApiHelper.getCommentInfoByIdAsync(m.commentId, info ->
+                                runOnUiThread(() -> {
+                                    if (m.parentCommentId == 0) { //如果是一级评论则显示
+                                        commentAdapter.appendData(info);
+                                    }
+                                }));
                     }
-                    runOnUiThread(() -> {
-                        textCommentCounter.setText(response.body().size() + getString(R.string.of_comments));
-                    });
+                    runOnUiThread(() ->
+                            textCommentCounter.setText(response.body().size() + getString(R.string.of_comments)));
                 } else {
                     runOnUiThread(() -> {
                         textCommentCounter.setText(R.string.no_comment);
