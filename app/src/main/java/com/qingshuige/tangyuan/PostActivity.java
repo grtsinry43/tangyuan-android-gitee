@@ -225,9 +225,8 @@ public class PostActivity extends AppCompatActivity {
                             input.setText("");
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
-                            if (parentCommentInfo == null) {
-                                updateComment();
-                            } else {
+                            updateComment();
+                            if (parentCommentInfo != null) {
                                 replyDialog.dismiss();
                                 showReplyBottomSheet(parentCommentInfo);
                             }
