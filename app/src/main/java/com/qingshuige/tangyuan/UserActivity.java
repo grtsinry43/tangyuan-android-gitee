@@ -68,11 +68,29 @@ public class UserActivity extends AppCompatActivity {
         userId = getIntent().getIntExtra("userId", 0);
         tm = TangyuanApplication.getTokenManager();
 
-        initializeUI(userId);
+        initializeUI();
     }
 
-    private void initializeUI(int userId) {
-        //显示基本资料
+    private void initializeUI() {
+        //显示所发帖子
+        PostCardAdapter adapter = new PostCardAdapter();
+        adapter.setOnItemClickListener(postId -> {
+            Intent intent = new Intent(this, PostActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        postList.addItemDecoration(div);
+        postList.setLayoutManager(new LinearLayoutManager(this));
+        postList.setAdapter(adapter);
+
+        updateProfile();
+        ///初始刷新
+        updateRecyclerView(userId);
+    }
+
+    private void updateProfile() {
         TangyuanApplication.getApi().getUser(userId).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -91,20 +109,6 @@ public class UserActivity extends AppCompatActivity {
 
             }
         });
-        //显示所发帖子
-        PostCardAdapter adapter = new PostCardAdapter();
-        adapter.setOnItemClickListener(postId -> {
-            Intent intent = new Intent(this, PostActivity.class);
-            intent.putExtra("postId", postId);
-            startActivity(intent);
-        });
-        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        postList.addItemDecoration(div);
-        postList.setLayoutManager(new LinearLayoutManager(this));
-        postList.setAdapter(adapter);
-        ///初始刷新
-        updateRecyclerView(userId);
     }
 
     private void updateRecyclerView(int userId) {
@@ -158,6 +162,6 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initializeUI(userId);
+        updateProfile();
     }
 }

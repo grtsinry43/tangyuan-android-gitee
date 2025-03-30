@@ -7,12 +7,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.qingshuige.tangyuan.R;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 public class DataTools {
@@ -44,12 +48,26 @@ public class DataTools {
         return Pattern.compile(REGEX).matcher(phoneNumber).matches();
     }
 
+    public static Date getCurrentUtcTime() {
+        // 获取当前UTC时间的Instant对象
+        Instant instant = Instant.now();
+
+        // 将Instant对象转换为ZonedDateTime对象（使用UTC时区）
+        ZonedDateTime zonedDateTime = instant.atZone(ZoneOffset.UTC);
+
+        // 将ZonedDateTime对象转换为Date对象
+        return Date.from(zonedDateTime.toInstant());
+    }
+
+
     public static String getLocalFriendlyDateTime(Date utcDate, Context context) {
-        ZonedDateTime zdt = utcDate.toInstant().atZone(ZoneId.of("UTC"));
+        String utcDateString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcDate);
+        ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateString);
+
         DateTimeFormatter noYearFormatter = DateTimeFormatter.ofPattern("M-d HH:mm");
         DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
 
-        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+        ZonedDateTime localdt = utcDateTime.withZoneSameInstant(ZoneId.systemDefault());
         ZonedDateTime currentLocalDt = ZonedDateTime.now();
         Duration duration = Duration.between(localdt, currentLocalDt);
 

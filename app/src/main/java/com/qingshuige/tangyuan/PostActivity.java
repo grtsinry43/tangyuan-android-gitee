@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -138,6 +140,7 @@ public class PostActivity extends AppCompatActivity {
                 });
             } else {
                 postInfo = result;
+                Log.i("TYAPP", "Date: " + result.getPostDate().toString());
                 runOnUiThread(() -> {
                     updateContent();
                     updateComment();
@@ -209,7 +212,7 @@ public class PostActivity extends AppCompatActivity {
 
             dto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
             dto.imageGuid = null;//发图功能后期可以加
-            dto.commentDateTime = Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTime();
+            dto.commentDateTime = new Date();
             dto.postId = postId;
             dto.parentCommentId = parentCommentInfo == null ? 0 : parentCommentInfo.getCommentId();
             dto.content = input.getText().toString();
