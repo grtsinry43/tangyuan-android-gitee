@@ -73,7 +73,6 @@ dependencies {
     implementation(libs.compressor)
     implementation(libs.ucrop)
     implementation(libs.logging.interceptor)
-    implementation(libs.photoview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

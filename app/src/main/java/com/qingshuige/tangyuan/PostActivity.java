@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,6 +35,7 @@ import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
 import com.qingshuige.tangyuan.network.CreateCommentDto;
+import com.qingshuige.tangyuan.ui.PhotoDialogFragment;
 import com.qingshuige.tangyuan.viewmodels.CommentCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.GalleryAdapter;
@@ -137,12 +140,7 @@ public class PostActivity extends AppCompatActivity {
                         }
                     }
                     GalleryAdapter adapter = new GalleryAdapter(images);
-                    adapter.setOnItemClickListener(new GalleryAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(Drawable drawable) {
-                            showImageWindow(drawable);
-                        }
-                    });
+                    adapter.setOnItemClickListener(this::showImageWindow);
                     gallery.setAdapter(adapter);
                 }
                 ///Avatar
@@ -173,7 +171,9 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void showImageWindow(Drawable drawable) {
-
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        PhotoDialogFragment photoDialogFragment = PhotoDialogFragment.create(bitmap);
+        photoDialogFragment.show(getSupportFragmentManager(), null);
     }
 
     private void trySendComment(EditText input, Button sendButton, ProgressBar pgBar, CommentInfo parentCommentInfo) {

@@ -8,12 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.github.chrisbanes.photoview.PhotoView;
 import com.qingshuige.tangyuan.R;
 
 public class PhotoDialogFragment extends DialogFragment {
@@ -27,7 +27,7 @@ public class PhotoDialogFragment extends DialogFragment {
 
         Drawable drawable = new BitmapDrawable((Bitmap) getArguments().getParcelable("bitmap"));
 
-        ((PhotoView) root.findViewById(R.id.photoView)).setImageDrawable(drawable);
+        ((ImageView) root.findViewById(R.id.photoView)).setImageDrawable(drawable);
 
         return builder.create();
     }
