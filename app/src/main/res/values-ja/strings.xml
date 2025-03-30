@@ -54,10 +54,10 @@
     <string name="of_replies">" 件の返信"</string>
     <string name="reply_sent">返信が送信されました。</string>
     <string name="logo_design">ロゴデザイナー</string>
-    <string name="delete">删除</string>
-    <string name="post_deleted">帖子已删除</string>
-    <string name="delete_post">删除帖子</string>
-    <string name="confirm_delete_post">确定要删除这条帖子吗？</string>
-    <string name="yes">是</string>
-    <string name="no">否</string>
+    <string name="delete">削除</string>
+    <string name="post_deleted">削除された投稿。</string>
+    <string name="delete_post">投稿を削除する</string>
+    <string name="confirm_delete_post">本当にこのスレッドを削除したいのか？</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
 </resources>
