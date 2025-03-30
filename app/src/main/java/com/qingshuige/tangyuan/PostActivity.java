@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -32,7 +33,9 @@ import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
 import com.qingshuige.tangyuan.network.CreateCommentDto;
+import com.qingshuige.tangyuan.viewmodels.CommentCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
+import com.qingshuige.tangyuan.viewmodels.GalleryAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
@@ -133,7 +136,14 @@ public class PostActivity extends AppCompatActivity {
                             images.add(postInfo.getImage3GUID());
                         }
                     }
-                    gallery.setAdapter(new GalleryAdapter(images));
+                    GalleryAdapter adapter = new GalleryAdapter(images);
+                    adapter.setOnItemClickListener(new GalleryAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(Drawable drawable) {
+                            showImageWindow(drawable);
+                        }
+                    });
+                    gallery.setAdapter(adapter);
                 }
                 ///Avatar
                 findViewById(R.id.userBar).setOnClickListener(view -> {
@@ -160,6 +170,10 @@ public class PostActivity extends AppCompatActivity {
 
         //评论输入区
         buttonSendComment.setOnClickListener(view -> trySendComment(editComment, buttonSendComment, pgBarCommentSend, null));
+    }
+
+    private void showImageWindow(Drawable drawable) {
+
     }
 
     private void trySendComment(EditText input, Button sendButton, ProgressBar pgBar, CommentInfo parentCommentInfo) {

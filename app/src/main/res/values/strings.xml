@@ -65,4 +65,5 @@
     <string name="confirm_delete_post">确定要删除这条帖子吗？</string>
     <string name="yes">是</string>
     <string name="no">否</string>
+    <string name="save_photo">保存图片</string>
 </resources>

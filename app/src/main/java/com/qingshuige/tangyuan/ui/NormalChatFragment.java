@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.PostActivity;
-import com.qingshuige.tangyuan.PostCardAdapter;
+import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;

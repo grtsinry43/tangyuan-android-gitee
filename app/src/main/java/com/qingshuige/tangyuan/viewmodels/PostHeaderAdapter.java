@@ -1,4 +1,4 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan.viewmodels;
 
 import android.view.View;
 import android.view.ViewGroup;

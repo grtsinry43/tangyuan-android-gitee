@@ -1,19 +1,17 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan.viewmodels;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
 import java.time.ZoneId;

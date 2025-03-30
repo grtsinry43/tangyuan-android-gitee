@@ -1,4 +1,4 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan.viewmodels;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

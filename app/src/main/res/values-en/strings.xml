@@ -60,4 +60,5 @@
     <string name="confirm_delete_post">Sure you want to delete this thread?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="save_photo">保存图片</string>
 </resources>
