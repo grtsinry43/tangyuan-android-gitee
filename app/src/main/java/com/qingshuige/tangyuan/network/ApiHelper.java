@@ -32,6 +32,10 @@ public class ApiHelper {
         api.getPostMetadata(postId).enqueue(new Callback<PostMetadata>() {
             @Override
             public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
+                if (response.code() == 404) {
+                    callback.onComplete(null);
+                    return;
+                }
                 PostMetadata metadata = response.body();
                 api.getPostBody(postId).enqueue(new Callback<PostBody>() {
                     @Override

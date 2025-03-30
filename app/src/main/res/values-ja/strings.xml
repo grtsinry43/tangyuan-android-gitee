@@ -63,4 +63,6 @@
     <string name="save_photo">保存图片</string>
     <string name="failed_to_save_photo">保存图片失败</string>
     <string name="photo_saved">图片已保存。</string>
+    <string name="post_does_not_exist">帖子不存在</string>
+    <string name="post_may_be_deleted">帖子可能已被删除。</string>
 </resources>

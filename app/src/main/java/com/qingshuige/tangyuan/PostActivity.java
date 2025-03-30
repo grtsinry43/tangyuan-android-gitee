@@ -2,6 +2,7 @@ package com.qingshuige.tangyuan;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,6 +32,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
@@ -112,51 +114,6 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void initializeUI(int postId) {
-        //正文区
-        ApiHelper.getPostInfoByIdAsync(postId, result -> {
-            postInfo = result;
-            runOnUiThread(() -> {
-                //UI
-                pgBar.setVisibility(View.GONE);
-                Picasso.get()
-                        .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
-                        .into(((ImageView) findViewById(R.id.avatarView)));
-                ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
-                ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
-                ((TextView) findViewById(R.id.dateTimeView)).setText(postInfo.getPostDate().toLocaleString());
-                ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());
-                ///Gallery
-                if (postInfo.getImage1GUID() != null) {
-                    //gallery可见化
-                    gallery.setVisibility(View.VISIBLE);
-                    //沉浸状态栏
-                    findViewById(R.id.main).requestLayout();
-                    ArrayList<String> images = new ArrayList<>();
-                    images.add(postInfo.getImage1GUID());
-                    if (postInfo.getImage2GUID() != null) {
-                        images.add(postInfo.getImage2GUID());
-                        if (postInfo.getImage3GUID() != null) {
-                            images.add(postInfo.getImage3GUID());
-                        }
-                    }
-                    GalleryAdapter adapter = new GalleryAdapter(images);
-                    adapter.setOnItemClickListener(this::showImageWindow);
-                    gallery.setAdapter(adapter);
-                }
-                ///Avatar
-                findViewById(R.id.userBar).setOnClickListener(view -> {
-                    Intent intent = new Intent(PostActivity.this, UserActivity.class);
-                    intent.putExtra("userId", postInfo.getUserId());
-                    startActivity(intent);
-                });
-                //菜单栏
-                if ((!(tm.getToken() == null)) && DataTools.decodeJwtTokenUserId(tm.getToken()) == postInfo.getUserId()) {
-                    menu.findItem(R.id.menuDelete).setVisible(true);
-                }
-            });
-        });
-
-        //评论区
         commentAdapter = new CommentCardAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         commentAdapter.setOnReplyButtonClickListener(this::showReplyBottomSheet);
@@ -164,10 +121,71 @@ public class PostActivity extends AppCompatActivity {
         commentsRcv.setLayoutManager(layoutManager);
         commentsRcv.setAdapter(commentAdapter);
         commentsRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
-        updateComment();
 
-        //评论输入区
-        buttonSendComment.setOnClickListener(view -> trySendComment(editComment, buttonSendComment, pgBarCommentSend, null));
+        ApiHelper.getPostInfoByIdAsync(postId, result -> {
+            if (result == null) {
+                runOnUiThread(() -> {
+                    pgBar.setVisibility(View.GONE);
+                    androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(PostActivity.this)
+                            .setTitle(R.string.post_does_not_exist)
+                            .setMessage(R.string.post_may_be_deleted)
+                            .setPositiveButton(R.string.ok, (dialogInterface, i) -> finish())
+                            .create();
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+
+                });
+            } else {
+                postInfo = result;
+                runOnUiThread(() -> {
+                    updateContent();
+                    updateComment();
+
+                    buttonSendComment.setOnClickListener(view ->
+                            trySendComment(editComment, buttonSendComment, pgBarCommentSend, null));
+                });
+            }
+        });
+    }
+
+    private void updateContent() {
+        //UI
+        pgBar.setVisibility(View.GONE);
+        Picasso.get()
+                .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
+                .into(((ImageView) findViewById(R.id.avatarView)));
+        ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
+        ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
+        ((TextView) findViewById(R.id.dateTimeView)).setText(postInfo.getPostDate().toLocaleString());
+        ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());
+        ///Gallery
+        if (postInfo.getImage1GUID() != null) {
+            //gallery可见化
+            gallery.setVisibility(View.VISIBLE);
+            //沉浸状态栏
+            findViewById(R.id.main).requestLayout();
+            ArrayList<String> images = new ArrayList<>();
+            images.add(postInfo.getImage1GUID());
+            if (postInfo.getImage2GUID() != null) {
+                images.add(postInfo.getImage2GUID());
+                if (postInfo.getImage3GUID() != null) {
+                    images.add(postInfo.getImage3GUID());
+                }
+            }
+            GalleryAdapter adapter = new GalleryAdapter(images);
+            adapter.setOnItemClickListener(this::showImageWindow);
+            gallery.setAdapter(adapter);
+        }
+        ///Avatar
+        findViewById(R.id.userBar).setOnClickListener(view -> {
+            Intent intent = new Intent(PostActivity.this, UserActivity.class);
+            intent.putExtra("userId", postInfo.getUserId());
+            startActivity(intent);
+        });
+        //菜单栏
+        if ((!(tm.getToken() == null)) && DataTools.decodeJwtTokenUserId(tm.getToken()) == postInfo.getUserId()) {
+            menu.findItem(R.id.menuDelete).setVisible(true);
+        }
     }
 
     private void showImageWindow(Drawable drawable) {
@@ -327,7 +345,11 @@ public class PostActivity extends AppCompatActivity {
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     if (response.code() == 200) {
                                         runOnUiThread(() -> {
+                                            Intent intent = new Intent();
+                                            intent.putExtra("deletedPostId", postId);
+                                            setResult(RESULT_OK, intent);
                                             finish();
+
                                             Toast.makeText(PostActivity.this, R.string.post_deleted, Toast.LENGTH_SHORT).show();
                                         });
                                     }
