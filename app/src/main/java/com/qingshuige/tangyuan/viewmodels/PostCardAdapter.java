@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.R;
+import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.squareup.picasso.Picasso;
 
@@ -81,12 +82,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         }
         //有一种手动控制引用计数的美
         ///时间处理
-        Date date = p.getPostDate();
-        ZonedDateTime zdt = date.toInstant().atZone(ZoneId.of("UTC"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
-        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
-        String datetimeString = localdt.format(formatter);
-        holder.getDateTimeView().setText(datetimeString);
+        holder.getDateTimeView().setText(DataTools.getLocalFriendlyDateTime(p.getPostDate(), holder.getView().getContext()));
         ///点击事件
         holder.getView().setOnClickListener(view ->
                 listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId()));

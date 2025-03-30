@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.qingshuige.tangyuan.R;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,12 +44,33 @@ public class DataTools {
         return Pattern.compile(REGEX).matcher(phoneNumber).matches();
     }
 
-    public static String getLocalFriendlyDateTime(Date utcDate) {
+    public static String getLocalFriendlyDateTime(Date utcDate, Context context) {
         ZonedDateTime zdt = utcDate.toInstant().atZone(ZoneId.of("UTC"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
-        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
-        String datetimeString = localdt.format(formatter);
+        DateTimeFormatter noYearFormatter = DateTimeFormatter.ofPattern("M-d HH:mm");
+        DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
 
-        return datetimeString;
+        ZonedDateTime localdt = zdt.withZoneSameInstant(ZoneId.systemDefault());
+        ZonedDateTime currentLocalDt = ZonedDateTime.now();
+        Duration duration = Duration.between(localdt, currentLocalDt);
+
+        long minutes = duration.toMinutes();
+        //刚刚=[0,1]
+        if (minutes <= 1) {
+            return context.getString(R.string.just_now);
+        }
+        //n分钟前=(1,60)
+        if (minutes < 60) {
+            return minutes + context.getString(R.string.minutes_before);
+        }
+        //n小时前=[60,180]
+        if (minutes <= 180) {
+            return duration.toHours() + context.getString(R.string.hours_before);
+        }
+        //日期
+        if (localdt.getYear() == currentLocalDt.getYear()) {
+            return localdt.format(noYearFormatter);
+        } else {
+            return localdt.format(yearFormatter);
+        }
     }
 }

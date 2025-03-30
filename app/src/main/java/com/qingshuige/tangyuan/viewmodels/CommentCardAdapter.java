@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan.viewmodels;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
             }
         });
         //DateTime
-        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getCommentDateTime()));
+        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getCommentDateTime(), holder.getContext()));
     }
 
     @Override
@@ -116,6 +117,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
         private TextView textComment;
         private TextView textDateTime;
         private MaterialButton buttonSeeReplies;
+        private Context context;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -125,6 +127,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
             textComment = itemView.findViewById(R.id.textCommentText);
             textDateTime = itemView.findViewById(R.id.textDateTime);
             buttonSeeReplies = itemView.findViewById(R.id.buttonSeeReplies);
+            context = itemView.getContext();
         }
 
         public ImageView getAvatar() {
@@ -145,6 +148,10 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
 
         public MaterialButton getButtonSeeReplies() {
             return buttonSeeReplies;
+        }
+
+        public Context getContext() {
+            return context;
         }
     }
 }
