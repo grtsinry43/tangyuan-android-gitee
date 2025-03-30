@@ -66,11 +66,11 @@
     <string name="yes">是</string>
     <string name="no">否</string>
     <string name="save_photo">保存图片</string>
-    <string name="failed_to_save_photo">保存图片失败</string>
+    <string name="failed_to_save_photo">保存图片失败。</string>
     <string name="photo_saved">图片已保存。</string>
     <string name="post_does_not_exist">帖子不存在</string>
     <string name="post_may_be_deleted">帖子可能已被删除。</string>
     <string name="just_now">刚刚</string>
-    <string name="minutes_before">分钟前</string>
-    <string name="hours_before">小时前</string>
+    <string name="minutes_before">" 分钟前"</string>
+    <string name="hours_before">" 小时前"</string>
 </resources>
