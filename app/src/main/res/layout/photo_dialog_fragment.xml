@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/photoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/buttonSavePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/save_photo" />
-    </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSavePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/transparent"
+        android:text="@string/save_photo"
+        android:textColor="@color/lynx_white"
+        app:icon="@drawable/icon_save"
+        app:iconSize="30dp"
+        app:iconTint="@color/lynx_white"
+        app:rippleColor="@color/chain_gang_grey" />
 </LinearLayout>
