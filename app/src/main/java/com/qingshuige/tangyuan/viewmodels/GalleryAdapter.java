@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -38,11 +39,20 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 .resize(1280, 0)
                 .centerInside()
                 .placeholder(R.drawable.img_placeholder)
-                .into(holder.getImageView());
-        if (onItemClickListener != null) {
-            holder.getImageView().setOnClickListener(view ->
-                    onItemClickListener.onItemClick(holder.getImageView().getDrawable()));
-        }
+                .into(holder.getImageView(), new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        if (onItemClickListener != null) {
+                            holder.getImageView().setOnClickListener(view ->
+                                    onItemClickListener.onItemClick(holder.getImageView().getDrawable()));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+                });
     }
 
     @Override
