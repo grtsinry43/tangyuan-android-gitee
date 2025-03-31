@@ -59,19 +59,10 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
                 .resize(200, 0)
                 .centerCrop()
                 .placeholder(R.drawable.img_placeholder)
-                .into(holder.getAvatar(), new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        if (onAvatarClickListener != null) {
-                            holder.getAvatar().setOnClickListener(view -> onAvatarClickListener.onAction(info));
-                        }
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-
-                    }
-                });
+                .into(holder.getAvatar());
+        if (onAvatarClickListener != null) {
+            holder.getAvatar().setOnClickListener(view -> onAvatarClickListener.onAction(info));
+        }
         //Nickname
         holder.getTextNickname().setText(info.getUserNickname());
         //Text

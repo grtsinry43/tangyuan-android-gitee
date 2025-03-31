@@ -68,6 +68,6 @@
     <string name="just_now">たった今</string>
     <string name="minutes_before">" 分前"</string>
     <string name="hours_before">" 時間前"</string>
-    <string name="comment_deleted">评论已删除。</string>
-    <string name="copy">复制</string>
+    <string name="comment_deleted">コメントは削除した。</string>
+    <string name="copy">コピー</string>
 </resources>
