@@ -146,7 +146,7 @@ public class ApiHelper {
 
             @Override
             public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-                //TODO
+                callback.onComplete(null);
             }
         });
     }

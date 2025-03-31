@@ -82,7 +82,9 @@ public class LoginActivity extends AppCompatActivity {
                             break;
                         }
                         ApiHelper.judgeIfUserExistsAsync(editTextPhone.getText().toString(), result -> {
-                            if (result) {
+                            if (result == null) {
+                                Toast.makeText(this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                            } else if (result) {
                                 //账号存在
                                 stage = AuthStage.REQUIRING_PASSWORD;
                             } else {
