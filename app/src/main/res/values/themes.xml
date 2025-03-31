@@ -24,7 +24,7 @@
 
     <style name="Theme.Tangyuan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="actionMenuTextColor">@color/electromagnetic</item>
-        <item name="android:textColorSecondary">@color/electromagnetic</item>
+        <item name="android:textColorPrimary">@color/electromagnetic</item>
         <item name="android:background">@color/lynx_white</item>
         <item name="colorControlNormal">@color/electromagnetic</item>
         <item name="android:iconTint">@color/electromagnetic</item>
