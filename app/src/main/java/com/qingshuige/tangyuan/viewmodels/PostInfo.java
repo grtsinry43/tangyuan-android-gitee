@@ -36,6 +36,8 @@ public class PostInfo {
 
     private String image3GUID;
 
+    private int sectionId;
+
 
     public int getPostId() {
         return postId;
@@ -49,7 +51,7 @@ public class PostInfo {
         return postDate;
     }
 
-    public PostInfo(int postId, int userId, String userNickname, String userAvatarGUID, Date postDate, String textContent, String image1GUID, String image2GUID, String image3GUID){
+    public PostInfo(int postId, int userId, String userNickname, String userAvatarGUID, Date postDate, String textContent, String image1GUID, String image2GUID, String image3GUID, int sectionId) {
         this.postId = postId;
         this.userId = userId;
         this.userNickname = userNickname;
@@ -59,6 +61,7 @@ public class PostInfo {
         this.image1GUID = image1GUID;
         this.image2GUID = image2GUID;
         this.image3GUID = image3GUID;
+        this.sectionId = sectionId;
     }
 
     public String getTextContent() {
@@ -83,5 +86,9 @@ public class PostInfo {
 
     public int getUserId() {
         return userId;
+    }
+
+    public int getSectionId() {
+        return sectionId;
     }
 }

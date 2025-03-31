@@ -74,6 +74,22 @@
                         android:layout_marginStart="10dp"
                         android:gravity="center_vertical"
                         android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="10dp"
+                        android:src="@drawable/icon_at"
+                        app:tint="?attr/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/textSectionName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:gravity="center_vertical"
+                        android:textColor="?attr/colorPrimary" />
                 </LinearLayout>
 
                 <TextView

@@ -43,13 +43,32 @@
         android:inputType="textMultiLine"
         android:padding="10dp" />
 
-    <TextView
-        android:id="@+id/byteCounter"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="0 / 200"
-        android:textAlignment="viewEnd" />
+        android:layout_margin="10dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/icon_at"
+            app:tint="?attr/colorPrimary" />
+
+        <Spinner
+            android:id="@+id/spinnerSection"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/byteCounter"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|end"
+            android:text="0 / 200"
+            android:textColor="?android:attr/textColorSecondary" />
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/imageLayout"

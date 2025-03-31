@@ -3,8 +3,8 @@
     <string name="app_name">糖原</string>
     <string name="nav_header_title">糖原</string>
     <string name="nav_header_subtitle">異なる人间の花火を楽しむ</string>
-    <string name="menu_normalchat">ちょっとおしゃべり</string>
-    <string name="menu_chitchat">気楽に語る</string>
+    <string name="menu_normalchat">おしゃべり</string>
+    <string name="menu_chitchat">語り合い</string>
     <string name="lorel_ipsum">滔滔たる長江は東へ流れ去り、波濤は英雄をすべて洗い流す。成否も是非も振り返れば空しく、青山は依然として在り、幾度かの夕陽が赤く染まる。白髪の漁師と樵は江のほとりに立ち、秋の月と春の風を慣れ親しんで見る。一壺の濁り酒で喜び合い、古今幾多の事は、みな笑いものに帰す。</string>
     <string name="title_activity_post">カード</string>
     <string name="new_post">投稿する</string>

@@ -54,7 +54,8 @@ public class ApiHelper {
                                         body.textContent,
                                         body.image1UUID,
                                         body.image2UUID,
-                                        body.image3UUID);
+                                        body.image3UUID,
+                                        metadata.sectionId);
                                 callback.onComplete(info);
                             }
 

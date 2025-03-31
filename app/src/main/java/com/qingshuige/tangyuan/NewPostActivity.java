@@ -19,9 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +59,7 @@ public class NewPostActivity extends AppCompatActivity {
     private ImageView imageView1;
     private ImageView imageView2;
     private ImageView imageView3;
+    private Spinner spinnerSection;
     private Menu menu;
 
     private ExecutorService es;
@@ -86,6 +89,7 @@ public class NewPostActivity extends AppCompatActivity {
         imageView1 = (ImageView) findViewById(R.id.imageView1);
         imageView2 = (ImageView) findViewById(R.id.imageView2);
         imageView3 = (ImageView) findViewById(R.id.imageView3);
+        spinnerSection = findViewById(R.id.spinnerSection);
 
         es = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
@@ -112,6 +116,12 @@ public class NewPostActivity extends AppCompatActivity {
         });
 
         imageView1.setOnClickListener(new ImageViewOnClickListener());
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                new String[]{getString(R.string.menu_normalchat), getString(R.string.menu_chitchat)});
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSection.setAdapter(spinnerAdapter);
     }
 
     @Override
@@ -201,7 +211,7 @@ public class NewPostActivity extends AppCompatActivity {
                 CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
                 metadataDto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
                 metadataDto.postDateTime = new Date();
-                metadataDto.sectionId = 1;
+                metadataDto.sectionId = spinnerSection.getSelectedItemPosition() + 1;
                 metadataDto.isVisible = true;
                 postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
                         .get(0);
