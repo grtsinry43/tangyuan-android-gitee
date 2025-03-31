@@ -62,13 +62,10 @@ public class NormalChatFragment extends Fragment {
                 }
             }
         });
-        adapter.setOnItemClickListener(new PostCardAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(int postId) {
-                Intent intent = new Intent(getActivity(), PostActivity.class);
-                intent.putExtra("postId", postId);
-                startActivity(intent);
-            }
+        adapter.setOnItemClickListener(postId -> {
+            Intent intent = new Intent(getActivity(), PostActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
         });
         ///装饰线
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), rcvLayoutManager.getOrientation());
@@ -91,9 +88,11 @@ public class NormalChatFragment extends Fragment {
                 List<PostMetadata> metadatas = response.body();
                 //对于每一条帖子……
                 for (PostMetadata m : metadatas) {
-                    ApiHelper.getPostInfoByIdAsync(m.postId, result ->
-                            getActivity().runOnUiThread(() ->
-                                    ((PostCardAdapter) recyclerView.getAdapter()).appendData(result)));
+                    if (m.sectionId == 1) {
+                        ApiHelper.getPostInfoByIdAsync(m.postId, result ->
+                                getActivity().runOnUiThread(() ->
+                                        ((PostCardAdapter) recyclerView.getAdapter()).appendData(result)));
+                    }
                 }
             }
 
