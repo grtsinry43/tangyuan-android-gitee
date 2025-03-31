@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -27,7 +28,9 @@ import com.google.gson.JsonObject;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
+import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -151,6 +154,25 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, NewPostActivity.class);
                 startActivity(intent);
             }
+        }
+        if (item.getItemId() == R.id.menuNotice) {
+            TangyuanApplication.getApi().getNotice().enqueue(new Callback<PostMetadata>() {
+                @Override
+                public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
+                    if (response.code() == 200) {
+                        ApiHelper.getPostInfoByIdAsync(response.body().postId, result -> {
+                            Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                            intent.putExtra("postId", result.getPostId());
+                            startActivity(intent);
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PostMetadata> call, Throwable throwable) {
+                    Toast.makeText(MainActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         return super.onOptionsItemSelected(item);
     }

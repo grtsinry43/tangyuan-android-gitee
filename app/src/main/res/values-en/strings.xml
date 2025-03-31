@@ -74,4 +74,5 @@
     <string name="load_post_error">Failed to load post</string>
     <string name="post_may_be_deleted_or_network_error">Post may have been deleted or there may have been a network error.</string>
     <string name="load_comments_error">Failed to load comment</string>
+    <string name="notice">公告</string>
 </resources>

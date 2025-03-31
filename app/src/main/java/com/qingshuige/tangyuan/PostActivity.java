@@ -209,7 +209,21 @@ public class PostActivity extends AppCompatActivity {
                 .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
                 .into(((ImageView) findViewById(R.id.avatarView)));
         ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
-        ((TextView) findViewById(R.id.textSectionName)).setText(postInfo.getSectionId() == 1 ? R.string.menu_normalchat : R.string.menu_chitchat);
+
+        String sectionName = new String();
+        switch (postInfo.getSectionId()) {
+            case 0:
+                sectionName = getString(R.string.notice);
+                break;
+            case 1:
+                sectionName = getString(R.string.menu_normalchat);
+                break;
+            case 2:
+                sectionName = getString(R.string.menu_chitchat);
+                break;
+        }
+        ((TextView) findViewById(R.id.textSectionName)).setText(sectionName);
+
         ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
         ((TextView) findViewById(R.id.dateTimeView)).setText(DataTools.getLocalFriendlyDateTime(postInfo.getPostDate(), this));
         ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());

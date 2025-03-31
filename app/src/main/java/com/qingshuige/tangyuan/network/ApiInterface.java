@@ -47,6 +47,9 @@ public interface ApiInterface {
     @POST("post/body")
     Call<ResponseBody> postPostBody(@Body PostBody body);
 
+    @GET("post/metadata/notice")
+    Call<PostMetadata> getNotice();
+
     @POST("user")
     Call<ResponseBody> postUser(@Body CreateUserDto user);
 

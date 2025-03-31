@@ -74,4 +74,5 @@
     <string name="load_post_error">投稿の読み込みに失敗しました</string>
     <string name="post_may_be_deleted_or_network_error">投稿が削除されたか、ネットワークエラーが発生した可能性があります。</string>
     <string name="load_comments_error">コメントの読み込みに失敗しました</string>
+    <string name="notice">公告</string>
 </resources>
