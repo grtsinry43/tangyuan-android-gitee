@@ -1,8 +1,9 @@
 package com.qingshuige.tangyuan;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -10,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,12 +46,10 @@ import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -117,10 +115,13 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void initializeUI(int postId) {
+        //数据无关设置
         commentAdapter = new CommentCardAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         commentAdapter.setOnReplyButtonClickListener(this::showReplyBottomSheet);
         commentAdapter.setOnTextClickListener(this::showReplyBottomSheet);
+        commentAdapter.setOnAvatarClickListener(this::startUserActivity);
+        commentAdapter.setOnItemHoldListener(info -> showCommentControlDialog(info, null));
         commentsRcv.setLayoutManager(layoutManager);
         commentsRcv.setAdapter(commentAdapter);
         commentsRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
@@ -140,7 +141,6 @@ public class PostActivity extends AppCompatActivity {
                 });
             } else {
                 postInfo = result;
-                Log.i("TYAPP", "Date: " + result.getPostDate().toString());
                 runOnUiThread(() -> {
                     updateContent();
                     updateComment();
@@ -150,6 +150,56 @@ public class PostActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void showCommentControlDialog(CommentInfo commentInfo, CommentInfo parentCommentInfo) {
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle(R.string.comment);
+        String[] items = {getString(R.string.copy), getString(R.string.delete)};
+        //是当前用户
+        if (tm.getToken() != null && DataTools.decodeJwtTokenUserId(tm.getToken()) == commentInfo.getUserId()) {
+            items = new String[]{getString(R.string.copy), getString(R.string.delete)};
+        }
+        //非当前用户或未登录
+        else {
+            items = new String[]{getString(R.string.copy)};
+        }
+        builder.setItems(items, (dialogInterface, i) -> {
+            switch (i) {
+                case 0:
+                    ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE))
+                            .setPrimaryClip(ClipData.newPlainText("tyapp", commentInfo.getCommentText()));
+                    break;
+                case 1:
+                    TangyuanApplication.getApi().deleteComment(commentInfo.getCommentId()).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.code() == 200) {
+                                runOnUiThread(() -> {
+                                    Toast.makeText(PostActivity.this, R.string.comment_deleted, Toast.LENGTH_SHORT).show();
+                                    updateComment();
+                                    if (parentCommentInfo != null) {
+                                        showReplyBottomSheet(parentCommentInfo);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                        }
+                    });
+                    break;
+            }
+        });
+        builder.create().show();
+    }
+
+    private void startUserActivity(CommentInfo commentInfo) {
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra("userId", commentInfo.getUserId());
+        startActivity(intent);
     }
 
     private void updateContent() {
@@ -231,7 +281,6 @@ public class PostActivity extends AppCompatActivity {
                             imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
                             updateComment();
                             if (parentCommentInfo != null) {
-                                replyDialog.dismiss();
                                 showReplyBottomSheet(parentCommentInfo);
                             }
                         });
@@ -261,16 +310,17 @@ public class PostActivity extends AppCompatActivity {
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                 if (response.code() != 404) {
                     //有评论
+                    AtomicInteger parentCount = new AtomicInteger();
                     for (Comment m : response.body()) {
-                        ApiHelper.getCommentInfoByIdAsync(m.commentId, info ->
-                                runOnUiThread(() -> {
-                                    if (m.parentCommentId == 0) { //如果是一级评论则显示
-                                        commentAdapter.appendData(info);
-                                    }
-                                }));
+                        ApiHelper.getCommentInfoByIdAsync(m.commentId, info -> {
+                            if (m.parentCommentId == 0) { //如果是一级评论则显示
+                                commentAdapter.appendData(info);
+                                parentCount.getAndIncrement();
+                                runOnUiThread(() ->
+                                        textCommentCounter.setText(parentCount.get() + getString(R.string.of_comments)));
+                            }
+                        });
                     }
-                    runOnUiThread(() ->
-                            textCommentCounter.setText(response.body().size() + getString(R.string.of_comments)));
                 } else {
                     runOnUiThread(() -> {
                         textCommentCounter.setText(R.string.no_comment);
@@ -286,6 +336,9 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void showReplyBottomSheet(CommentInfo info) {
+        if (replyDialog != null) {
+            replyDialog.dismiss();
+        }
         replyDialog = new BottomSheetDialog(this);
         View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_comment_layout, null);
         replyDialog.setContentView(dialogView);
@@ -297,6 +350,13 @@ public class PostActivity extends AppCompatActivity {
 
         RecyclerView replyRcv = dialogView.findViewById(R.id.replyRecyclerView);
         CommentCardAdapter adapter = new CommentCardAdapter();
+        adapter.setOnAvatarClickListener(this::startUserActivity);
+        adapter.setOnItemHoldListener(new CommentCardAdapter.ItemActionListener() {
+            @Override
+            public void onAction(CommentInfo subCommentInfo) {
+                showCommentControlDialog(subCommentInfo, info);
+            }
+        });
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         replyRcv.setAdapter(adapter);
         replyRcv.setLayoutManager(layoutManager);

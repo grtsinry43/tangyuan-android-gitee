@@ -9,8 +9,9 @@ public class CommentInfo {
     private Date commentDateTime;
     private int commentId;
     private boolean hasReplies;
+    private int userId;
 
-    public CommentInfo(String userAvatarGuid, String userNickname, String commentText, Date commentDateTime, int commentId, boolean hasReplies){
+    public CommentInfo(String userAvatarGuid, String userNickname, String commentText, Date commentDateTime, int commentId, boolean hasReplies, int userId) {
 
         this.userAvatarGuid = userAvatarGuid;
         this.userNickname = userNickname;
@@ -18,6 +19,7 @@ public class CommentInfo {
         this.commentDateTime = commentDateTime;
         this.commentId = commentId;
         this.hasReplies = hasReplies;
+        this.userId = userId;
     }
 
     public String getUserAvatarGuid() {
@@ -42,5 +44,9 @@ public class CommentInfo {
 
     public boolean isHasReplies() {
         return hasReplies;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 }

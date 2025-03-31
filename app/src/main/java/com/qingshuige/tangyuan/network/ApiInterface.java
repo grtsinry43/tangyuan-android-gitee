@@ -65,6 +65,9 @@ public interface ApiInterface {
     @GET("comment/sub/{parentCommentId}")
     Call<List<Comment>> getSubComment(@Path("parentCommentId") int parentCommentId);
 
+    @DELETE("comment/{id}")
+    Call<ResponseBody> deleteComment(@Path("id") int commentId);
+
     @Multipart
     @POST("image/uploadjpg")
     Call<Map<String, String>> postImage(@Part MultipartBody.Part file);

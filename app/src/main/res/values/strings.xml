@@ -73,4 +73,6 @@
     <string name="just_now">刚刚</string>
     <string name="minutes_before">" 分钟前"</string>
     <string name="hours_before">" 小时前"</string>
+    <string name="comment_deleted">评论已删除。</string>
+    <string name="copy">复制</string>
 </resources>

@@ -96,7 +96,8 @@ public class ApiHelper {
                                         comment.content,
                                         comment.commentDateTime,
                                         commentId,
-                                        response.code() != 404);
+                                        response.code() != 404,
+                                        user.userId);
                                 callback.onComplete(info);
                             }
 
