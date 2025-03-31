@@ -70,8 +70,8 @@
     <string name="hours_before">" 時間前"</string>
     <string name="comment_deleted">コメントは削除した。</string>
     <string name="copy">コピー</string>
-    <string name="network_error">网络错误</string>
-    <string name="load_post_error">加载帖子失败</string>
-    <string name="post_may_be_deleted_or_network_error">帖子可能已被删除或网络错误。</string>
-    <string name="load_comments_error">加载评论失败</string>
+    <string name="network_error">ネットワークエラー</string>
+    <string name="load_post_error">投稿の読み込みに失敗しました</string>
+    <string name="post_may_be_deleted_or_network_error">投稿が削除されたか、ネットワークエラーが発生した可能性があります。</string>
+    <string name="load_comments_error">コメントの読み込みに失敗しました</string>
 </resources>
