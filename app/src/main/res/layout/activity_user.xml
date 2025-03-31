@@ -18,10 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/lynx_white"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/user_profile"
-            app:titleTextColor="@color/electromagnetic" />
+            app:title="@string/user_profile" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -49,8 +47,7 @@
                     android:layout_width="110dp"
                     android:layout_height="110dp"
                     android:layout_columnWeight="0"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/xianliticn_avatar" />
+                    android:scaleType="centerCrop" />
 
                 <GridLayout
                     android:layout_column="1"
@@ -69,8 +66,6 @@
                         android:layout_gravity="fill"
                         android:gravity="center_vertical"
                         android:maxLines="2"
-                        android:text="线粒体XianlitiCN"
-                        android:textColor="@color/electromagnetic"
                         android:textSize="25sp"
                         android:textStyle="bold" />
 
@@ -91,7 +86,7 @@
                             android:minHeight="0dp"
                             android:padding="0dp"
                             android:text="CN"
-                            android:textColor="@color/chain_gang_grey"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="11sp"
                             app:icon="@drawable/icon_location"
                             app:iconGravity="textStart"
@@ -106,9 +101,8 @@
                             android:minWidth="0dp"
                             android:minHeight="0dp"
                             android:padding="0dp"
-                            android:text="982567394@qq.com"
                             android:textAllCaps="false"
-                            android:textColor="@color/chain_gang_grey"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="11sp"
                             app:icon="@drawable/icon_mail"
                             app:iconGravity="textStart"
@@ -123,9 +117,7 @@
                 android:id="@+id/bioTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/bio_example"
-                android:textColor="@color/electromagnetic" />
+                android:layout_marginTop="20dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/postList"

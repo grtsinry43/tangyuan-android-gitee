@@ -17,10 +17,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/lynx_white"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/title_activity_post"
-            app:titleTextColor="@color/electromagnetic" />
+            app:title="@string/title_activity_post" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -75,7 +73,6 @@
                         android:layout_height="match_parent"
                         android:layout_marginStart="10dp"
                         android:gravity="center_vertical"
-                        android:textColor="@color/electromagnetic"
                         android:textStyle="bold" />
                 </LinearLayout>
 
@@ -84,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:textColor="@color/electromagnetic" />
+                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -97,8 +94,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
-                        android:textColor="@color/chain_gang_grey"
-                        android:textSize="12sp" />
+                        android:textColor="?android:attr/textColorSecondary" />
 
                     <TextView
                         android:id="@+id/tidView"
@@ -107,8 +103,7 @@
                         android:layout_weight="1"
                         android:fontFamily="monospace"
                         android:textAlignment="viewEnd"
-                        android:textColor="@color/chain_gang_grey"
-                        android:textSize="12sp" />
+                        android:textColor="?android:attr/textColorSecondary" />
                 </LinearLayout>
 
                 <TextView
@@ -133,7 +128,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/lynx_white"
         android:elevation="15dp"
         android:padding="10dp"
         android:translationZ="15dp">
@@ -155,7 +149,7 @@
             android:background="@color/transparent"
             app:icon="@drawable/icon_send"
             app:iconGravity="start"
-            app:iconTint="@color/mazarine_blue" />
+            app:iconTint="?attr/colorPrimary" />
 
         <ProgressBar
             android:id="@+id/progressBarCommentSend"

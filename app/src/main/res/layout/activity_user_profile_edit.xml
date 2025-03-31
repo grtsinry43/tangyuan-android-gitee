@@ -18,10 +18,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/lynx_white"
             app:popupTheme="@style/Theme.Tangyuan.PopupOverlay"
-            app:title="@string/edit_profile"
-            app:titleTextColor="@color/electromagnetic" />
+            app:title="@string/edit_profile" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

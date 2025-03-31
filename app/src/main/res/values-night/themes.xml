@@ -2,15 +2,27 @@
     <!-- Base application theme. -->
     <style name="Theme.Tangyuan" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/mazarine_blue</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/nanohanacha_gold</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:textColor">@color/lynx_white</item>
+        <item name="android:textColorSecondary">@color/chain_gang_grey</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:iconTint">@color/lynx_white</item>
+    </style>
+
+    <style name="Theme.Tangyuan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:actionMenuTextColor">@color/lynx_white</item>
+        <item name="android:textColorPrimary">@color/lynx_white</item>
+        <item name="android:background">@color/black</item>
+        <item name="android:colorControlNormal">@color/lynx_white</item>
+        <item name="android:iconTint">@color/lynx_white</item>
     </style>
 </resources>

@@ -24,7 +24,6 @@
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:text="杨慎"
-            android:textColor="@color/electromagnetic"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -35,8 +34,7 @@
         android:layout_marginTop="10dp"
         android:ellipsize="end"
         android:maxLines="3"
-        android:text="@string/lorel_ipsum"
-        android:textColor="@color/electromagnetic" />
+        android:text="@string/lorel_ipsum" />
 
     <GridLayout
         android:id="@+id/imageLayout"
@@ -82,6 +80,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="2025年3月1日"
-        android:textColor="@color/chain_gang_grey"
+        android:textColor="?android:attr/textColorSecondary"
         android:textSize="12sp" />
 </LinearLayout>
