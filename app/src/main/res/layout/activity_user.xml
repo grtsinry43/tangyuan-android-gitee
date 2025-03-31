@@ -85,7 +85,6 @@
                             android:minWidth="0dp"
                             android:minHeight="0dp"
                             android:padding="0dp"
-                            android:text="CN"
                             android:textColor="?android:attr/textColorSecondary"
                             android:textSize="11sp"
                             app:icon="@drawable/icon_location"

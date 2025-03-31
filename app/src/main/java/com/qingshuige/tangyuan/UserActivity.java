@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -106,7 +107,8 @@ public class UserActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable throwable) {
-
+                runOnUiThread(() ->
+                        Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -126,7 +128,8 @@ public class UserActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                Log.i("TY", "Error: " + throwable.toString());
+                runOnUiThread(() ->
+                        Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
             }
         });
     }

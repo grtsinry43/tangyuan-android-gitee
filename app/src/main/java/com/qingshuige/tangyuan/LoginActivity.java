@@ -140,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-
+                Toast.makeText(LoginActivity.this, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                runOnUiThread(() -> buttonLogin.setEnabled(true));
             }
         });
     }
@@ -169,14 +170,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-
+                        Toast.makeText(LoginActivity.this, getString(R.string.network_error), Toast.LENGTH_LONG).show();
                     }
                 });
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                Toast.makeText(LoginActivity.this, getString(R.string.network_error), Toast.LENGTH_LONG).show();
             }
         });
     }

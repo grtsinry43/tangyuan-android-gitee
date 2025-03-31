@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable throwable) {
-
+                    runOnUiThread(() -> ((TextView) navHeaderView.findViewById(R.id.navNicknameView)).setText(R.string.network_error));
                 }
             });
         }

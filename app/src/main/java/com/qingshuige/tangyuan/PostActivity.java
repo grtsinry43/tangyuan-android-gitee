@@ -131,8 +131,8 @@ public class PostActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     pgBar.setVisibility(View.GONE);
                     androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(PostActivity.this)
-                            .setTitle(R.string.post_does_not_exist)
-                            .setMessage(R.string.post_may_be_deleted)
+                            .setTitle(R.string.load_post_error)
+                            .setMessage(R.string.post_may_be_deleted_or_network_error)
                             .setPositiveButton(R.string.ok, (dialogInterface, i) -> finish())
                             .create();
                     dialog.setCanceledOnTouchOutside(false);
@@ -286,15 +286,21 @@ public class PostActivity extends AppCompatActivity {
                             }
                         });
                     } else {
-                        Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
-                        sendButton.setVisibility(View.VISIBLE);
-                        pgBar.setVisibility(View.GONE);
+                        runOnUiThread(() -> {
+                            Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
+                            sendButton.setVisibility(View.VISIBLE);
+                            pgBar.setVisibility(View.GONE);
+                        });
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-
+                    runOnUiThread(() -> {
+                        Toast.makeText(PostActivity.this, R.string.send_comment_error, Toast.LENGTH_SHORT).show();
+                        sendButton.setVisibility(View.VISIBLE);
+                        pgBar.setVisibility(View.GONE);
+                    });
                 }
             });
         } else {
@@ -323,15 +329,13 @@ public class PostActivity extends AppCompatActivity {
                         });
                     }
                 } else {
-                    runOnUiThread(() -> {
-                        textCommentCounter.setText(R.string.no_comment);
-                    });
+                    runOnUiThread(() -> textCommentCounter.setText(R.string.no_comment));
                 }
             }
 
             @Override
             public void onFailure(Call<List<Comment>> call, Throwable throwable) {
-
+                runOnUiThread(() -> textCommentCounter.setText(R.string.load_comments_error));
             }
         });
     }
@@ -352,17 +356,11 @@ public class PostActivity extends AppCompatActivity {
         RecyclerView replyRcv = dialogView.findViewById(R.id.replyRecyclerView);
         CommentCardAdapter adapter = new CommentCardAdapter();
         adapter.setOnAvatarClickListener(this::startUserActivity);
-        adapter.setOnItemHoldListener(new CommentCardAdapter.ItemActionListener() {
-            @Override
-            public void onAction(CommentInfo subCommentInfo) {
-                showCommentControlDialog(subCommentInfo, info);
-            }
-        });
+        adapter.setOnItemHoldListener(subCommentInfo -> showCommentControlDialog(subCommentInfo, info));
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         replyRcv.setAdapter(adapter);
         replyRcv.setLayoutManager(layoutManager);
         replyRcv.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
-        pgBar.setVisibility(View.VISIBLE);
         TangyuanApplication.getApi().getSubComment(info.getCommentId()).enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
@@ -374,14 +372,14 @@ public class PostActivity extends AppCompatActivity {
                     }
 
                 } else {
-                    ((TextView) dialogView.findViewById(R.id.titleReply)).setText(R.string.no_reply);
+                    runOnUiThread(() -> ((TextView) dialogView.findViewById(R.id.titleReply)).setText(R.string.no_reply));
                 }
                 pgBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<List<Comment>> call, Throwable throwable) {
-
+                runOnUiThread(() -> ((TextView) dialogView.findViewById(R.id.titleReply)).setText(R.string.network_error));
             }
         });
 
@@ -419,7 +417,7 @@ public class PostActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                                    Toast.makeText(PostActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
                                 }
                             }))
                     .setNegativeButton(R.string.no, null)

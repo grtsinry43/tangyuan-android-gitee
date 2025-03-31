@@ -61,21 +61,21 @@ public class ApiHelper {
 
                             @Override
                             public void onFailure(Call<User> call, Throwable throwable) {
-                                //TODO
+                                callback.onComplete(null);
                             }
                         });
                     }
 
                     @Override
                     public void onFailure(Call<PostBody> call, Throwable throwable) {
-                        //TODO
+                        callback.onComplete(null);
                     }
                 });
             }
 
             @Override
             public void onFailure(Call<PostMetadata> call, Throwable throwable) {
-                //TODO
+                callback.onComplete(null);
             }
         });
     }

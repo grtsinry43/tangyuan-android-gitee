@@ -75,4 +75,8 @@
     <string name="hours_before">" 小时前"</string>
     <string name="comment_deleted">评论已删除。</string>
     <string name="copy">复制</string>
+    <string name="network_error">网络错误</string>
+    <string name="load_post_error">加载帖子失败</string>
+    <string name="post_may_be_deleted_or_network_error">帖子可能已被删除或网络错误。</string>
+    <string name="load_comments_error">加载评论失败</string>
 </resources>
