@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 if (response.body().getAsJsonObject("data").get("buildHaveNewVersion").getAsBoolean()) {
                     runOnUiThread(() -> {
                         new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("糖原内测阶段")
+                                .setTitle("糖原公测阶段")
                                 .setMessage("检测到新版本，请及时更新。")
                                 .setPositiveButton("下载", (dialogInterface, i) -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW);
