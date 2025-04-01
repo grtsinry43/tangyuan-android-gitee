@@ -20,6 +20,7 @@
     <style name="Theme.Tangyuan.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Theme.Tangyuan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light">
