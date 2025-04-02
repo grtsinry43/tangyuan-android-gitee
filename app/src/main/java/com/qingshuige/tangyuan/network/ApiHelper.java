@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
+import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.ByteArrayOutputStream;
@@ -119,6 +120,46 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<Comment> call, Throwable throwable) {
 
+            }
+        });
+    }
+
+    public static void getNotificationInfoAsync(Notification n, ApiCallback<NotificationInfo> callback) {
+        api.getUser(n.sourceUserId).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.code() == 200) {
+                    User sourceUser = response.body();
+                    api.getComment(n.sourceCommentId).enqueue(new Callback<Comment>() {
+                        @Override
+                        public void onResponse(Call<Comment> call, Response<Comment> response) {
+                            if (response.code() == 200) {
+                                Comment sourceComment = response.body();
+
+                                NotificationInfo info = new NotificationInfo(
+                                        n.notificationDateTime,
+                                        n.notificationId,
+                                        sourceComment.content,
+                                        sourceUser.avatarGuid,
+                                        sourceUser.nickName,
+                                        n.targetCommentId,
+                                        n.targetPostId
+                                );
+                                callback.onComplete(info);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Comment> call, Throwable throwable) {
+                            callback.onComplete(null);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable throwable) {
+                callback.onComplete(null);
             }
         });
     }

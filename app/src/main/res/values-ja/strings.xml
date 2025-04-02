@@ -75,4 +75,9 @@
     <string name="post_may_be_deleted_or_network_error">投稿が削除されたか、ネットワークエラーが発生した可能性があります。</string>
     <string name="load_comments_error">コメントの読み込みに失敗しました</string>
     <string name="notice">公告</string>
+    <string name="replied_your_comment">" 回复了你的评论"</string>
+    <string name="commented_your_post">" 评论了你的帖子"</string>
+    <string name="message">消息</string>
+    <string name="no_message">无消息</string>
+    <string name="unloggedin">未登录</string>
 </resources>

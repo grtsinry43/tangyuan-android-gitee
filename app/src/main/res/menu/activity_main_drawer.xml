@@ -12,6 +12,11 @@
             android:id="@+id/nav_chitchat"
             android:icon="@drawable/icon_chitchat"
             android:title="@string/menu_chitchat" />
+
+        <item
+            android:id="@+id/nav_message"
+            android:icon="@drawable/icon_notice"
+            android:title="@string/message" />
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/icon_about"

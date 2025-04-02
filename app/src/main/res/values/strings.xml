@@ -80,4 +80,11 @@
     <string name="post_may_be_deleted_or_network_error">帖子可能已被删除或网络错误。</string>
     <string name="load_comments_error">加载评论失败</string>
     <string name="notice">公告</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="replied_your_comment">" 回复了你的评论"</string>
+    <string name="commented_your_post">" 评论了你的帖子"</string>
+    <string name="message">消息</string>
+    <string name="no_message">无消息</string>
+    <string name="unloggedin">未登录</string>
 </resources>
