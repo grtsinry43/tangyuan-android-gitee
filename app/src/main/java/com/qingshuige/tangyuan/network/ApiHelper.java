@@ -142,6 +142,7 @@ public class ApiHelper {
                                         sourceComment.content,
                                         sourceUser.avatarGuid,
                                         sourceUser.nickName,
+                                        sourceComment.commentId,
                                         n.targetCommentId,
                                         n.targetPostId
                                 );

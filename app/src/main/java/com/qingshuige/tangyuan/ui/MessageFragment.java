@@ -1,5 +1,6 @@
 package com.qingshuige.tangyuan.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.TokenManager;
@@ -26,6 +28,7 @@ import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,6 +53,7 @@ public class MessageFragment extends Fragment {
         textMessageStatus = root.findViewById(R.id.textMessageStatus);
 
         adapter = new NotificationCardAdapter();
+        adapter.setOnItemClickListener(this::handleItemClick);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         DividerItemDecoration decoration = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
         recyclerView.setAdapter(adapter);
@@ -96,5 +100,23 @@ public class MessageFragment extends Fragment {
             textMessageStatus.setVisibility(View.VISIBLE);
             textMessageStatus.setText(R.string.unloggedin);
         }
+    }
+
+    private void handleItemClick(NotificationInfo info) {
+        Intent intent = new Intent(getActivity(), PostActivity.class);
+        intent.putExtra("postId", info.getTargetPostId());
+        intent.putExtra("commentId", info.getSourceCommentId());
+        startActivity(intent);
+        TangyuanApplication.getApi().markNotificationAsRead(info.getNotificationId()).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
     }
 }

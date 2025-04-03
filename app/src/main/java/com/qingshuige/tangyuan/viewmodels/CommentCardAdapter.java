@@ -16,6 +16,7 @@ import com.google.android.material.button.MaterialButton;
 import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.Comment;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -93,6 +94,10 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
     @Override
     public int getItemCount() {
         return comments.size();
+    }
+
+    public int getPositionOf(CommentInfo info) {
+        return comments.indexOf(info);
     }
 
     public void appendData(CommentInfo info) {

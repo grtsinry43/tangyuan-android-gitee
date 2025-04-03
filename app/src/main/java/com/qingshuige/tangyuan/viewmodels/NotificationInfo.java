@@ -7,16 +7,18 @@ public class NotificationInfo {
     private String sourceUserAvatarGuid;
     private String sourceUserNickname;
     private String sourceCommentContent;
+    private int sourceCommentId;
     private int targetPostId;
     private int targetCommentId;
     private Date dateTime;
 
-    public NotificationInfo(Date dateTime, int notificationId, String sourceCommentContent, String sourceUserAvatarGuid, String sourceUserNickname, int targetCommentId, int targetPostId) {
+    public NotificationInfo(Date dateTime, int notificationId, String sourceCommentContent, String sourceUserAvatarGuid, String sourceUserNickname, int sourceCommentId, int targetCommentId, int targetPostId) {
         this.dateTime = dateTime;
         this.notificationId = notificationId;
         this.sourceCommentContent = sourceCommentContent;
         this.sourceUserAvatarGuid = sourceUserAvatarGuid;
         this.sourceUserNickname = sourceUserNickname;
+        this.sourceCommentId = sourceCommentId;
         this.targetCommentId = targetCommentId;
         this.targetPostId = targetPostId;
     }
@@ -47,5 +49,9 @@ public class NotificationInfo {
 
     public int getTargetPostId() {
         return targetPostId;
+    }
+
+    public int getSourceCommentId() {
+        return sourceCommentId;
     }
 }

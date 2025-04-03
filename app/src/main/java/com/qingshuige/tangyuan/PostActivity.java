@@ -27,6 +27,7 @@ import android.widget.Toast;
 import androidx.activity.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -74,6 +75,8 @@ public class PostActivity extends AppCompatActivity {
     CommentCardAdapter commentAdapter;
     TokenManager tm;
 
+    private int flagScrollToCommmentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +115,32 @@ public class PostActivity extends AppCompatActivity {
         snapHelper.attachToRecyclerView(gallery);
 
         initializeUI(postId);
+
+        if (getIntent().getIntExtra("commentId", 0) != 0) {
+            targetToComment(getIntent().getIntExtra("commentId", 0));
+        }
+    }
+
+    private void targetToComment(int commentId) {
+        TangyuanApplication.getApi().getComment(commentId).enqueue(new Callback<Comment>() {
+            @Override
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
+                if (response.code() == 200) {
+                    Comment comment = response.body();
+                    assert comment != null;
+                    if (comment.parentCommentId != 0) { //是子评论
+                        ApiHelper.getCommentInfoByIdAsync(comment.parentCommentId, result -> runOnUiThread(() -> showReplyBottomSheet(result)));
+                    } else { //不是子评论
+                        flagScrollToCommmentId = commentId;
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Comment> call, Throwable throwable) {
+
+            }
+        });
     }
 
     private void initializeUI(int postId) {
@@ -332,13 +361,33 @@ public class PostActivity extends AppCompatActivity {
                 if (response.code() != 404) {
                     //有评论
                     AtomicInteger parentCount = new AtomicInteger();
+                    AtomicInteger scrollToPosition = new AtomicInteger(); //用来记录需要滚动到的位置
                     for (Comment m : response.body()) {
                         ApiHelper.getCommentInfoByIdAsync(m.commentId, info -> {
                             if (m.parentCommentId == 0) { //如果是一级评论则显示
                                 commentAdapter.appendData(info);
                                 parentCount.getAndIncrement();
-                                runOnUiThread(() ->
-                                        textCommentCounter.setText(parentCount.get() + getString(R.string.of_comments)));
+
+                                if (m.commentId == flagScrollToCommmentId) { //如果这条评论正是想要滚动到的评论
+                                    scrollToPosition.set(commentAdapter.getPositionOf(info)); //记录这条评论在Adapter中的位置
+                                }
+
+                                runOnUiThread(() -> {
+                                    textCommentCounter.setText(parentCount.get() + getString(R.string.of_comments));
+
+                                    if (scrollToPosition.get() != 0) { //如果已经设置了滚动位置
+                                        findViewById(R.id.main).postDelayed(() -> {
+                                            //滚动到指定位置
+                                            int distance = commentsRcv.getLayoutManager().findViewByPosition(scrollToPosition.get()).getTop() +
+                                                    findViewById(R.id.contentView).getHeight();
+                                            ((NestedScrollView) findViewById(R.id.main)).smoothScrollTo(0, distance);
+                                            //每次新增一条父评论，都滚动到指定位置
+                                        }, 2000);
+
+                                    }
+                                });
+
+
                             }
                         });
                     }

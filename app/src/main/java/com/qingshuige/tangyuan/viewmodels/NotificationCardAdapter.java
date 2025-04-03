@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,6 +22,8 @@ import java.util.List;
 public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCardAdapter.ViewHolder> {
 
     List<NotificationInfo> messages;
+
+    private ItemActionListener onItemClickListener;
 
     public NotificationCardAdapter() {
         messages = new ArrayList<>();
@@ -53,6 +56,12 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         holder.getTextMessage().setText(info.getSourceCommentContent());
         //DateTime
         holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getDateTime(), holder.getContext()));
+        //MainLayout
+        holder.getMainLayout().setOnClickListener(view -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemAction(info);
+            }
+        });
     }
 
     @Override
@@ -65,12 +74,21 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         notifyDataSetChanged();
     }
 
+    public void setOnItemClickListener(ItemActionListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public interface ItemActionListener {
+        public void onItemAction(NotificationInfo info);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imgAvatar;
         private TextView textTitle;
         private TextView textMessage;
         private TextView textDateTime;
+        private GridLayout mainLayout;
 
         private Context context;
 
@@ -81,6 +99,7 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
             textTitle = itemView.findViewById(R.id.textTitle);
             textMessage = itemView.findViewById(R.id.textMessage);
             textDateTime = itemView.findViewById(R.id.textDateTime);
+            mainLayout = itemView.findViewById(R.id.mainLayout);
 
             context = itemView.getContext();
         }
@@ -103,6 +122,10 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
 
         public Context getContext() {
             return context;
+        }
+
+        public GridLayout getMainLayout() {
+            return mainLayout;
         }
     }
 }
