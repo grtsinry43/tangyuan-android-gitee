@@ -192,7 +192,7 @@ public class NewPostActivity extends AppCompatActivity {
                     if (v.getDrawable() != null) {
                         Bitmap bitmap = MediaTools.compressToSize(NewPostActivity.this,
                                 ((BitmapDrawable) v.getDrawable()).getBitmap(),
-                                0.5f);
+                                1.5f);
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         byte[] bytes = stream.toByteArray();
