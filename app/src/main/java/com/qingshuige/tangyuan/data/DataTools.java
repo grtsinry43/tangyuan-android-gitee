@@ -91,4 +91,30 @@ public class DataTools {
             return localdt.format(yearFormatter);
         }
     }
+
+    public static String deleteBlankLines(String source) {
+        if (source == null || source.isEmpty()) {
+            return source;
+        }
+
+        StringBuilder result = new StringBuilder();
+        int newlineCount = 0;
+
+        for (int i = 0; i < source.length(); i++) {
+            char c = source.charAt(i);
+            if (c == '\n') {
+                newlineCount++;
+                if (newlineCount <= 2) {
+                    result.append(c);
+                }
+            } else {
+                if (newlineCount > 0) {
+                    newlineCount = 0;
+                }
+                result.append(c);
+            }
+        }
+
+        return result.toString();
+    }
 }

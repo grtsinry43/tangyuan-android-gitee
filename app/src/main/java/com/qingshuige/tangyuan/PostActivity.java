@@ -309,7 +309,7 @@ public class PostActivity extends AppCompatActivity {
             dto.commentDateTime = new Date();
             dto.postId = postId;
             dto.parentCommentId = parentCommentInfo == null ? 0 : parentCommentInfo.getCommentId();
-            dto.content = input.getText().toString();
+            dto.content = DataTools.deleteBlankLines(input.getText().toString());
             TangyuanApplication.getApi().postComment(dto).enqueue(new Callback<Map<String, String>>() {
                 @Override
                 public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {

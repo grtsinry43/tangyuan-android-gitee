@@ -219,7 +219,7 @@ public class NewPostActivity extends AppCompatActivity {
                 //3.上传Body
                 PostBody body = new PostBody();
                 body.postId = postId;
-                body.textContent = textEdit.getText().toString();
+                body.textContent = DataTools.deleteBlankLines(textEdit.getText().toString());
                 if (!guids.isEmpty()) {
                     body.image1UUID = guids.get(0);
                     if (guids.size() >= 2) {
