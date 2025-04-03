@@ -114,6 +114,9 @@ public class LoginActivity extends AppCompatActivity {
                                     editTextPassword.getText().toString(),
                                     editTextNickname.getText().toString()
                             );
+                        } else {
+                            Toast.makeText(this, R.string.fields_unfinished, Toast.LENGTH_SHORT).show();
+                            buttonLogin.setEnabled(true);
                         }
                         break;
                 }
