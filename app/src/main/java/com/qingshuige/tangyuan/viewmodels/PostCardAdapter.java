@@ -44,6 +44,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                 .load(ApiHelper.getFullImageURL(p.getUserAvatarGUID()))
                 .into(holder.getAvatarView());
         holder.getPostPreviewView().setText(p.getTextContent());
+        holder.getCategoryView().setText(p.getCategoryName());
         ///图片处理
         holder.getImageLayout().setVisibility(View.GONE);
         holder.getImageView1().setVisibility(View.GONE);
@@ -121,6 +122,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
+        private final TextView categoryView;
         private final GridLayout imageLayout;
         private final ImageView imageView1;
         private final ImageView imageView2;
@@ -134,6 +136,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
+            categoryView = view.findViewById(R.id.textCategoryName);
             imageLayout = (GridLayout) view.findViewById(R.id.imageLayout);
             imageView1 = (ImageView) view.findViewById(R.id.imageView1);
             imageView2 = (ImageView) view.findViewById(R.id.imageView2);
@@ -175,6 +178,10 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         public GridLayout getImageLayout() {
             return imageLayout;
+        }
+
+        public TextView getCategoryView() {
+            return categoryView;
         }
     }
 }

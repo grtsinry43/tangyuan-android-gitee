@@ -25,6 +25,22 @@
             android:gravity="center_vertical"
             android:text="杨慎"
             android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/icon_category"
+            app:tint="?attr/colorPrimary" />
+
+        <TextView
+            android:id="@+id/textCategoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="2dp"
+            android:gravity="center_vertical"
+            android:textColor="?attr/colorPrimary" />
     </LinearLayout>
 
     <TextView
