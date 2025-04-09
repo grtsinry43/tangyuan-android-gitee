@@ -8,6 +8,7 @@ import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,68 +31,30 @@ public class ApiHelper {
      * @param callback 取得PostID后呼叫的回调，接受获取的PostInfo对象。
      */
     public static void getPostInfoByIdAsync(int postId, ApiCallback<PostInfo> callback) {
-        //TODO:改为Thread+同步方式
-        api.getPostMetadata(postId).enqueue(new Callback<PostMetadata>() {
-            @Override
-            public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
-                if (response.code() == 404) {
-                    callback.onComplete(null);
-                    return;
-                }
-                PostMetadata metadata = response.body();
-                api.getPostBody(postId).enqueue(new Callback<PostBody>() {
-                    @Override
-                    public void onResponse(Call<PostBody> call, Response<PostBody> response) {
-                        PostBody body = response.body();
-                        api.getUser(metadata.userId).enqueue(new Callback<User>() {
-                            @Override
-                            public void onResponse(Call<User> call, Response<User> response) {
-                                User user = response.body();
-                                api.getCategory(metadata.categoryId).enqueue(new Callback<Category>() {
-                                    @Override
-                                    public void onResponse(Call<Category> call, Response<Category> response) {
-                                        Category category = response.body();
-                                        PostInfo info = new PostInfo(
-                                                postId,
-                                                user.userId,
-                                                user.nickName,
-                                                user.avatarGuid,
-                                                metadata.postDateTime,
-                                                body.textContent,
-                                                body.image1UUID,
-                                                body.image2UUID,
-                                                body.image3UUID,
-                                                metadata.sectionId,
-                                                category.baseName);
-                                        callback.onComplete(info);
-                                    }
+        new Thread(() -> {
+            try {
+                PostMetadata metadata = api.getPostMetadata(postId).execute().body();
+                PostBody body = api.getPostBody(postId).execute().body();
+                User user = api.getUser(metadata.userId).execute().body();
+                Category category = api.getCategory(metadata.categoryId).execute().body();
 
-                                    @Override
-                                    public void onFailure(Call<Category> call, Throwable throwable) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(Call<User> call, Throwable throwable) {
-                                callback.onComplete(null);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<PostBody> call, Throwable throwable) {
-                        callback.onComplete(null);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call<PostMetadata> call, Throwable throwable) {
+                PostInfo info = new PostInfo(
+                        postId,
+                        user.userId,
+                        user.nickName,
+                        user.avatarGuid,
+                        metadata.postDateTime,
+                        body.textContent,
+                        body.image1UUID,
+                        body.image2UUID,
+                        body.image3UUID,
+                        metadata.sectionId,
+                        category.baseName);
+                callback.onComplete(info);
+            } catch (Exception e) {
                 callback.onComplete(null);
             }
-        });
+        }).start();
     }
 
     public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
