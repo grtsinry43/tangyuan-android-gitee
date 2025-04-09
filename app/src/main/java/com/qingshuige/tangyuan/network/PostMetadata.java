@@ -8,5 +8,6 @@ public class PostMetadata {
     public int userId;
     public Date postDateTime;
     public int sectionId;
+    public int categoryId;
     public boolean isVisible;
 }

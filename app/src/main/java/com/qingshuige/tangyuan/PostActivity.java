@@ -238,7 +238,7 @@ public class PostActivity extends AppCompatActivity {
                 .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
                 .into(((ImageView) findViewById(R.id.avatarView)));
         ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
-
+        //Section
         String sectionName = new String();
         switch (postInfo.getSectionId()) {
             case 0:
@@ -252,7 +252,9 @@ public class PostActivity extends AppCompatActivity {
                 break;
         }
         ((TextView) findViewById(R.id.textSectionName)).setText(sectionName);
-
+        //Category
+        ((TextView) findViewById(R.id.textCategoryName)).setText(postInfo.getCategoryName());
+        //正文区
         ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
         ((TextView) findViewById(R.id.dateTimeView)).setText(DataTools.getLocalFriendlyDateTime(postInfo.getPostDate(), this));
         ((TextView) findViewById(R.id.tidView)).setText("TID:" + postInfo.getPostId());

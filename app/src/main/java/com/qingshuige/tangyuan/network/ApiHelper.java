@@ -30,6 +30,7 @@ public class ApiHelper {
      * @param callback 取得PostID后呼叫的回调，接受获取的PostInfo对象。
      */
     public static void getPostInfoByIdAsync(int postId, ApiCallback<PostInfo> callback) {
+        //TODO:改为Thread+同步方式
         api.getPostMetadata(postId).enqueue(new Callback<PostMetadata>() {
             @Override
             public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
@@ -46,18 +47,30 @@ public class ApiHelper {
                             @Override
                             public void onResponse(Call<User> call, Response<User> response) {
                                 User user = response.body();
-                                PostInfo info = new PostInfo(
-                                        postId,
-                                        user.userId,
-                                        user.nickName,
-                                        user.avatarGuid,
-                                        metadata.postDateTime,
-                                        body.textContent,
-                                        body.image1UUID,
-                                        body.image2UUID,
-                                        body.image3UUID,
-                                        metadata.sectionId);
-                                callback.onComplete(info);
+                                api.getCategory(metadata.categoryId).enqueue(new Callback<Category>() {
+                                    @Override
+                                    public void onResponse(Call<Category> call, Response<Category> response) {
+                                        Category category = response.body();
+                                        PostInfo info = new PostInfo(
+                                                postId,
+                                                user.userId,
+                                                user.nickName,
+                                                user.avatarGuid,
+                                                metadata.postDateTime,
+                                                body.textContent,
+                                                body.image1UUID,
+                                                body.image2UUID,
+                                                body.image3UUID,
+                                                metadata.sectionId,
+                                                category.baseName);
+                                        callback.onComplete(info);
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Category> call, Throwable throwable) {
+
+                                    }
+                                });
                             }
 
                             @Override
