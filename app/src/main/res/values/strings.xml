@@ -88,4 +88,7 @@
     <string name="no_message">无消息</string>
     <string name="unloggedin">未登录</string>
     <string name="codename_design">代号设计</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+    <string name="the_day_before_yesterday">前天</string>
 </resources>

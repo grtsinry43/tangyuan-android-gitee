@@ -66,8 +66,8 @@
     <string name="post_does_not_exist">The post does not exist</string>
     <string name="post_may_be_deleted">Post may have been deleted.</string>
     <string name="just_now">Just now</string>
-    <string name="minutes_before">" minutes ago"</string>
-    <string name="hours_before">" hours ago"</string>
+    <string name="minutes_before">m ago</string>
+    <string name="hours_before">h ago</string>
     <string name="comment_deleted">Comment deleted.</string>
     <string name="copy">Copy</string>
     <string name="network_error">Network error</string>
@@ -81,4 +81,7 @@
     <string name="no_message">No message</string>
     <string name="unloggedin">Not logged in</string>
     <string name="codename_design">Codename Designer</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="the_day_before_yesterday">2d ago</string>
 </resources>

@@ -64,6 +64,7 @@ public class DataTools {
         String utcDateString = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(utcDate);
         ZonedDateTime utcDateTime = ZonedDateTime.parse(utcDateString);
 
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:MM");
         DateTimeFormatter noYearFormatter = DateTimeFormatter.ofPattern("M-d HH:mm");
         DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yyyy-M-d HH:mm");
 
@@ -84,10 +85,22 @@ public class DataTools {
         if (minutes <= 180) {
             return duration.toHours() + context.getString(R.string.hours_before);
         }
-        //日期
+        //今天
+        if (localdt.toLocalDate().isEqual(currentLocalDt.toLocalDate())) {
+            return context.getString(R.string.today) + " " + localdt.format(timeFormatter);
+        }
+        //昨天
+        if (localdt.toLocalDate().isEqual(currentLocalDt.toLocalDate().minusDays(1))) {
+            return context.getString(R.string.yesterday) + " " + localdt.format(timeFormatter);
+        }
+        //前天
+        if (localdt.toLocalDate().isEqual(currentLocalDt.toLocalDate().minusDays(2))) {
+            return context.getString(R.string.the_day_before_yesterday) + " " + localdt.format(timeFormatter);
+        }
+        //日期（不带年）
         if (localdt.getYear() == currentLocalDt.getYear()) {
             return localdt.format(noYearFormatter);
-        } else {
+        } else { //日期（带年）
             return localdt.format(yearFormatter);
         }
     }

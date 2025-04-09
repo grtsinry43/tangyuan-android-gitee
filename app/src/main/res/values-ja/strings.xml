@@ -81,4 +81,7 @@
     <string name="no_message">メッセージなし</string>
     <string name="unloggedin">ログインしていません</string>
     <string name="codename_design">コードネームデザイナー</string>
+    <string name="today">今日</string>
+    <string name="yesterday">昨日</string>
+    <string name="the_day_before_yesterday">一昨日</string>
 </resources>
