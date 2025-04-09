@@ -87,6 +87,20 @@ public interface ApiInterface {
     @POST("comment")
     Call<Map<String, String>> postComment(@Body CreateCommentDto dto);
 
+    @GET("category/{id}")
+    Call<Category> getCategory(@Path("id") int id);
+
+    @GET("category/all")
+    Call<List<Category>> getAllCategories();
+
+    @GET("category/count/{id}")
+    Call<Integer> getPostCountOfCategory(@Path("id") int id);
+
+    @GET("category/weeklynewcount/{id}")
+    Call<Integer> getWeeklyNewPostCountOfCategory(@Path("id") int id);
+
+    /////以下为非后端方法
+
     @GET
     Call<ResponseBody> getFromUrl(@Url String Url);
 
