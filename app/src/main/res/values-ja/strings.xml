@@ -84,4 +84,6 @@
     <string name="today">今日</string>
     <string name="yesterday">昨日</string>
     <string name="the_day_before_yesterday">一昨日</string>
+    <string name="failed_to_fetch_categories">无法获取领域。</string>
+    <string name="waiting_for_loading_categories">正在等待加载领域……</string>
 </resources>

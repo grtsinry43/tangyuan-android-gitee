@@ -30,12 +30,14 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.data.MediaTools;
+import com.qingshuige.tangyuan.network.Category;
 import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
 
@@ -49,6 +51,9 @@ import java.util.concurrent.Executors;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NewPostActivity extends AppCompatActivity {
 
@@ -60,6 +65,7 @@ public class NewPostActivity extends AppCompatActivity {
     private ImageView imageView2;
     private ImageView imageView3;
     private Spinner spinnerSection;
+    private Spinner spinnerCategory;
     private Menu menu;
 
     private ExecutorService es;
@@ -90,6 +96,7 @@ public class NewPostActivity extends AppCompatActivity {
         imageView2 = (ImageView) findViewById(R.id.imageView2);
         imageView3 = (ImageView) findViewById(R.id.imageView3);
         spinnerSection = findViewById(R.id.spinnerSection);
+        spinnerCategory = findViewById(R.id.spinnerCategory);
 
         es = Executors.newSingleThreadExecutor();
         handler = new Handler(Looper.getMainLooper());
@@ -117,11 +124,43 @@ public class NewPostActivity extends AppCompatActivity {
 
         imageView1.setOnClickListener(new ImageViewOnClickListener());
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this,
+        //板块选择
+        ArrayAdapter<String> sectionAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
                 new String[]{getString(R.string.menu_normalchat), getString(R.string.menu_chitchat)});
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSection.setAdapter(spinnerAdapter);
+        sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSection.setAdapter(sectionAdapter);
+
+        //领域选择
+        TangyuanApplication.getApi().getAllCategories().enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                if (response.code() == 200) {
+                    ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(
+                            NewPostActivity.this,
+                            android.R.layout.simple_spinner_item,
+                            response.body()
+                    );
+                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerCategory.setAdapter(categoryAdapter);
+                } else {
+                    new AlertDialog.Builder(NewPostActivity.this)
+                            .setTitle(R.string.network_error)
+                            .setMessage(R.string.failed_to_fetch_categories)
+                            .create().show();
+                    NewPostActivity.this.finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable throwable) {
+                new AlertDialog.Builder(NewPostActivity.this)
+                        .setTitle(R.string.network_error)
+                        .setMessage(R.string.failed_to_fetch_categories)
+                        .create().show();
+                NewPostActivity.this.finish();
+            }
+        });
     }
 
     @Override
@@ -176,6 +215,10 @@ public class NewPostActivity extends AppCompatActivity {
             Toast.makeText(context, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
             return;
         }
+        if (spinnerCategory.getAdapter() == null) {
+            Toast.makeText(context, R.string.waiting_for_loading_categories, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         menu.findItem(R.id.send_post_button).setEnabled(false);
         pgBar.setVisibility(View.VISIBLE);
@@ -212,6 +255,7 @@ public class NewPostActivity extends AppCompatActivity {
                 metadataDto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
                 metadataDto.postDateTime = new Date();
                 metadataDto.sectionId = spinnerSection.getSelectedItemPosition() + 1;
+                metadataDto.categoryId = ((Category) spinnerCategory.getSelectedItem()).categoryId;
                 metadataDto.isVisible = true;
                 postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
                         .get(0);
