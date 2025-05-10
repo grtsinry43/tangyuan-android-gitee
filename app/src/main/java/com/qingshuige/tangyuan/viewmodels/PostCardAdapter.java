@@ -19,6 +19,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -114,6 +115,24 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         }
         postInfoList.add(data);
         notifyItemInserted(postInfoList.size() - 1);
+        return true;
+    }
+
+    public boolean appendDataAndSortDesc(PostInfo data) {
+        for (PostInfo i : postInfoList) {
+            if (i.getPostId() == data.getPostId()) {
+                return false;
+            }
+        }
+        postInfoList.add(data);
+
+        postInfoList.sort(new Comparator<PostInfo>() {
+            @Override
+            public int compare(PostInfo postInfo, PostInfo t1) {
+                return t1.getPostDate().compareTo(postInfo.getPostDate());
+            }
+        });
+        notifyDataSetChanged();
         return true;
     }
 

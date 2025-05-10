@@ -122,7 +122,7 @@ public class UserActivity extends AppCompatActivity {
                 for (PostMetadata m : metadatas) {
                     ApiHelper.getPostInfoByIdAsync(m.postId, result ->
                             runOnUiThread(() ->
-                                    ((PostCardAdapter) postList.getAdapter()).appendData(result)));
+                                    ((PostCardAdapter) postList.getAdapter()).appendDataAndSortDesc(result)));
                 }
             }
 

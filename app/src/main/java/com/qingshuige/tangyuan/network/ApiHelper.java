@@ -1,6 +1,7 @@
 package com.qingshuige.tangyuan.network;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
@@ -52,6 +53,7 @@ public class ApiHelper {
                         category.baseName);
                 callback.onComplete(info);
             } catch (Exception e) {
+                Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
                 callback.onComplete(null);
             }
         }).start();

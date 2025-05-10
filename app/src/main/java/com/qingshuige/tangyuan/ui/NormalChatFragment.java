@@ -89,9 +89,12 @@ public class NormalChatFragment extends Fragment {
                 //对于每一条帖子……
                 for (PostMetadata m : metadatas) {
                     if (m.sectionId == 1) {
-                        ApiHelper.getPostInfoByIdAsync(m.postId, result ->
+                        ApiHelper.getPostInfoByIdAsync(m.postId, result -> {
+                            if (result != null) {
                                 getActivity().runOnUiThread(() ->
-                                        ((PostCardAdapter) recyclerView.getAdapter()).appendData(result)));
+                                        ((PostCardAdapter) recyclerView.getAdapter()).appendData(result));
+                            }
+                        });
                     }
                 }
             }
