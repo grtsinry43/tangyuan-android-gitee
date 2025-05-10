@@ -8,13 +8,11 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.R;
@@ -75,7 +73,7 @@ public class MessageFragment extends Fragment {
                     if (response.code() == 200) { //有通知
                         for (Notification n : response.body()) {
                             ApiHelper.getNotificationInfoAsync(n, result -> {
-                                adapter.append(result);
+                                adapter.appendAndSortDesc(result);
                             });
                         }
                     } else if (response.code() == 404) { //无通知

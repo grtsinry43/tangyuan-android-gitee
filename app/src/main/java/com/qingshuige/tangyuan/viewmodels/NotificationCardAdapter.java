@@ -17,6 +17,7 @@ import com.qingshuige.tangyuan.network.ApiHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCardAdapter.ViewHolder> {
@@ -69,8 +70,9 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         return messages.size();
     }
 
-    public void append(NotificationInfo message) {
+    public void appendAndSortDesc(NotificationInfo message) {
         messages.add(message);
+        messages.sort((notificationInfo, t1) -> t1.getDateTime().compareTo(notificationInfo.getDateTime()));
         notifyDataSetChanged();
     }
 
