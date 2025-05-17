@@ -57,7 +57,7 @@
     <string name="delete">Delete</string>
     <string name="post_deleted">Post deleted.</string>
     <string name="delete_post">Delete post</string>
-    <string name="confirm_delete_post">Sure you want to delete this thread?</string>
+    <string name="confirm_delete_post">Sure you want to delete this post?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="save_photo">Save Image</string>
@@ -84,7 +84,7 @@
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="the_day_before_yesterday">2d ago</string>
-    <string name="failed_to_fetch_categories">无法获取领域。</string>
-    <string name="waiting_for_loading_categories">正在等待加载领域……</string>
-    <string name="sending_post_no_category">未选择领域，确定要发送吗？</string>
+    <string name="failed_to_fetch_categories">Failed to get categories.</string>
+    <string name="waiting_for_loading_categories">Waiting to load categories...</string>
+    <string name="sending_post_no_category">No category selected, sure you want to send it?</string>
 </resources>
