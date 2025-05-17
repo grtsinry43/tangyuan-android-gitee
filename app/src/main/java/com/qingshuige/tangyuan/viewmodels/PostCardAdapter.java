@@ -136,6 +136,12 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         return true;
     }
 
+    public boolean replaceDataSet(List<PostInfo> dataSet) {
+        postInfoList = dataSet;
+        notifyDataSetChanged();
+        return true;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView avatar;
         private final TextView nicknameView;

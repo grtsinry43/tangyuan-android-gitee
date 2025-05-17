@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +24,11 @@ import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
 import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
+import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -38,6 +43,7 @@ public class UserActivity extends AppCompatActivity {
     private TextView bioView;
     private Button regionButton;
     private Button mailButton;
+    private ProgressBar pgBarPostLoad;
 
     private int userId;
     private TokenManager tm;
@@ -65,6 +71,7 @@ public class UserActivity extends AppCompatActivity {
         bioView = findViewById(R.id.bioTextView);
         regionButton = findViewById(R.id.regionButton);
         mailButton = findViewById(R.id.mailButton);
+        pgBarPostLoad = findViewById(R.id.pgBarPostLoad);
 
         userId = getIntent().getIntExtra("userId", 0);
         tm = TangyuanApplication.getTokenManager();
@@ -114,16 +121,32 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void updateRecyclerView(int userId) {
+        pgBarPostLoad.setVisibility(View.VISIBLE);
+        pgBarPostLoad.setProgress(0, true);
+
         TangyuanApplication.getApi().getMetadatasByUserID(userId).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 List<PostMetadata> metadatas = response.body();
-                //对于每一条帖子……
-                for (PostMetadata m : metadatas) {
-                    ApiHelper.getPostInfoByIdAsync(m.postId, result ->
-                            runOnUiThread(() ->
-                                    ((PostCardAdapter) postList.getAdapter()).appendDataAndSortDesc(result)));
-                }
+                new Thread(() -> {
+                    List<PostInfo> infos = new ArrayList<>();
+                    //对于每一条帖子……
+                    for (PostMetadata m : metadatas) {
+                        PostInfo pi = ApiHelper.getPostInfoById(m.postId);
+                        infos.add(pi);
+                        //进度条
+                        runOnUiThread(() ->
+                                pgBarPostLoad.setProgress((int) Math.floor(100 / metadatas.size()) * infos.size(), true));
+                    }
+                    if (!infos.isEmpty()) {
+                        //排序
+                        infos.sort((postInfo, t1) -> t1.getPostDate().compareTo(postInfo.getPostDate()));
+                        runOnUiThread(() -> {
+                            ((PostCardAdapter) postList.getAdapter()).replaceDataSet(infos);
+                            pgBarPostLoad.setVisibility(View.GONE);
+                        });
+                    }
+                }).start();
             }
 
             @Override

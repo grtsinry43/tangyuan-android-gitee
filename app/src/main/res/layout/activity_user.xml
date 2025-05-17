@@ -118,6 +118,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp" />
 
+            <ProgressBar
+                android:id="@+id/pgBarPostLoad"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:indeterminate="false" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/postList"
                 android:layout_width="match_parent"

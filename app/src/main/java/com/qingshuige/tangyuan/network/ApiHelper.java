@@ -33,30 +33,36 @@ public class ApiHelper {
      */
     public static void getPostInfoByIdAsync(int postId, ApiCallback<PostInfo> callback) {
         new Thread(() -> {
-            try {
-                PostMetadata metadata = api.getPostMetadata(postId).execute().body();
-                PostBody body = api.getPostBody(postId).execute().body();
-                User user = api.getUser(metadata.userId).execute().body();
-                Category category = api.getCategory(metadata.categoryId).execute().body();
-
-                PostInfo info = new PostInfo(
-                        postId,
-                        user.userId,
-                        user.nickName,
-                        user.avatarGuid,
-                        metadata.postDateTime,
-                        body.textContent,
-                        body.image1UUID,
-                        body.image2UUID,
-                        body.image3UUID,
-                        metadata.sectionId,
-                        category.baseName);
-                callback.onComplete(info);
-            } catch (Exception e) {
-                Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
-                callback.onComplete(null);
-            }
+            PostInfo info = getPostInfoById(postId);
+            callback.onComplete(info);
         }).start();
+    }
+
+    public static PostInfo getPostInfoById(int postId) {
+        try {
+            PostMetadata metadata = api.getPostMetadata(postId).execute().body();
+            PostBody body = api.getPostBody(postId).execute().body();
+            User user = api.getUser(metadata.userId).execute().body();
+            Category category = api.getCategory(metadata.categoryId).execute().body();
+
+            PostInfo info = new PostInfo(
+                    postId,
+                    user.userId,
+                    user.nickName,
+                    user.avatarGuid,
+                    metadata.postDateTime,
+                    body.textContent,
+                    body.image1UUID,
+                    body.image2UUID,
+                    body.image3UUID,
+                    metadata.sectionId,
+                    category.baseName);
+
+            return info;
+        } catch (Exception e) {
+            Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
+            return null;
+        }
     }
 
     public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
