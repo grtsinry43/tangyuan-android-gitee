@@ -3,6 +3,7 @@ package com.qingshuige.tangyuan;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -199,27 +200,32 @@ public class NewPostActivity extends AppCompatActivity {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
-            sendPostAsync(this);
+
+            //检查必要条件
+            if (!(textEdit.getText().length() > 0)) {
+                Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
+            } else if (!(textEdit.getText().length() < 200)) {
+                Toast.makeText(this, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
+            } else if (spinnerCategory.getAdapter() == null) {
+                Toast.makeText(this, R.string.waiting_for_loading_categories, Toast.LENGTH_SHORT).show();
+            } else if (((Category) spinnerCategory.getSelectedItem()).categoryId == 0) {
+                new AlertDialog.Builder(this)
+                        .setMessage(R.string.sending_post_no_category)
+                        .setTitle(R.string.message)
+                        .setPositiveButton(R.string.yes, (dialogInterface, i) ->
+                                sendPostAsync(NewPostActivity.this))
+                        .setNegativeButton(R.string.no, null)
+                        .create()
+                        .show();
+            } else {
+                sendPostAsync(this);
+            }
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void sendPostAsync(Context context) {
-        //检查必要条件
-        if (!(textEdit.getText().length() > 0)) {
-            Toast.makeText(context, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!(textEdit.getText().length() < 200)) {
-            Toast.makeText(context, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (spinnerCategory.getAdapter() == null) {
-            Toast.makeText(context, R.string.waiting_for_loading_categories, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         menu.findItem(R.id.send_post_button).setEnabled(false);
         pgBar.setVisibility(View.VISIBLE);
 

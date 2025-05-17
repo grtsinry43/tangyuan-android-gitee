@@ -93,4 +93,5 @@
     <string name="the_day_before_yesterday">前天</string>
     <string name="failed_to_fetch_categories">无法获取领域。</string>
     <string name="waiting_for_loading_categories">正在等待加载领域……</string>
+    <string name="sending_post_no_category">未选择领域，确定要发送吗？</string>
 </resources>
