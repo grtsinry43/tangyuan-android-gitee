@@ -41,6 +41,7 @@ import com.qingshuige.tangyuan.data.MediaTools;
 import com.qingshuige.tangyuan.network.Category;
 import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;

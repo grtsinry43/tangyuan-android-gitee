@@ -85,16 +85,18 @@ public class NormalChatFragment extends Fragment {
         TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                List<PostMetadata> metadatas = response.body();
-                //对于每一条帖子……
-                for (PostMetadata m : metadatas) {
-                    if (m.sectionId == 1) {
-                        ApiHelper.getPostInfoByIdAsync(m.postId, result -> {
-                            if (result != null) {
-                                getActivity().runOnUiThread(() ->
-                                        ((PostCardAdapter) recyclerView.getAdapter()).appendData(result));
-                            }
-                        });
+                if (response.code() == 200 && response.body() != null) {
+                    List<PostMetadata> metadatas = response.body();
+                    //对于每一条帖子……
+                    for (PostMetadata m : metadatas) {
+                        if (m.sectionId == 1) {
+                            ApiHelper.getPostInfoByIdAsync(m.postId, result -> {
+                                if (result != null) {
+                                    getActivity().runOnUiThread(() ->
+                                            ((PostCardAdapter) recyclerView.getAdapter()).appendData(result));
+                                }
+                            });
+                        }
                     }
                 }
             }

@@ -360,7 +360,7 @@ public class PostActivity extends AppCompatActivity {
         TangyuanApplication.getApi().getCommentForPost(postId).enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
-                if (response.code() != 404) {
+                if (response.code() == 200 && response.body() != null) {
                     //有评论
                     AtomicInteger parentCount = new AtomicInteger();
                     AtomicInteger scrollToPosition = new AtomicInteger(); //用来记录需要滚动到的位置
