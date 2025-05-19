@@ -310,13 +310,25 @@ public class NewPostActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK && data != null) {
                     //轮流填充三个imageView
                     if (imageView1.getDrawable() == null) {
-                        imageView1.setImageURI(data.getData());
+                        Picasso.get()
+                                .load(data.getData())
+                                .resize(4000, 0)
+                                .centerCrop()
+                                .into(imageView1);
                         break;
                     } else if (imageView2.getDrawable() == null) {
-                        imageView2.setImageURI(data.getData());
+                        Picasso.get()
+                                .load(data.getData())
+                                .resize(4000, 0)
+                                .centerCrop()
+                                .into(imageView2);
                         break;
                     } else if (imageView3.getDrawable() == null) {
-                        imageView3.setImageURI(data.getData());
+                        Picasso.get()
+                                .load(data.getData())
+                                .resize(4000, 0)
+                                .centerCrop()
+                                .into(imageView3);
                         break;
                     }
                 }
