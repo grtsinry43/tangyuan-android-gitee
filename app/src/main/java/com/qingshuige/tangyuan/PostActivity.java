@@ -254,6 +254,8 @@ public class PostActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.textSectionName)).setText(sectionName);
         //Category
         ((TextView) findViewById(R.id.textCategoryName)).setText(postInfo.getCategoryName());
+        findViewById(R.id.imgCategoryIcon).setOnClickListener(view -> startCategoryActivity());
+        findViewById(R.id.textCategoryName).setOnClickListener(view -> startCategoryActivity());
         //正文区
         ((TextView) findViewById(R.id.contentView)).setText(postInfo.getTextContent());
         ((TextView) findViewById(R.id.dateTimeView)).setText(DataTools.getLocalFriendlyDateTime(postInfo.getPostDate(), this));
@@ -277,11 +279,8 @@ public class PostActivity extends AppCompatActivity {
             gallery.setAdapter(adapter);
         }
         ///Avatar
-        findViewById(R.id.userBar).setOnClickListener(view -> {
-            Intent intent = new Intent(PostActivity.this, UserActivity.class);
-            intent.putExtra("userId", postInfo.getUserId());
-            startActivity(intent);
-        });
+        findViewById(R.id.avatarView).setOnClickListener(view -> startUserActivity());
+        findViewById(R.id.nicknameView).setOnClickListener(view -> startUserActivity());
         //菜单栏
         if ((!(tm.getToken() == null)) && DataTools.decodeJwtTokenUserId(tm.getToken()) == postInfo.getUserId()) {
             menu.findItem(R.id.menuDelete).setVisible(true);
@@ -503,5 +502,17 @@ public class PostActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.activity_post_menu, menu);
         this.menu = menu;
         return true;
+    }
+
+    private void startUserActivity() {
+        Intent intent = new Intent(PostActivity.this, UserActivity.class);
+        intent.putExtra("userId", postInfo.getUserId());
+        startActivity(intent);
+    }
+
+    private void startCategoryActivity() {
+        Intent intent = new Intent(PostActivity.this, CategoryActivity.class);
+        intent.putExtra("categoryId", postInfo.getCategoryId());
+        startActivity(intent);
     }
 }

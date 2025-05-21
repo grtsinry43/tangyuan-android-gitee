@@ -40,22 +40,43 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp" />
 
-            <TextView
-                android:id="@+id/textCategoryName"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:layout_marginTop="20dp"
-                android:text="@string/category"
-                android:textColor="@color/mazarine_blue"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="5dp"
+                    android:src="@drawable/icon_category" />
+
+                <TextView
+                    android:id="@+id/textCategoryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/category"
+                    android:textColor="@color/mazarine_blue"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/text24hNewPost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/_24hpost" />
+
+            <TextView
+                android:id="@+id/textTotalPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/total_post_count" />
 
             <TextView
                 android:id="@+id/textCategoryDisc"
@@ -70,7 +91,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:indeterminate="false" />
+                android:indeterminate="false"
+                android:max="1000"
+                android:min="0" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvCategoryPosts"

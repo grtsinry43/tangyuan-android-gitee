@@ -56,6 +56,7 @@ public class ApiHelper {
                     body.image2UUID,
                     body.image3UUID,
                     metadata.sectionId,
+                    category.categoryId,
                     category.baseName);
 
             return info;

@@ -28,6 +28,8 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     private List<PostInfo> postInfoList;
     private OnItemClickListener listener;
+    private boolean isSectionVisible = true;
+    private boolean isCategoryVisible = true;
 
     @NonNull
     @Override
@@ -46,7 +48,23 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
                 .load(ApiHelper.getFullImageURL(p.getUserAvatarGUID()))
                 .into(holder.getAvatarView());
         holder.getPostPreviewView().setText(p.getTextContent());
+        switch (p.getSectionId()) {
+            case 0:
+                holder.getTextSectionName().setText(R.string.notice);
+                break;
+            case 1:
+                holder.getTextSectionName().setText(R.string.menu_normalchat);
+                break;
+            case 2:
+                holder.getTextSectionName().setText(R.string.menu_chitchat);
+                break;
+        }
         holder.getCategoryView().setText(p.getCategoryName());
+        ///板块和领域可见性
+        holder.getImgSectionIcon().setVisibility(isSectionVisible ? View.VISIBLE : View.GONE);
+        holder.getTextSectionName().setVisibility(isSectionVisible ? View.VISIBLE : View.GONE);
+        holder.getImgCategoryIcon().setVisibility(isCategoryVisible ? View.VISIBLE : View.GONE);
+        holder.getCategoryView().setVisibility(isCategoryVisible ? View.VISIBLE : View.GONE);
         ///图片处理
         holder.getImageLayout().setVisibility(View.GONE);
         holder.getImageView1().setVisibility(View.GONE);
@@ -87,8 +105,10 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         ///时间处理
         holder.getDateTimeView().setText(DataTools.getLocalFriendlyDateTime(p.getPostDate(), holder.getView().getContext()));
         ///点击事件
-        holder.getView().setOnClickListener(view ->
-                listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId()));
+        if (listener != null) {
+            holder.getView().setOnClickListener(view ->
+                    listener.onItemClick(postInfoList.get(holder.getAdapterPosition()).getPostId()));
+        }
     }
 
     @Override
@@ -106,6 +126,14 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
     public void setOnItemClickListener(OnItemClickListener callback) {
         this.listener = callback;
+    }
+
+    public void setSectionVisible(boolean sectionVisible) {
+        isSectionVisible = sectionVisible;
+    }
+
+    public void setCategoryVisible(boolean categoryVisible) {
+        isCategoryVisible = categoryVisible;
     }
 
     public boolean appendData(PostInfo data) {
@@ -148,6 +176,9 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         private final TextView nicknameView;
         private final TextView postPreviewView;
         private final TextView dateTimeView;
+        private final ImageView imgSectionIcon;
+        private final TextView textSectionName;
+        private final ImageView imgCategoryIcon;
         private final TextView categoryView;
         private final GridLayout imageLayout;
         private final ImageView imageView1;
@@ -162,6 +193,9 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
             nicknameView = (TextView) view.findViewById(R.id.nicknameView);
             postPreviewView = (TextView) view.findViewById(R.id.postPreviewView);
             dateTimeView = (TextView) view.findViewById(R.id.postDateTimeView);
+            imgSectionIcon = view.findViewById(R.id.imgSectionIcon);
+            textSectionName = view.findViewById(R.id.textSectionName);
+            imgCategoryIcon = view.findViewById(R.id.imgCategoryIcon);
             categoryView = view.findViewById(R.id.textCategoryName);
             imageLayout = (GridLayout) view.findViewById(R.id.imageLayout);
             imageView1 = (ImageView) view.findViewById(R.id.imageView1);
@@ -208,6 +242,18 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
 
         public TextView getCategoryView() {
             return categoryView;
+        }
+
+        public ImageView getImgSectionIcon() {
+            return imgSectionIcon;
+        }
+
+        public TextView getTextSectionName() {
+            return textSectionName;
+        }
+
+        public ImageView getImgCategoryIcon() {
+            return imgCategoryIcon;
         }
     }
 }

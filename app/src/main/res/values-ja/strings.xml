@@ -89,4 +89,6 @@
     <string name="sending_post_no_category">カテゴリーが選択されていませんが、送信しますか？</string>
     <string name="category">领域</string>
     <string name="_24hpost">24小时新帖数</string>
+    <string name="total_post_count">总帖数：</string>
+    <string name="failed_to_load_category">无法加载领域。</string>
 </resources>

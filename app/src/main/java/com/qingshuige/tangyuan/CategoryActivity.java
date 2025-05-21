@@ -1,11 +1,14 @@
 package com.qingshuige.tangyuan;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -31,6 +34,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     private TextView textCategoryName;
     private TextView text24hNewPosts;
+    private TextView textTotalPosts;
     private TextView textCategoryDisc;
     private RecyclerView rcvPosts;
     private ProgressBar pgBar;
@@ -45,14 +49,19 @@ public class CategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_category);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+//            return insets;
+//        });
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textCategoryName = findViewById(R.id.textCategoryName);
         text24hNewPosts = findViewById(R.id.text24hNewPost);
+        textTotalPosts = findViewById(R.id.textTotalPost);
         textCategoryDisc = findViewById(R.id.textCategoryDisc);
         rcvPosts = findViewById(R.id.rcvCategoryPosts);
         pgBar = findViewById(R.id.pgBar);
@@ -62,6 +71,12 @@ public class CategoryActivity extends AppCompatActivity {
 
         //设置RecyclerView
         adapter = new PostCardAdapter();
+        adapter.setOnItemClickListener(postId -> {
+            Intent intent = new Intent(CategoryActivity.this, PostActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+        adapter.setCategoryVisible(false);
         rcvPosts.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         rcvPosts.setLayoutManager(new LinearLayoutManager(this));
         rcvPosts.setAdapter(adapter);
@@ -82,7 +97,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Category> call, Throwable throwable) {
-
+                alertAndFinish();
             }
         });
 
@@ -97,7 +112,20 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Integer> call, Throwable throwable) {
+                alertAndFinish();
+            }
+        });
 
+        //总帖数
+        TangyuanApplication.getApi().getPostCountOfCategory(categoryId).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                textTotalPosts.setText(getString(R.string.total_post_count) + response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable throwable) {
+                alertAndFinish();
             }
         });
 
@@ -106,6 +134,7 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 if (response.code() == 200 && response.body() != null) {
+                    runOnUiThread(() -> pgBar.setVisibility(View.GONE));
                     List<PostMetadata> metadatas = response.body();
                     new Thread(() -> {
                         List<PostInfo> infos = new ArrayList<>();
@@ -115,7 +144,7 @@ public class CategoryActivity extends AppCompatActivity {
                             infos.add(pi);
                             //进度条
                             runOnUiThread(() ->
-                                    pgBarPostLoad.setProgress((int) Math.floor(100 / metadatas.size()) * infos.size(), true));
+                                    pgBarPostLoad.setProgress((int) Math.floor(1000 / metadatas.size()) * infos.size(), true));
                         }
                         if (!infos.isEmpty()) {
                             runOnUiThread(() -> {
@@ -129,8 +158,16 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-
+                alertAndFinish();
             }
         });
+    }
+
+    private void alertAndFinish() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.network_error)
+                .setMessage(R.string.failed_to_load_category)
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> runOnUiThread(this::finish))
+                .create().show();
     }
 }

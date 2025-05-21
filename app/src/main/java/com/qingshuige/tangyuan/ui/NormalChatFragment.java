@@ -43,6 +43,7 @@ public class NormalChatFragment extends Fragment {
         //RecyclerView
         recyclerView = (RecyclerView) root.findViewById(R.id.normalchat_recyclerview);
         PostCardAdapter adapter = new PostCardAdapter();
+        adapter.setSectionVisible(false);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager rcvLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rcvLayoutManager);
