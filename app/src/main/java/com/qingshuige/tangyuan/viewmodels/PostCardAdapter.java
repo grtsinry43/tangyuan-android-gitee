@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+//TODO: 增加Jetpack Paging 3支持
 public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHolder> {
 
     private List<PostInfo> postInfoList;

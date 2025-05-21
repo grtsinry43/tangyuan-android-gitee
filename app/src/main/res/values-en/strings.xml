@@ -87,4 +87,6 @@
     <string name="failed_to_fetch_categories">Failed to get categories.</string>
     <string name="waiting_for_loading_categories">Waiting to load categories...</string>
     <string name="sending_post_no_category">No category selected, sure you want to send it?</string>
+    <string name="category">领域</string>
+    <string name="_24hpost">24小时新帖数</string>
 </resources>

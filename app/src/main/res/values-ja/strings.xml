@@ -87,4 +87,6 @@
     <string name="failed_to_fetch_categories">カテゴリの取得に失敗しました。</string>
     <string name="waiting_for_loading_categories">カテゴリーの読み込み待ち...</string>
     <string name="sending_post_no_category">カテゴリーが選択されていませんが、送信しますか？</string>
+    <string name="category">领域</string>
+    <string name="_24hpost">24小时新帖数</string>
 </resources>

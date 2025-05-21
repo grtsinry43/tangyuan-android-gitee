@@ -1,7 +1,5 @@
 package com.qingshuige.tangyuan.network;
 
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
-
 
 import com.google.gson.*;
 
@@ -98,6 +96,16 @@ public interface ApiInterface {
 
     @GET("category/weeklynewcount/{id}")
     Call<Integer> getWeeklyNewPostCountOfCategory(@Path("id") int id);
+
+    @GET("post/metadata/category/{categoryId}")
+    Call<List<PostMetadata>> getAllMetadatasByCategoryId(@Path("categoryId") int categoryId);
+
+    @GET("post/count/category/24h/{categoryId}")
+    Call<Integer> get24hNewPostCountByCategoryId(@Path("categoryId") int categoryId);
+
+    @GET("post/count/category/7d/{categoryId}")
+    Call<Integer> get7dNewPostCountByCategoryId(@Path("categoryId") int categoryId);
+
 
     /////以下为非后端方法
 
