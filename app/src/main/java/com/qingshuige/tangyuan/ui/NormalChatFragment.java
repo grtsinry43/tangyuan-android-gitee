@@ -53,7 +53,7 @@ public class NormalChatFragment extends Fragment {
                 getActivity().getColor(R.color.nanohanacha_gold));
 
         //RecyclerView
-        recyclerView = (RecyclerView) root.findViewById(R.id.normalchat_recyclerview);
+        recyclerView = root.findViewById(R.id.normalchat_recyclerview);
         PostCardAdapter adapter = new PostCardAdapter();
         adapter.setSectionVisible(false);
         recyclerView.setAdapter(adapter);
@@ -69,7 +69,6 @@ public class NormalChatFragment extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         ///首次更新
-        swp.setRefreshing(true);
         updateRecyclerView(10);
 
         return root;
@@ -81,6 +80,7 @@ public class NormalChatFragment extends Fragment {
      * @throws IOException
      */
     private void updateRecyclerView(int expectedCount) {
+        swp.setRefreshing(true);
         new Thread(() -> {
             try {
                 List<PostMetadata> metadatas = TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).execute().body();
