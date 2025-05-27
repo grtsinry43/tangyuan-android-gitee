@@ -151,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                intent.putExtra("keyword", query);
+                startActivity(intent);
                 return false;
             }
 

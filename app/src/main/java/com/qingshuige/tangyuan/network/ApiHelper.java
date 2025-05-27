@@ -2,14 +2,17 @@ package com.qingshuige.tangyuan.network;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
 
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
+import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +67,23 @@ public class ApiHelper {
             Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
             return null;
         }
+    }
+
+    //TODO: 这个方法不快，把它改成多线程的
+    public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
+        new Thread(() -> {
+            List<PostInfo> infos = new ArrayList<>();
+            //对于每一条帖子……
+            for (PostMetadata m : metadata) {
+                PostInfo pi = getPostInfoById(m.postId);
+                if (pi != null) {
+                    infos.add(pi);
+                }
+            }
+            if (!infos.isEmpty()) {
+                callback.onComplete(infos);
+            }
+        }).start();
     }
 
     public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {

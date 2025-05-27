@@ -100,4 +100,6 @@
     <string name="failed_to_load_category">无法加载领域。</string>
     <string name="search">搜索</string>
     <string name="please_enter_keyword">请输入关键字……</string>
+    <string name="post">帖子</string>
+    <string name="no_post_result">帖子无结果</string>
 </resources>
