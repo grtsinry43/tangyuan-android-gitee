@@ -2,6 +2,8 @@ package com.qingshuige.tangyuan.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
@@ -20,8 +23,10 @@ import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.databinding.FragmentNormalchatBinding;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostMetadata;
+import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,12 +38,19 @@ public class NormalChatFragment extends Fragment {
     private FragmentNormalchatBinding binding;
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swp;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentNormalchatBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        //swp
+        swp = root.findViewById(R.id.swpNormalChat);
+        swp.setOnRefreshListener(() -> updateRecyclerView(10));
+        swp.setColorSchemeColors(getActivity().getColor(R.color.mazarine_blue),
+                getActivity().getColor(R.color.nanohanacha_gold));
 
         //RecyclerView
         recyclerView = (RecyclerView) root.findViewById(R.id.normalchat_recyclerview);
@@ -47,22 +59,6 @@ public class NormalChatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         LinearLayoutManager rcvLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rcvLayoutManager);
-        ///监听器
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                int lastVisibleItem = rcvLayoutManager.findLastVisibleItemPosition();
-                int totalItemCount = rcvLayoutManager.getItemCount();
-
-                // 滑动到底部
-                if (dy > 0 && lastVisibleItem == totalItemCount - 1) {
-                    // 用户滑动到列表底部
-                    updateRecyclerView(5);
-                }
-            }
-        });
         adapter.setOnItemClickListener(postId -> {
             Intent intent = new Intent(getActivity(), PostActivity.class);
             intent.putExtra("postId", postId);
@@ -71,7 +67,9 @@ public class NormalChatFragment extends Fragment {
         ///装饰线
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), rcvLayoutManager.getOrientation());
         recyclerView.addItemDecoration(divider);
+
         ///首次更新
+        swp.setRefreshing(true);
         updateRecyclerView(10);
 
         return root;
@@ -83,6 +81,31 @@ public class NormalChatFragment extends Fragment {
      * @throws IOException
      */
     private void updateRecyclerView(int expectedCount) {
+        new Thread(() -> {
+            try {
+                List<PostMetadata> metadatas = TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).execute().body();
+                if (metadatas != null) {
+                    List<PostInfo> pis = new ArrayList<>();
+                    for (PostMetadata m : metadatas) {
+                        if (m.sectionId == 1) {
+                            PostInfo pi = ApiHelper.getPostInfoById(m.postId);
+                            if (pi != null) {
+                                pis.add(pi);
+                            }
+                        }
+                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(pis);
+                        recyclerView.scrollToPosition(0);
+                        swp.setRefreshing(false);
+                    });
+                }
+            } catch (IOException e) {
+                swp.setRefreshing(false);
+            }
+        }).start();
+
+        /*老代码
         TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
@@ -93,13 +116,17 @@ public class NormalChatFragment extends Fragment {
                         if (m.sectionId == 1) {
                             ApiHelper.getPostInfoByIdAsync(m.postId, result -> {
                                 if (result != null) {
-                                    getActivity().runOnUiThread(() ->
-                                            ((PostCardAdapter) recyclerView.getAdapter()).appendData(result));
+                                    getActivity().runOnUiThread(() -> {
+                                        ((PostCardAdapter) recyclerView.getAdapter()).prependData(result);
+                                    });
                                 }
                             });
                         }
                     }
                 }
+                swp.setRefreshing(false);
+
+
             }
 
             @Override
@@ -107,6 +134,7 @@ public class NormalChatFragment extends Fragment {
                 Log.i("TY", "Error: " + throwable.toString());
             }
         });
+         */
     }
 
     @Override

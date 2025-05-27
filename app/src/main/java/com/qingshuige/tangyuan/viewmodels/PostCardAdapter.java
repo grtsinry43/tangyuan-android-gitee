@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-//TODO: 增加Jetpack Paging 3支持
 public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHolder> {
 
     private List<PostInfo> postInfoList;
@@ -145,6 +144,24 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         postInfoList.add(data);
         notifyItemInserted(postInfoList.size() - 1);
         return true;
+    }
+
+    //TODO: 这几个要关注一下线程锁问题
+    public boolean prependData(PostInfo data) {
+        for (PostInfo i : postInfoList) {
+            if (i.getPostId() == data.getPostId()) {
+                return false;
+            }
+        }
+        postInfoList.add(0, data);
+        notifyItemInserted(0);
+        return true;
+    }
+
+    public void prependDataset(List<PostInfo> dataset) {
+        for (PostInfo i : dataset) {
+            prependData(i);
+        }
     }
 
     public boolean appendDataAndSortDesc(PostInfo data) {
