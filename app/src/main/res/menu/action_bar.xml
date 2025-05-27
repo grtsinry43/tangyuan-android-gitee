@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/menuSearch"
+        android:title="@string/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menuNotice"
         android:icon="@drawable/icon_notice"
         android:title="@string/notice"
@@ -11,6 +16,6 @@
         android:icon="@drawable/icon_add"
         android:iconTint="?android:attr/textColor"
         android:title="@string/new_post"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>

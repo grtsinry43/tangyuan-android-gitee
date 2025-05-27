@@ -91,4 +91,6 @@
     <string name="_24hpost">24小时新帖数</string>
     <string name="total_post_count">总帖数：</string>
     <string name="failed_to_load_category">无法加载领域。</string>
+    <string name="search">搜索</string>
+    <string name="please_enter_keyword">请输入关键字……</string>
 </resources>

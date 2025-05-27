@@ -106,6 +106,8 @@ public interface ApiInterface {
     @GET("post/count/category/7d/{categoryId}")
     Call<Integer> get7dNewPostCountByCategoryId(@Path("categoryId") int categoryId);
 
+    @GET("search/post/{keyword}")
+    Call<List<PostMetadata>> searchPostByKeyword(@Path("keyword") String keyword);
 
     /////以下为非后端方法
 
