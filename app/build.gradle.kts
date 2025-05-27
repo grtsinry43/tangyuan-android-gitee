@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.ucrop)
     implementation(libs.logging.interceptor)
     implementation(libs.photoview)
+    implementation(libs.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

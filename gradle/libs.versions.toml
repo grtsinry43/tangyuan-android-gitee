@@ -24,6 +24,7 @@ luban = "1.1.8"
 ucrop = "2.2.8"
 loggingInterceptor = "5.0.0-alpha.14"
 photoview = "2.0.0"
+swiperefreshlayout = "1.1.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -56,6 +57,7 @@ luban = { group = "top.zibin", name = "Luban", version.ref = "luban" }
 ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 photoview = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoview" }
+swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
