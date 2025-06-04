@@ -76,11 +76,16 @@ public interface ApiInterface {
     @POST("auth/login")
     Call<Map<String, String>> login(@Body LoginDto loginDto);
 
+    @Deprecated
     @GET("notification/user/{userId}")
     Call<List<Notification>> getAllUnreadNotificationsOf(@Path("userId") int userId);
 
+    @Deprecated
     @GET("notification/mark/{notificationId}")
     Call<ResponseBody> markNotificationAsRead(@Path("notificationId") int notificationId);
+
+    @GET("newnotification/{userId}")
+    Call<List<NewNotification>> getAllNotificationsByUserId(@Path("userId") int userId);
 
     @POST("comment")
     Call<Map<String, String>> postComment(@Body CreateCommentDto dto);
