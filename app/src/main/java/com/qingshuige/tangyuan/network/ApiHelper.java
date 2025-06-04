@@ -1,20 +1,24 @@
 package com.qingshuige.tangyuan.network;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.View;
 
+import com.qingshuige.tangyuan.R;
 import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
-import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -86,6 +90,89 @@ public class ApiHelper {
         }).start();
     }
 
+    public static void getNotificationInfoFastAsync(List<NewNotification> notifications, Context context, ApiCallback<List<NotificationInfo>> callback) {
+        new Thread(() -> {
+            int threadCount = 5;//默认5线程
+            CountDownLatch latch = new CountDownLatch(threadCount);
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+            List<NotificationInfo> finalList = Collections.synchronizedList(new ArrayList<>());
+
+            List<List<NewNotification>> lists = new ArrayList<>();
+            for (int i = 0; i < threadCount; i++) {
+                lists.add(new ArrayList<>());
+            }
+
+            //分派任务
+            for (int i = 0; i < notifications.size(); i++) {
+                lists.get(i % threadCount).add(notifications.get(i));
+            }
+
+            AtomicBoolean hasException = new AtomicBoolean(false);
+
+            //开始执行每个列表的异步任务
+            for (List<NewNotification> l : lists) {
+                executor.submit(() -> {
+                    try {
+                        for (NewNotification n : l) {
+                            NotificationInfo info = constructNotificationInfo(n, context); //注意到这个方法是同步的
+                            finalList.add(info);
+                        }
+                    } catch (Exception e) {
+                        hasException.set(true);
+                        latch.countDown();
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                hasException.set(true);
+            }
+
+            //判断是否出错，如果出错就报错
+            if (hasException.get()) {
+                callback.onComplete(null);
+            } else {
+                callback.onComplete(finalList);
+            }
+        }).start();
+    }
+
+    private static NotificationInfo constructNotificationInfo(NewNotification n, Context context) {
+        try {
+            switch (n.type) {
+                case "comment":
+                    //断言sourceType是comment，所以直接调用获取评论的API
+                    Comment c = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
+                    User u = TangyuanApplication.getApi().getUser(c.userId).execute().body();
+                    return new NotificationInfo(n,
+                            u.nickName + context.getString(R.string.commented_your_post),
+                            c.content,
+                            u.avatarGuid);
+                case "reply":
+                    //断言sourceType是comment，所以直接调用获取评论的API
+                    Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
+                    User uu = TangyuanApplication.getApi().getUser(cc.userId).execute().body();
+                    return new NotificationInfo(n,
+                            uu.nickName + context.getString(R.string.replied_your_comment),
+                            cc.content,
+                            uu.avatarGuid);
+                case "mention":
+                    return null;
+                case "notice":
+                    return null;
+                default:
+                    return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
         api.getComment(commentId).enqueue(new Callback<Comment>() {
             @Override
@@ -125,47 +212,6 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<Comment> call, Throwable throwable) {
 
-            }
-        });
-    }
-
-    public static void getNotificationInfoAsync(Notification n, ApiCallback<NotificationInfo> callback) {
-        api.getUser(n.sourceUserId).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.code() == 200) {
-                    User sourceUser = response.body();
-                    api.getComment(n.sourceCommentId).enqueue(new Callback<Comment>() {
-                        @Override
-                        public void onResponse(Call<Comment> call, Response<Comment> response) {
-                            if (response.code() == 200) {
-                                Comment sourceComment = response.body();
-
-                                NotificationInfo info = new NotificationInfo(
-                                        n.notificationDateTime,
-                                        n.notificationId,
-                                        sourceComment.content,
-                                        sourceUser.avatarGuid,
-                                        sourceUser.nickName,
-                                        sourceComment.commentId,
-                                        n.targetCommentId,
-                                        n.targetPostId
-                                );
-                                callback.onComplete(info);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<Comment> call, Throwable throwable) {
-                            callback.onComplete(null);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable throwable) {
-                callback.onComplete(null);
             }
         });
     }

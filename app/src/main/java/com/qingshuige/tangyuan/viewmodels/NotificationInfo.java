@@ -1,57 +1,35 @@
 package com.qingshuige.tangyuan.viewmodels;
 
+import com.qingshuige.tangyuan.network.NewNotification;
+
 import java.util.Date;
 
 public class NotificationInfo {
-    private int notificationId;
-    private String sourceUserAvatarGuid;
-    private String sourceUserNickname;
-    private String sourceCommentContent;
-    private int sourceCommentId;
-    private int targetPostId;
-    private int targetCommentId;
-    private Date dateTime;
+    private NewNotification notification;
+    private String title;
+    private String message;
+    private String avatarGuid;
 
-    public NotificationInfo(Date dateTime, int notificationId, String sourceCommentContent, String sourceUserAvatarGuid, String sourceUserNickname, int sourceCommentId, int targetCommentId, int targetPostId) {
-        this.dateTime = dateTime;
-        this.notificationId = notificationId;
-        this.sourceCommentContent = sourceCommentContent;
-        this.sourceUserAvatarGuid = sourceUserAvatarGuid;
-        this.sourceUserNickname = sourceUserNickname;
-        this.sourceCommentId = sourceCommentId;
-        this.targetCommentId = targetCommentId;
-        this.targetPostId = targetPostId;
+    public NotificationInfo(NewNotification notification, String title, String message, String avatarGuid) {
+        this.notification = notification;
+        this.title = title;
+        this.message = message;
+        this.avatarGuid = avatarGuid;
     }
 
-    public Date getDateTime() {
-        return dateTime;
+    public String getMessage() {
+        return message;
     }
 
-    public int getNotificationId() {
-        return notificationId;
+    public NewNotification getNotification() {
+        return notification;
     }
 
-    public String getSourceCommentContent() {
-        return sourceCommentContent;
+    public String getAvatarGuid() {
+        return avatarGuid;
     }
 
-    public String getSourceUserAvatarGuid() {
-        return sourceUserAvatarGuid;
-    }
-
-    public String getSourceUserNickname() {
-        return sourceUserNickname;
-    }
-
-    public int getTargetCommentId() {
-        return targetCommentId;
-    }
-
-    public int getTargetPostId() {
-        return targetPostId;
-    }
-
-    public int getSourceCommentId() {
-        return sourceCommentId;
+    public String getTitle() {
+        return title;
     }
 }

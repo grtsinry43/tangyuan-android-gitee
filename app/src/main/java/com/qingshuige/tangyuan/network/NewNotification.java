@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class NewNotification {
     public int notificationId;
-    public String Type;
+    public String type;
     public int targetUserId;
     public int sourceId;
     public String sourceType;

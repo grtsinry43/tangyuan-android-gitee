@@ -24,6 +24,7 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
 
     List<NotificationInfo> messages;
 
+
     private ItemActionListener onItemClickListener;
 
     public NotificationCardAdapter() {
@@ -43,20 +44,16 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
 
         //Avatar
         Picasso.get()
-                .load(ApiHelper.getFullImageURL(info.getSourceUserAvatarGuid()))
+                .load(ApiHelper.getFullImageURL(info.getAvatarGuid()))
                 .resize(200, 0)
                 .centerCrop()
                 .into(holder.getImgAvatar());
         //Title
-        if (info.getTargetCommentId() != 0) {//针对评论评论
-            holder.getTextTitle().setText(info.getSourceUserNickname() + holder.getContext().getString(R.string.replied_your_comment));
-        } else {
-            holder.getTextTitle().setText(info.getSourceUserNickname() + holder.getContext().getString(R.string.commented_your_post));
-        }
+        holder.getTextTitle().setText(info.getTitle());
         //Message
-        holder.getTextMessage().setText(info.getSourceCommentContent());
+        holder.getTextMessage().setText(info.getMessage());
         //DateTime
-        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getDateTime(), holder.getContext()));
+        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getNotification().createDate, holder.getContext()));
         //MainLayout
         holder.getMainLayout().setOnClickListener(view -> {
             if (onItemClickListener != null) {
@@ -70,9 +67,8 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         return messages.size();
     }
 
-    public void appendAndSortDesc(NotificationInfo message) {
-        messages.add(message);
-        messages.sort((notificationInfo, t1) -> t1.getDateTime().compareTo(notificationInfo.getDateTime()));
+    public void setDataset(List<NotificationInfo> dataset) {
+        messages = dataset;
         notifyDataSetChanged();
     }
 
@@ -81,7 +77,7 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
     }
 
     public interface ItemActionListener {
-        public void onItemAction(NotificationInfo info);
+        void onItemAction(NotificationInfo info);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
