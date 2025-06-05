@@ -3,17 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menuSearch"
+        android:iconTint="?android:attr/textColor"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menuNotice"
-        android:icon="@drawable/icon_notice"
+        android:icon="@android:drawable/ic_menu_compass"
+        android:iconTint="?android:attr/textColor"
         android:title="@string/notice"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/new_post_button"
-        android:icon="@drawable/icon_add"
+        android:icon="@android:drawable/ic_menu_add"
         android:iconTint="?android:attr/textColor"
         android:title="@string/new_post"
         app:showAsAction="ifRoom" />
