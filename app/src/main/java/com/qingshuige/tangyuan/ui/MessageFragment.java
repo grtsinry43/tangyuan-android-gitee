@@ -3,6 +3,7 @@ package com.qingshuige.tangyuan.ui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -107,6 +108,25 @@ public class MessageFragment extends Fragment {
                 startActivity(intent);
                 break;
         }
+        TangyuanApplication.getApi().markNewNotificationAsRead(info.getNotification().notificationId).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() != 200) {
+                    new AlertDialog.Builder(getContext())
+                            .setMessage(R.string.cannot_mark_notification)
+                            .setTitle(R.string.network_error)
+                            .create().show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(R.string.cannot_mark_notification)
+                        .setTitle(R.string.network_error)
+                        .create().show();
+            }
+        });
 
     }
 }

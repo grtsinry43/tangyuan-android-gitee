@@ -103,4 +103,5 @@
     <string name="post">帖子</string>
     <string name="no_post_result">帖子无结果</string>
     <string name="reply">回复</string>
+    <string name="cannot_mark_notification">无法将这条通知标为已读。</string>
 </resources>
