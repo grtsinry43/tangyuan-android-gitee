@@ -38,6 +38,7 @@ public class NormalChatFragment extends Fragment {
     private FragmentNormalchatBinding binding;
 
     private RecyclerView recyclerView;
+    private PostCardAdapter adapter;
     private SwipeRefreshLayout swp;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -48,13 +49,13 @@ public class NormalChatFragment extends Fragment {
 
         //swp
         swp = root.findViewById(R.id.swpNormalChat);
-        swp.setOnRefreshListener(() -> updateRecyclerView(10));
+        swp.setOnRefreshListener(this::updateRecyclerView);
         swp.setColorSchemeColors(getActivity().getColor(R.color.mazarine_blue),
                 getActivity().getColor(R.color.nanohanacha_gold));
 
         //RecyclerView
         recyclerView = root.findViewById(R.id.normalchat_recyclerview);
-        PostCardAdapter adapter = new PostCardAdapter();
+        adapter = new PostCardAdapter();
         adapter.setSectionVisible(false);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager rcvLayoutManager = new LinearLayoutManager(getActivity());
@@ -69,29 +70,23 @@ public class NormalChatFragment extends Fragment {
         recyclerView.addItemDecoration(divider);
 
         ///首次更新
-        updateRecyclerView(10);
+        updateRecyclerView();
 
         return root;
     }
 
 
-    /**
-     * @param expectedCount 预期更新的帖子条数，不代表最终更新的条数。
-     * @throws IOException
-     */
-    private void updateRecyclerView(int expectedCount) {
+    private void updateRecyclerView() {
         swp.setRefreshing(true);
         new Thread(() -> {
             try {
-                List<PostMetadata> metadatas = TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).execute().body();
+                List<PostMetadata> metadatas = TangyuanApplication.getApi().phtPostMetadata(1, adapter.getAllPostIds()).execute().body();
                 if (metadatas != null) {
                     List<PostInfo> pis = new ArrayList<>();
                     for (PostMetadata m : metadatas) {
-                        if (m.sectionId == 1) {
-                            PostInfo pi = ApiHelper.getPostInfoById(m.postId);
-                            if (pi != null) {
-                                pis.add(pi);
-                            }
+                        PostInfo pi = ApiHelper.getPostInfoById(m.postId);
+                        if (pi != null) {
+                            pis.add(pi);
                         }
                     }
                     new Handler(Looper.getMainLooper()).post(() -> {

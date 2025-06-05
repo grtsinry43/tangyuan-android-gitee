@@ -36,8 +36,12 @@ public interface ApiInterface {
     @GET("post/metadata/user/{id}")
     Call<List<PostMetadata>> getMetadatasByUserID(@Path("id") int userId);
 
+    @Deprecated
     @GET("post/metadata/random/{count}")
     Call<List<PostMetadata>> getRandomPostMetadata(@Path("count") int count);
+
+    @POST("philotaxis/postmetadata/{sectionId}")
+    Call<List<PostMetadata>> phtPostMetadata(@Path("sectionId") int sectionId, @Body List<Integer> exceptedIds);
 
     @POST("post/metadata")
     Call<Map<String, Integer>> postPostMetadata(@Body CreatPostMetadataDto metadata);

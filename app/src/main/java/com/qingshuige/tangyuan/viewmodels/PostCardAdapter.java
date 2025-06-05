@@ -164,28 +164,18 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         }
     }
 
-    public boolean appendDataAndSortDesc(PostInfo data) {
-        for (PostInfo i : postInfoList) {
-            if (i.getPostId() == data.getPostId()) {
-                return false;
-            }
-        }
-        postInfoList.add(data);
-
-        postInfoList.sort(new Comparator<PostInfo>() {
-            @Override
-            public int compare(PostInfo postInfo, PostInfo t1) {
-                return t1.getPostDate().compareTo(postInfo.getPostDate());
-            }
-        });
-        notifyDataSetChanged();
-        return true;
-    }
-
     public boolean replaceDataSet(List<PostInfo> dataSet) {
         postInfoList = dataSet;
         notifyDataSetChanged();
         return true;
+    }
+
+    public List<Integer> getAllPostIds() {
+        List<Integer> ids = new ArrayList<>();
+        for (PostInfo p : postInfoList) {
+            ids.add(p.getPostId());
+        }
+        return ids;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
