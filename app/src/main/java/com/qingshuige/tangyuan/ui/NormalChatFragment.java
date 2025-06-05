@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -87,12 +88,24 @@ public class NormalChatFragment extends Fragment {
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(result);
                                 recyclerView.scrollToPosition(0);
-                                swp.setRefreshing(false);
+                            });
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
                             });
                         }
+                        swp.setRefreshing(false);
                     });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                    });
+                    swp.setRefreshing(false);
                 }
             } catch (IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                });
                 swp.setRefreshing(false);
             }
         }).start();
