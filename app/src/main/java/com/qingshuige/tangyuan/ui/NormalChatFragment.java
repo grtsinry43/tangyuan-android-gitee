@@ -82,17 +82,14 @@ public class NormalChatFragment extends Fragment {
             try {
                 List<PostMetadata> metadatas = TangyuanApplication.getApi().phtPostMetadata(1, adapter.getAllPostIds()).execute().body();
                 if (metadatas != null) {
-                    List<PostInfo> pis = new ArrayList<>();
-                    for (PostMetadata m : metadatas) {
-                        PostInfo pi = ApiHelper.getPostInfoById(m.postId);
-                        if (pi != null) {
-                            pis.add(pi);
+                    ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
+                        if (result != null) {
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(result);
+                                recyclerView.scrollToPosition(0);
+                                swp.setRefreshing(false);
+                            });
                         }
-                    }
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(pis);
-                        recyclerView.scrollToPosition(0);
-                        swp.setRefreshing(false);
                     });
                 }
             } catch (IOException e) {

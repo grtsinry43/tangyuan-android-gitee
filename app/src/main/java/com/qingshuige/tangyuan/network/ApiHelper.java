@@ -73,19 +73,54 @@ public class ApiHelper {
         }
     }
 
-    //TODO: 这个方法不快，把它改成多线程的
     public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
         new Thread(() -> {
-            List<PostInfo> infos = new ArrayList<>();
-            //对于每一条帖子……
-            for (PostMetadata m : metadata) {
-                PostInfo pi = getPostInfoById(m.postId);
-                if (pi != null) {
-                    infos.add(pi);
-                }
+            int threadCount = 5;//默认5线程
+            CountDownLatch latch = new CountDownLatch(threadCount);
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+            List<PostInfo> finalList = Collections.synchronizedList(new ArrayList<>());
+
+            List<List<PostMetadata>> lists = new ArrayList<>();
+            for (int i = 0; i < threadCount; i++) {
+                lists.add(new ArrayList<>());
             }
-            if (!infos.isEmpty()) {
-                callback.onComplete(infos);
+
+            //分派任务
+            for (int i = 0; i < metadata.size(); i++) {
+                lists.get(i % threadCount).add(metadata.get(i));
+            }
+
+            AtomicBoolean hasException = new AtomicBoolean(false);
+
+            //开始执行每个列表的异步任务
+            for (List<PostMetadata> l : lists) {
+                executor.submit(() -> {
+                    try {
+                        for (PostMetadata n : l) {
+                            PostInfo info = getPostInfoById(n.postId); //注意到这个方法是同步的
+                            finalList.add(info);
+                        }
+                    } catch (Exception e) {
+                        hasException.set(true);
+                        latch.countDown();
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                hasException.set(true);
+            }
+
+            //判断是否出错，如果出错就报错
+            if (hasException.get()) {
+                callback.onComplete(null);
+            } else {
+                callback.onComplete(finalList);
             }
         }).start();
     }
