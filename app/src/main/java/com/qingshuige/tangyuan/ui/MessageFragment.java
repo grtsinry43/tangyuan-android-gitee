@@ -98,20 +98,15 @@ public class MessageFragment extends Fragment {
     }
 
     private void handleItemClick(NotificationInfo info) {
-//        Intent intent = new Intent(getActivity(), PostActivity.class);
-//        intent.putExtra("postId", info.get);
-//        intent.putExtra("commentId", info.getSourceCommentId());
-//        startActivity(intent);
-//        TangyuanApplication.getApi().markNotificationAsRead(info.getNotificationId()).enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-//
-//            }
-//        });
+        switch (info.getNotification().type) {
+            case "comment":
+            case "reply":
+                Intent intent = new Intent(getActivity(), PostActivity.class);
+                intent.putExtra("postId", info.getRelatedPostId());
+                intent.putExtra("commentId", info.getNotification().sourceId);
+                startActivity(intent);
+                break;
+        }
+
     }
 }

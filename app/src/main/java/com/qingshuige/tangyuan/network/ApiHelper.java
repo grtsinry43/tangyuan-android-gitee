@@ -153,7 +153,9 @@ public class ApiHelper {
                             u.nickName,
                             context.getString(R.string.comment),
                             c.content,
-                            u.avatarGuid);
+                            u.avatarGuid,
+                            c.postId,
+                            u.userId);
                 case "reply":
                     //断言sourceType是comment，所以直接调用获取评论的API
                     Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
@@ -162,7 +164,9 @@ public class ApiHelper {
                             uu.nickName,
                             context.getString(R.string.reply),
                             cc.content,
-                            uu.avatarGuid);
+                            uu.avatarGuid,
+                            cc.postId,
+                            uu.userId);
                 case "mention":
                     return null;
                 case "notice":
