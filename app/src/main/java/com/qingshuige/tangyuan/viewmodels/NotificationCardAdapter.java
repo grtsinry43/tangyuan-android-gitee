@@ -50,6 +50,10 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
                 .into(holder.getImgAvatar());
         //Title
         holder.getTextTitle().setText(info.getTitle());
+        //Type
+        holder.getTextType().setText(info.getType());
+        //Indicator
+        holder.getIdcIsRead().setVisibility(info.getNotification().isRead ? View.GONE : View.VISIBLE);
         //Message
         holder.getTextMessage().setText(info.getMessage());
         //DateTime
@@ -87,6 +91,8 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         private TextView textMessage;
         private TextView textDateTime;
         private GridLayout mainLayout;
+        private View idcIsRead;
+        private TextView textType;
 
         private Context context;
 
@@ -98,6 +104,8 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
             textMessage = itemView.findViewById(R.id.textMessage);
             textDateTime = itemView.findViewById(R.id.textDateTime);
             mainLayout = itemView.findViewById(R.id.mainLayout);
+            idcIsRead = itemView.findViewById(R.id.idcIsRead);
+            textType = itemView.findViewById(R.id.textType);
 
             context = itemView.getContext();
         }
@@ -124,6 +132,14 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
 
         public GridLayout getMainLayout() {
             return mainLayout;
+        }
+
+        public View getIdcIsRead() {
+            return idcIsRead;
+        }
+
+        public TextView getTextType() {
+            return textType;
         }
     }
 }

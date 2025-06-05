@@ -7,12 +7,14 @@ import java.util.Date;
 public class NotificationInfo {
     private NewNotification notification;
     private String title;
+    private String type;
     private String message;
     private String avatarGuid;
 
-    public NotificationInfo(NewNotification notification, String title, String message, String avatarGuid) {
+    public NotificationInfo(NewNotification notification, String title, String type, String message, String avatarGuid) {
         this.notification = notification;
         this.title = title;
+        this.type = type;
         this.message = message;
         this.avatarGuid = avatarGuid;
     }
@@ -31,5 +33,9 @@ public class NotificationInfo {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getType() {
+        return type;
     }
 }

@@ -150,7 +150,8 @@ public class ApiHelper {
                     Comment c = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
                     User u = TangyuanApplication.getApi().getUser(c.userId).execute().body();
                     return new NotificationInfo(n,
-                            u.nickName + context.getString(R.string.commented_your_post),
+                            u.nickName,
+                            context.getString(R.string.comment),
                             c.content,
                             u.avatarGuid);
                 case "reply":
@@ -158,7 +159,8 @@ public class ApiHelper {
                     Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
                     User uu = TangyuanApplication.getApi().getUser(cc.userId).execute().body();
                     return new NotificationInfo(n,
-                            uu.nickName + context.getString(R.string.replied_your_comment),
+                            uu.nickName,
+                            context.getString(R.string.reply),
                             cc.content,
                             uu.avatarGuid);
                 case "mention":
