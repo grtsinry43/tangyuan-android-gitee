@@ -43,7 +43,7 @@ public class UserActivity extends AppCompatActivity {
     private TextView bioView;
     private Button regionButton;
     private Button mailButton;
-    private ProgressBar pgBarPostLoad;
+    private ProgressBar pgBar;
 
     private int userId;
     private TokenManager tm;
@@ -71,7 +71,7 @@ public class UserActivity extends AppCompatActivity {
         bioView = findViewById(R.id.bioTextView);
         regionButton = findViewById(R.id.regionButton);
         mailButton = findViewById(R.id.mailButton);
-        pgBarPostLoad = findViewById(R.id.pgBarPostLoad);
+        pgBar = findViewById(R.id.pgBar);
 
         userId = getIntent().getIntExtra("userId", 0);
         tm = TangyuanApplication.getTokenManager();
@@ -121,32 +121,23 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void updateRecyclerView(int userId) {
-        pgBarPostLoad.setVisibility(View.VISIBLE);
-        pgBarPostLoad.setProgress(0, true);
-
         TangyuanApplication.getApi().getMetadatasByUserID(userId).enqueue(new Callback<List<PostMetadata>>() {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 List<PostMetadata> metadatas = response.body();
-                new Thread(() -> {
-                    List<PostInfo> infos = new ArrayList<>();
-                    //对于每一条帖子……
-                    for (PostMetadata m : metadatas) {
-                        PostInfo pi = ApiHelper.getPostInfoById(m.postId);
-                        infos.add(pi);
-                        //进度条
-                        runOnUiThread(() ->
-                                pgBarPostLoad.setProgress((int) Math.floor(100 / metadatas.size()) * infos.size(), true));
-                    }
-                    if (!infos.isEmpty()) {
-                        //排序
-                        infos.sort((postInfo, t1) -> t1.getPostDate().compareTo(postInfo.getPostDate()));
+
+                ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
+                    if (result != null) {
+                        result.sort((postInfo, t1) -> t1.getPostDate().compareTo(postInfo.getPostDate()));
                         runOnUiThread(() -> {
-                            ((PostCardAdapter) postList.getAdapter()).replaceDataSet(infos);
-                            pgBarPostLoad.setVisibility(View.GONE);
+                            ((PostCardAdapter) postList.getAdapter()).replaceDataSet(result);
                         });
+                    } else {
+                        runOnUiThread(() ->
+                                Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
                     }
-                }).start();
+                    runOnUiThread(() -> pgBar.setVisibility(View.GONE));
+                });
             }
 
             @Override

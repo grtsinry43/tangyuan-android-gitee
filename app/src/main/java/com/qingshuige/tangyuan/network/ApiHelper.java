@@ -75,7 +75,7 @@ public class ApiHelper {
 
     public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
         new Thread(() -> {
-            int threadCount = 5;//默认5线程
+            int threadCount = 10;//默认10线程
             CountDownLatch latch = new CountDownLatch(threadCount);
             ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 

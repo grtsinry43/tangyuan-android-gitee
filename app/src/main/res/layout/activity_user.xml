@@ -37,6 +37,13 @@
             android:paddingTop="20dp"
             android:paddingEnd="20dp">
 
+            <ProgressBar
+                android:id="@+id/pgBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp" />
+
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -118,14 +125,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp" />
-
-            <ProgressBar
-                android:id="@+id/pgBarPostLoad"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:indeterminate="false" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/postList"
