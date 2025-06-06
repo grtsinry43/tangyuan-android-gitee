@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.qingshuige.tangyuan.network.Notification;
 import com.qingshuige.tangyuan.viewmodels.NotificationCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
 
+import java.util.Comparator;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -35,10 +37,10 @@ import retrofit2.Response;
 
 public class MessageFragment extends Fragment {
 
+    private SwipeRefreshLayout swpMessage;
     private RecyclerView recyclerView;
     private NotificationCardAdapter adapter;
 
-    private ProgressBar pgBar;
     private TextView textMessageStatus;
 
     private TokenManager tm;
@@ -48,8 +50,9 @@ public class MessageFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_message, container, false);
+
+        swpMessage = root.findViewById(R.id.swpMessage);
         recyclerView = root.findViewById(R.id.rcvMessage);
-        pgBar = root.findViewById(R.id.pgBar);
         textMessageStatus = root.findViewById(R.id.textMessageStatus);
 
         adapter = new NotificationCardAdapter();
@@ -60,6 +63,10 @@ public class MessageFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(decoration);
 
+        swpMessage.setOnRefreshListener(this::initializeUI);
+        swpMessage.setColorSchemeColors(getActivity().getColor(R.color.mazarine_blue),
+                getActivity().getColor(R.color.nanohanacha_gold));
+
         tm = TangyuanApplication.getTokenManager();
 
         initializeUI();
@@ -68,6 +75,8 @@ public class MessageFragment extends Fragment {
     }
 
     private void initializeUI() {
+        swpMessage.setRefreshing(true);
+
         if (tm.getToken() != null) {
             TangyuanApplication.getApi().getAllNotificationsByUserId(DataTools.decodeJwtTokenUserId(tm.getToken())).enqueue(new Callback<List<NewNotification>>() {
                 @Override
@@ -76,9 +85,11 @@ public class MessageFragment extends Fragment {
                         List<NewNotification> notifications = response.body();
                         ApiHelper.getNotificationInfoFastAsync(notifications, MessageFragment.this.getContext(), result -> {
                             if (result != null) {
+                                //排序
+                                result.sort((notificationInfo, t1) -> t1.getNotification().createDate.compareTo(notificationInfo.getNotification().createDate));
                                 getActivity().runOnUiThread(() -> {
                                     adapter.setDataset(result);
-                                    pgBar.setVisibility(View.GONE);
+                                    swpMessage.setRefreshing(false);
                                 });
                             }
                         });
@@ -91,8 +102,8 @@ public class MessageFragment extends Fragment {
                 }
             });
         } else {
-            pgBar.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.GONE);
+            swpMessage.setRefreshing(false);
+            swpMessage.setVisibility(View.GONE);
             textMessageStatus.setVisibility(View.VISIBLE);
             textMessageStatus.setText(R.string.unloggedin);
         }

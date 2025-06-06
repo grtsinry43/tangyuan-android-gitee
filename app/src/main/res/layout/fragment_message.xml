@@ -5,13 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/pgBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="20dp" />
-
     <TextView
         android:id="@+id/textMessageStatus"
         android:layout_width="wrap_content"
@@ -22,11 +15,20 @@
         android:textColor="?android:attr/textColorSecondary"
         android:visibility="gone" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:id="@+id/rcvMessage"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swpMessage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.MessageFragment" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbars="vertical"
+            tools:context=".ui.MessageFragment" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 </LinearLayout>
