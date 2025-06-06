@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.qingshuige.tangyuan.PostActivity;
 import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.R;
@@ -41,6 +42,7 @@ public class NormalChatFragment extends Fragment {
     private RecyclerView recyclerView;
     private PostCardAdapter adapter;
     private SwipeRefreshLayout swp;
+    private FloatingActionButton fab;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +55,10 @@ public class NormalChatFragment extends Fragment {
         swp.setOnRefreshListener(this::updateRecyclerView);
         swp.setColorSchemeColors(getActivity().getColor(R.color.mazarine_blue),
                 getActivity().getColor(R.color.nanohanacha_gold));
+
+        //fab
+        fab = root.findViewById(R.id.fabTop);
+        fab.setOnClickListener(view -> updateRecyclerView());
 
         //RecyclerView
         recyclerView = root.findViewById(R.id.normalchat_recyclerview);
@@ -69,6 +75,20 @@ public class NormalChatFragment extends Fragment {
         ///装饰线
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), rcvLayoutManager.getOrientation());
         recyclerView.addItemDecoration(divider);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int firstVisiblePosition = rcvLayoutManager.findFirstVisibleItemPosition();
+                if (firstVisiblePosition >= 5 && !swp.isRefreshing()) {
+                    fab.show();
+                } else {
+                    fab.hide();
+                }
+
+            }
+        });
 
         ///首次更新
         updateRecyclerView();
@@ -79,6 +99,8 @@ public class NormalChatFragment extends Fragment {
 
     private void updateRecyclerView() {
         swp.setRefreshing(true);
+        fab.hide();
+
         new Thread(() -> {
             try {
                 List<PostMetadata> metadatas = TangyuanApplication.getApi().phtPostMetadata(1, adapter.getAllPostIds()).execute().body();

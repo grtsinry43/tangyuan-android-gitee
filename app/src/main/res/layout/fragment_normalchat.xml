@@ -28,7 +28,7 @@
             android:layout_margin="40dp"
             android:backgroundTint="@color/nanohanacha_gold"
             android:contentDescription="@string/top"
-            android:src="@android:drawable/ic_menu_upload"
+            android:src="@drawable/ic_refresh"
             android:tint="@color/lynx_white" />
     </RelativeLayout>
 
