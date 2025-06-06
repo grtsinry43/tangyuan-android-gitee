@@ -115,6 +115,7 @@ public class MessageFragment extends Fragment {
                     new AlertDialog.Builder(getContext())
                             .setMessage(R.string.cannot_mark_notification)
                             .setTitle(R.string.network_error)
+                            .setPositiveButton(R.string.ok, null)
                             .create().show();
                 }
             }

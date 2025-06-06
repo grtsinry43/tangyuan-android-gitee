@@ -91,7 +91,7 @@ public interface ApiInterface {
     @GET("newnotification/{userId}")
     Call<List<NewNotification>> getAllNotificationsByUserId(@Path("userId") int userId);
 
-    @GET("newnotification/{id}")
+    @GET("newnotification/markasread/{id}")
     Call<ResponseBody> markNewNotificationAsRead(@Path("id") int id);
 
     @POST("comment")
