@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.R;
+import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.squareup.picasso.Picasso;
@@ -47,6 +48,7 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
                 .load(ApiHelper.getFullImageURL(info.getAvatarGuid()))
                 .resize(200, 0)
                 .centerCrop()
+                .transform(new CircleTransform())
                 .into(holder.getImgAvatar());
         //Title
         holder.getTextTitle().setText(info.getTitle());
