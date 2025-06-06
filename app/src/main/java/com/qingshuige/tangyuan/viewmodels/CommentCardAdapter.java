@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 import com.qingshuige.tangyuan.R;
+import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
@@ -60,6 +61,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
                 .resize(200, 0)
                 .centerCrop()
                 .placeholder(R.drawable.img_placeholder)
+                .transform(new CircleTransform())
                 .into(holder.getAvatar());
         if (onAvatarClickListener != null) {
             holder.getAvatar().setOnClickListener(view -> onAvatarClickListener.onAction(info));

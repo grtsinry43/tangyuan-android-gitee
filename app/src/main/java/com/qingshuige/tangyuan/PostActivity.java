@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.Comment;
@@ -236,6 +237,7 @@ public class PostActivity extends AppCompatActivity {
         pgBar.setVisibility(View.GONE);
         Picasso.get()
                 .load(ApiHelper.getFullImageURL(postInfo.getUserAvatarGUID()))
+                .transform(new CircleTransform())
                 .into(((ImageView) findViewById(R.id.avatarView)));
         ((TextView) findViewById(R.id.nicknameView)).setText(postInfo.getUserNickname());
         //Section

@@ -98,4 +98,5 @@
     <string name="reply">回复</string>
     <string name="cannot_mark_notification">无法将这条通知标为已读。</string>
     <string name="top">回顶</string>
+    <string name="user">用户</string>
 </resources>

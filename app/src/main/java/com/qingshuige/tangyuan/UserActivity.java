@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostMetadata;
@@ -104,7 +105,10 @@ public class UserActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 User user = response.body();
                 runOnUiThread(() -> {
-                    Picasso.get().load(ApiHelper.getFullImageURL(user.avatarGuid)).into(avatarView);
+                    Picasso.get()
+                            .load(ApiHelper.getFullImageURL(user.avatarGuid))
+                            .transform(new CircleTransform())
+                            .into(avatarView);
                     nicknameView.setText(user.nickName);
                     bioView.setText(user.bio);
                     regionButton.setText(user.isoRegionName);

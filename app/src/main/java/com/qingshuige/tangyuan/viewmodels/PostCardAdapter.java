@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.R;
+import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.squareup.picasso.Picasso;
@@ -45,6 +46,7 @@ public class PostCardAdapter extends RecyclerView.Adapter<PostCardAdapter.ViewHo
         holder.getNicknameView().setText(p.getUserNickname());
         Picasso.get()
                 .load(ApiHelper.getFullImageURL(p.getUserAvatarGUID()))
+                .transform(new CircleTransform())
                 .into(holder.getAvatarView());
         holder.getPostPreviewView().setText(p.getTextContent());
         switch (p.getSectionId()) {

@@ -22,6 +22,7 @@ import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,11 +33,14 @@ public class SearchActivity extends AppCompatActivity {
     private String keyword;
 
     private Toolbar toolbar;
-    private RecyclerView rcvPost;
     private ProgressBar pgBar;
-    private TextView textPostSearchTitle;
 
+    private RecyclerView rcvPost;
+    private TextView textPostSearchTitle;
     private PostCardAdapter postAdapter;
+
+    private RecyclerView rcvUser;
+    private TextView textUserSearchTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class SearchActivity extends AppCompatActivity {
         rcvPost = findViewById(R.id.rcvPost);
         pgBar = findViewById(R.id.pgBar);
         textPostSearchTitle = findViewById(R.id.textPostSearchTitle);
+        rcvUser = findViewById(R.id.rcvUser);
+        textUserSearchTitle = findViewById(R.id.textUserSearchTitle);
 
         toolbar.setTitle(getString(R.string.search) + ": " + keyword);
 
@@ -74,30 +80,40 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
-        //帖子搜索结果
-        TangyuanApplication.getApi().searchPostByKeyword(keyword).enqueue(new Callback<List<PostMetadata>>() {
-            @Override
-            public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                if (response.code() == 200 && response.body() != null) {
-                    runOnUiThread(() -> textPostSearchTitle.setText(textPostSearchTitle.getText() + ": " + response.body().size()));
-                    ApiHelper.getPostInfoByMetadataFastAsync(response.body(), result ->
-                            runOnUiThread(() -> {
-                                postAdapter.replaceDataSet(result);
-                                pgBar.setVisibility(View.GONE);
-                            }));
-                } else {
+        new Thread(() -> {
+            CountDownLatch latch = new CountDownLatch(3);
+
+            //帖子搜索结果
+            TangyuanApplication.getApi().searchPostByKeyword(keyword).enqueue(new Callback<List<PostMetadata>>() {
+                @Override
+                public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
+                    if (response.code() == 200 && response.body() != null) {
+                        runOnUiThread(() -> textPostSearchTitle.setText(textPostSearchTitle.getText() + ": " + response.body().size()));
+                        ApiHelper.getPostInfoByMetadataFastAsync(response.body(), result -> {
+                            if (result != null) {
+                                runOnUiThread(() -> {
+                                    postAdapter.replaceDataSet(result);
+                                });
+                            }
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            textPostSearchTitle.setText(R.string.no_post_result);
+                        });
+                    }
+                    latch.countDown();
+                }
+
+                @Override
+                public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
                     runOnUiThread(() -> {
-                        pgBar.setVisibility(View.GONE);
-                        textPostSearchTitle.setText(R.string.no_post_result);
+                        textPostSearchTitle.setText(textPostSearchTitle.getText() + ": " + getString(R.string.network_error));
                     });
                 }
-            }
+            });
 
-            @Override
-            public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-
-            }
-        });
+            //用户搜索结果
+        }).start();
     }
 
     private void startPostActivity(int postId) {
