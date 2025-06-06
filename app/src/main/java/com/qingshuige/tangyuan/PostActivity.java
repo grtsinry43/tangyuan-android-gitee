@@ -60,6 +60,8 @@ import retrofit2.Response;
 
 public class PostActivity extends AppCompatActivity {
 
+    CommentCardAdapter commentAdapter;
+    TokenManager tm;
     private PostInfo postInfo;
     private int postId;
     private RecyclerView gallery;
@@ -69,13 +71,8 @@ public class PostActivity extends AppCompatActivity {
     private EditText editComment;
     private Button buttonSendComment;
     private TextView textCommentCounter;
-
     private BottomSheetDialog replyDialog;
     private Menu menu;
-
-    CommentCardAdapter commentAdapter;
-    TokenManager tm;
-
     private int flagScrollToCommmentId;
 
     @Override

@@ -18,8 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.network.ApiHelper;
 import com.qingshuige.tangyuan.network.PostMetadata;
+import com.qingshuige.tangyuan.network.User;
 import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
+import com.qingshuige.tangyuan.viewmodels.UserCardAdapter;
+import com.qingshuige.tangyuan.viewmodels.UserInfo;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -41,6 +44,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private RecyclerView rcvUser;
     private TextView textUserSearchTitle;
+    private UserCardAdapter userAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +72,20 @@ public class SearchActivity extends AppCompatActivity {
 
         toolbar.setTitle(getString(R.string.search) + ": " + keyword);
 
+        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+
+        //Post
         postAdapter = new PostCardAdapter();
         postAdapter.setOnItemClickListener(this::startPostActivity);
-        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rcvPost.setAdapter(postAdapter);
         rcvPost.addItemDecoration(div);
         rcvPost.setLayoutManager(new LinearLayoutManager(this));
+
+        //User
+        userAdapter = new UserCardAdapter(this);
+        rcvUser.setAdapter(userAdapter);
+        rcvUser.setLayoutManager(new LinearLayoutManager(this));
+        rcvUser.addItemDecoration(div);
 
         initializeUI();
 
@@ -81,7 +93,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void initializeUI() {
         new Thread(() -> {
-            CountDownLatch latch = new CountDownLatch(3);
+            CountDownLatch latch = new CountDownLatch(2);
 
             //帖子搜索结果
             TangyuanApplication.getApi().searchPostByKeyword(keyword).enqueue(new Callback<List<PostMetadata>>() {
@@ -113,7 +125,49 @@ public class SearchActivity extends AppCompatActivity {
             });
 
             //用户搜索结果
+            TangyuanApplication.getApi().searchUserByKeyword(keyword).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    if (response.code() == 200 && response.body() != null) {
+                        List<User> users = response.body();
+                        runOnUiThread(() -> textUserSearchTitle.setText(textUserSearchTitle.getText() + ": " + response.body().size()));
+                        ApiHelper.getInfoFastAsync(users, new ApiHelper.UserInfoConstructor(), result -> {
+                            if (result != null) {
+                                runOnUiThread(() -> {
+                                    userAdapter.replaceDataset(result);
+                                });
+                            }
+
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            textUserSearchTitle.setText(R.string.no_user_result);
+                        });
+                    }
+                    latch.countDown();
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable throwable) {
+
+                }
+            });
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            runOnUiThread(() -> pgBar.setVisibility(View.GONE));
+
         }).start();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private void startPostActivity(int postId) {

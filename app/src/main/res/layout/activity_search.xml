@@ -54,7 +54,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvPost"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:overScrollMode="never" />
 
             <TextView
                 android:id="@+id/textUserSearchTitle"
@@ -69,7 +70,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvUser"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:overScrollMode="never" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

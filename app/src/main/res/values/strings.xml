@@ -106,4 +106,7 @@
     <string name="cannot_mark_notification">无法将这条通知标为已读。</string>
     <string name="top">回顶</string>
     <string name="user">用户</string>
+    <string name="follow">关注</string>
+    <string name="followed">已关注</string>
+    <string name="no_user_result">用户无结果</string>
 </resources>

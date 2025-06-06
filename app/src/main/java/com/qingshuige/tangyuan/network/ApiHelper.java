@@ -2,7 +2,6 @@ package com.qingshuige.tangyuan.network;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.util.Log;
 
 import com.qingshuige.tangyuan.R;
@@ -10,6 +9,7 @@ import com.qingshuige.tangyuan.TangyuanApplication;
 import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
+import com.qingshuige.tangyuan.viewmodels.UserInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -72,6 +72,73 @@ public class ApiHelper {
             Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
             return null;
         }
+    }
+
+    public static class UserInfoConstructor implements InfoConstructable<User, UserInfo> {
+
+        @Override
+        public UserInfo getInfo(User source) {
+            if (TangyuanApplication.getTokenManager().getToken() != null) {
+                //已登录
+                //TODO: 目前没有关注功能，也就无从判断是否关注
+                return new UserInfo(source, true);
+            } else {
+                return new UserInfo(source, true);
+            }
+        }
+    }
+
+    //TODO: 尽快迁移到通用方法
+    public static <S, I> void getInfoFastAsync(List<S> source, InfoConstructable<S, I> constructor, ApiCallback<List<I>> callback) {
+        new Thread(() -> {
+            int threadCount = 10;//默认10线程
+            CountDownLatch latch = new CountDownLatch(threadCount);
+            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+
+            List<I> finalList = Collections.synchronizedList(new ArrayList<>());
+
+            List<List<S>> lists = new ArrayList<>();
+            for (int i = 0; i < threadCount; i++) {
+                lists.add(new ArrayList<>());
+            }
+
+            //分派任务
+            for (int i = 0; i < source.size(); i++) {
+                lists.get(i % threadCount).add(source.get(i));
+            }
+
+            AtomicBoolean hasException = new AtomicBoolean(false);
+
+            //开始执行每个列表的异步任务
+            for (List<S> l : lists) {
+                executor.submit(() -> {
+                    try {
+                        for (S n : l) {
+                            I info = constructor.getInfo(n); //注意到这个方法是同步的
+                            finalList.add(info);
+                        }
+                    } catch (Exception e) {
+                        hasException.set(true);
+                        latch.countDown();
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+            }
+
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                hasException.set(true);
+            }
+
+            //判断是否出错，如果出错就报错
+            if (hasException.get()) {
+                callback.onComplete(null);
+            } else {
+                callback.onComplete(finalList);
+            }
+        }).start();
     }
 
     public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
@@ -308,7 +375,11 @@ public class ApiHelper {
         });
     }
 
+    public interface InfoConstructable<S, I> {
+        I getInfo(S source);
+    }
+
     public interface ApiCallback<T> {
-        public void onComplete(T result);
+        void onComplete(T result);
     }
 }
