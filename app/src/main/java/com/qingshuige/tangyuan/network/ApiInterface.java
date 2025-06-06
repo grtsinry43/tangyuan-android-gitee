@@ -121,6 +121,12 @@ public interface ApiInterface {
     @GET("search/post/{keyword}")
     Call<List<PostMetadata>> searchPostByKeyword(@Path("keyword") String keyword);
 
+    @GET("search/user/{keyword}")
+    Call<List<User>> searchUserByKeyword(@Path("keyword") String keyword);
+
+    @GET("search/comment/{keyword}")
+    Call<List<Comment>> searchCommentByKeyword(@Path("keyword") String keyword);
+
     /////以下为非后端方法
 
     @GET
