@@ -52,6 +52,7 @@ public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCa
         holder.getTextTitle().setText(info.getTitle());
         //Type
         holder.getTextType().setText(info.getType());
+        holder.getTextType().setTextColor(info.getTypeColor());
         //Indicator
         holder.getIdcIsRead().setVisibility(info.getNotification().isRead ? View.GONE : View.VISIBLE);
         //Message

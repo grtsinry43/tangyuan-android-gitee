@@ -2,6 +2,7 @@ package com.qingshuige.tangyuan.network;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 
 import com.qingshuige.tangyuan.R;
@@ -190,7 +191,8 @@ public class ApiHelper {
                             c.content,
                             u.avatarGuid,
                             c.postId,
-                            u.userId);
+                            u.userId,
+                            context.getColor(R.color.mazarine_blue));
                 case "reply":
                     //断言sourceType是comment，所以直接调用获取评论的API
                     Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
@@ -201,7 +203,8 @@ public class ApiHelper {
                             cc.content,
                             uu.avatarGuid,
                             cc.postId,
-                            uu.userId);
+                            uu.userId,
+                            context.getColor(R.color.nanohanacha_gold));
                 case "mention":
                     return null;
                 case "notice":

@@ -38,8 +38,9 @@
             android:layout_height="match_parent"
             android:layout_marginStart="3dp"
             android:layout_weight="1"
-            android:gravity="bottom"
-            android:textSize="13sp" />
+            android:gravity="center_vertical"
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
         <View
             android:id="@+id/idcIsRead"

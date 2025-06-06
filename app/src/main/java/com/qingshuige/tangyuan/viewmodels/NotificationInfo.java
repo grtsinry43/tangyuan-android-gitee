@@ -12,8 +12,9 @@ public class NotificationInfo {
     private String avatarGuid;
     private int relatedPostId;
     private int relatedUserId;
+    private int typeColor;
 
-    public NotificationInfo(NewNotification notification, String title, String type, String message, String avatarGuid, int relatedPostId, int relatedUserId) {
+    public NotificationInfo(NewNotification notification, String title, String type, String message, String avatarGuid, int relatedPostId, int relatedUserId, int typeColor) {
         this.notification = notification;
         this.title = title;
         this.type = type;
@@ -21,6 +22,7 @@ public class NotificationInfo {
         this.avatarGuid = avatarGuid;
         this.relatedPostId = relatedPostId;
         this.relatedUserId = relatedUserId;
+        this.typeColor = typeColor;
     }
 
     public String getMessage() {
@@ -50,5 +52,9 @@ public class NotificationInfo {
 
     public int getRelatedUserId() {
         return relatedUserId;
+    }
+
+    public int getTypeColor() {
+        return typeColor;
     }
 }
