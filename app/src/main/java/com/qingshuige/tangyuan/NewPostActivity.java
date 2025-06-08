@@ -41,6 +41,7 @@ import com.qingshuige.tangyuan.data.MediaTools;
 import com.qingshuige.tangyuan.network.Category;
 import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
 import com.qingshuige.tangyuan.network.PostBody;
+import com.qingshuige.tangyuan.viewmodels.CategorySpinnerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -138,7 +139,7 @@ public class NewPostActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
                 if (response.code() == 200) {
-                    ArrayAdapter<Category> categoryAdapter = new ArrayAdapter<>(
+                    ArrayAdapter<Category> categoryAdapter = new CategorySpinnerAdapter(
                             NewPostActivity.this,
                             android.R.layout.simple_spinner_item,
                             response.body()
