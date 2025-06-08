@@ -77,45 +77,35 @@
                         android:textSize="25sp"
                         android:textStyle="bold" />
 
-                    <LinearLayout
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_row="1"
                         android:layout_gravity="fill"
-                        android:divider="@drawable/transparent_divider_horizontal_20dp"
-                        android:orientation="horizontal"
-                        android:showDividers="middle">
+                        android:scrollbars="none">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/regionButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
+                        <com.google.android.material.chip.ChipGroup
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:padding="0dp"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="11sp"
-                            app:icon="@drawable/icon_location"
-                            app:iconGravity="textStart"
-                            app:iconSize="13dp"
-                            app:iconTint="@color/chain_gang_grey" />
+                            app:singleLine="true">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/mailButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:padding="0dp"
-                            android:textAllCaps="false"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="11sp"
-                            app:icon="@drawable/icon_mail"
-                            app:iconGravity="textStart"
-                            app:iconSize="13dp"
-                            app:iconTint="@color/chain_gang_grey" />
-                    </LinearLayout>
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipRegion"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/ic_location"
+                                app:chipIconSize="18dp"
+                                app:chipIconTint="?android:attr/textColor" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/chipEmail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:chipIcon="@drawable/ic_mail"
+                                app:chipIconSize="18dp"
+                                app:chipIconTint="?android:attr/textColor" />
+                        </com.google.android.material.chip.ChipGroup>
+                    </HorizontalScrollView>
                 </GridLayout>
 
             </GridLayout>

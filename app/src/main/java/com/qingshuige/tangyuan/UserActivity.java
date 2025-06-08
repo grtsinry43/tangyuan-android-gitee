@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
 import com.qingshuige.tangyuan.data.CircleTransform;
 import com.qingshuige.tangyuan.data.DataTools;
 import com.qingshuige.tangyuan.network.ApiHelper;
@@ -42,9 +43,9 @@ public class UserActivity extends AppCompatActivity {
     private ImageView avatarView;
     private TextView nicknameView;
     private TextView bioView;
-    private Button regionButton;
-    private Button mailButton;
     private ProgressBar pgBar;
+    private Chip chipRegion;
+    private Chip chipEmail;
 
     private int userId;
     private TokenManager tm;
@@ -70,9 +71,10 @@ public class UserActivity extends AppCompatActivity {
         avatarView = findViewById(R.id.avatarView);
         nicknameView = findViewById(R.id.nicknameTextView);
         bioView = findViewById(R.id.bioTextView);
-        regionButton = findViewById(R.id.regionButton);
-        mailButton = findViewById(R.id.mailButton);
         pgBar = findViewById(R.id.pgBar);
+
+        chipRegion = findViewById(R.id.chipRegion);
+        chipEmail = findViewById(R.id.chipEmail);
 
         userId = getIntent().getIntExtra("userId", 0);
         tm = TangyuanApplication.getTokenManager();
@@ -111,8 +113,8 @@ public class UserActivity extends AppCompatActivity {
                             .into(avatarView);
                     nicknameView.setText(user.nickName);
                     bioView.setText(user.bio);
-                    regionButton.setText(user.isoRegionName);
-                    mailButton.setText(user.email);
+                    chipRegion.setText(user.isoRegionName);
+                    chipEmail.setText(user.email);
                 });
             }
 
