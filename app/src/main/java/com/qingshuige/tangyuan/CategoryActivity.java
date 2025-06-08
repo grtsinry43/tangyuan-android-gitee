@@ -38,7 +38,6 @@ public class CategoryActivity extends AppCompatActivity {
     private TextView textCategoryDisc;
     private RecyclerView rcvPosts;
     private ProgressBar pgBar;
-    private ProgressBar pgBarPostLoad;
 
     private PostCardAdapter adapter;
 
@@ -65,7 +64,6 @@ public class CategoryActivity extends AppCompatActivity {
         textCategoryDisc = findViewById(R.id.textCategoryDisc);
         rcvPosts = findViewById(R.id.rcvCategoryPosts);
         pgBar = findViewById(R.id.pgBar);
-        pgBarPostLoad = findViewById(R.id.pgBarPostLoad);
 
         categoryId = getIntent().getIntExtra("categoryId", 0);
 
@@ -134,25 +132,17 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 if (response.code() == 200 && response.body() != null) {
-                    runOnUiThread(() -> pgBar.setVisibility(View.GONE));
                     List<PostMetadata> metadatas = response.body();
-                    new Thread(() -> {
-                        List<PostInfo> infos = new ArrayList<>();
-                        //对于每一条帖子……
-                        for (PostMetadata m : metadatas) {
-                            PostInfo pi = ApiHelper.getPostInfoById(m.postId);
-                            infos.add(pi);
-                            //进度条
-                            runOnUiThread(() ->
-                                    pgBarPostLoad.setProgress((int) Math.floor(1000 / metadatas.size()) * infos.size(), true));
-                        }
-                        if (!infos.isEmpty()) {
+                    ApiHelper.getInfoFastAsync(metadatas, new ApiHelper.PostInfoConstructor(), result -> {
+                        if (result != null) {
                             runOnUiThread(() -> {
-                                adapter.replaceDataSet(infos);
-                                pgBarPostLoad.setVisibility(View.GONE);
+                                adapter.replaceDataSet(result);
+                                pgBar.setVisibility(View.GONE);
                             });
                         }
-                    }).start();
+                    });
+                } else {
+                    alertAndFinish();
                 }
             }
 

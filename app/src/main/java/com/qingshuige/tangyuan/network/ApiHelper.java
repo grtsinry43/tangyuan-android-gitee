@@ -374,6 +374,37 @@ public class ApiHelper {
         void onComplete(T result);
     }
 
+    public static class PostInfoConstructor implements InfoConstructable<PostMetadata, PostInfo> {
+
+        @Override
+        public PostInfo getInfo(PostMetadata source) {
+            try {
+                PostMetadata metadata = api.getPostMetadata(source.postId).execute().body();
+                PostBody body = api.getPostBody(source.postId).execute().body();
+                User user = api.getUser(metadata.userId).execute().body();
+                Category category = api.getCategory(metadata.categoryId).execute().body();
+
+                PostInfo info = new PostInfo(
+                        source.postId,
+                        user.userId,
+                        user.nickName,
+                        user.avatarGuid,
+                        metadata.postDateTime,
+                        body.textContent,
+                        body.image1UUID,
+                        body.image2UUID,
+                        body.image3UUID,
+                        metadata.sectionId,
+                        category.categoryId,
+                        category.baseName);
+
+                return info;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
     public static class UserInfoConstructor implements InfoConstructable<User, UserInfo> {
 
         @Override

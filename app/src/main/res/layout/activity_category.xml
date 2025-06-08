@@ -87,16 +87,6 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/lorel_ipsum" />
 
-            <ProgressBar
-                android:id="@+id/pgBarPostLoad"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:indeterminate="false"
-                android:max="1000"
-                android:min="0" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvCategoryPosts"
                 android:layout_width="match_parent"

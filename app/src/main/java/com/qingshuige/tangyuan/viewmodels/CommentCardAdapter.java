@@ -33,7 +33,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
     private ItemActionListener onItemHoldListener;
     private ItemActionListener onAvatarClickListener;
 
-    private boolean isReplyButtonVisible;
+    private boolean isReplyButtonVisible = true;
 
     public CommentCardAdapter() {
         comments = new ArrayList<>();
