@@ -109,4 +109,5 @@
     <string name="follow">关注</string>
     <string name="followed">已关注</string>
     <string name="no_user_result">用户无结果</string>
+    <string name="no_comment_result">无评论结果</string>
 </resources>

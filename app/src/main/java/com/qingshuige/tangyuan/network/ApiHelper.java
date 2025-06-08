@@ -74,20 +74,6 @@ public class ApiHelper {
         }
     }
 
-    public static class UserInfoConstructor implements InfoConstructable<User, UserInfo> {
-
-        @Override
-        public UserInfo getInfo(User source) {
-            if (TangyuanApplication.getTokenManager().getToken() != null) {
-                //已登录
-                //TODO: 目前没有关注功能，也就无从判断是否关注
-                return new UserInfo(source, true);
-            } else {
-                return new UserInfo(source, true);
-            }
-        }
-    }
-
     //TODO: 尽快迁移到通用方法
     public static <S, I> void getInfoFastAsync(List<S> source, InfoConstructable<S, I> constructor, ApiCallback<List<I>> callback) {
         new Thread(() -> {
@@ -381,5 +367,39 @@ public class ApiHelper {
 
     public interface ApiCallback<T> {
         void onComplete(T result);
+    }
+
+    public static class UserInfoConstructor implements InfoConstructable<User, UserInfo> {
+
+        @Override
+        public UserInfo getInfo(User source) {
+            if (TangyuanApplication.getTokenManager().getToken() != null) {
+                //已登录
+                //TODO: 目前没有关注功能，也就无从判断是否关注
+                return new UserInfo(source, true);
+            } else {
+                return new UserInfo(source, true);
+            }
+        }
+    }
+
+    public static class CommentInfoConstructor implements InfoConstructable<Comment, CommentInfo> {
+
+        @Override
+        public CommentInfo getInfo(Comment source) {
+            try {
+                User user = TangyuanApplication.getApi().getUser(source.userId).execute().body();
+                boolean hasReply = TangyuanApplication.getApi().getSubComment(source.commentId).execute().code() != 404;
+                return new CommentInfo(user.avatarGuid,
+                        user.nickName,
+                        source.content,
+                        source.commentDateTime,
+                        source.commentId,
+                        hasReply,
+                        user.userId);
+            } catch (Exception e) {
+                return null;
+            }
+        }
     }
 }

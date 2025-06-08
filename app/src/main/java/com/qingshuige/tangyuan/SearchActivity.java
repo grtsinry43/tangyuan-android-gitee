@@ -17,8 +17,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.qingshuige.tangyuan.network.ApiHelper;
+import com.qingshuige.tangyuan.network.Comment;
 import com.qingshuige.tangyuan.network.PostMetadata;
 import com.qingshuige.tangyuan.network.User;
+import com.qingshuige.tangyuan.viewmodels.CommentCardAdapter;
+import com.qingshuige.tangyuan.viewmodels.CommentInfo;
 import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
 import com.qingshuige.tangyuan.viewmodels.PostInfo;
 import com.qingshuige.tangyuan.viewmodels.UserCardAdapter;
@@ -46,6 +49,10 @@ public class SearchActivity extends AppCompatActivity {
     private TextView textUserSearchTitle;
     private UserCardAdapter userAdapter;
 
+    private RecyclerView rcvComment;
+    private TextView textCommentSearchTitle;
+    private CommentCardAdapter commentAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +76,8 @@ public class SearchActivity extends AppCompatActivity {
         textPostSearchTitle = findViewById(R.id.textPostSearchTitle);
         rcvUser = findViewById(R.id.rcvUser);
         textUserSearchTitle = findViewById(R.id.textUserSearchTitle);
+        rcvComment = findViewById(R.id.rcvComment);
+        textCommentSearchTitle = findViewById(R.id.textCommentSearchTitle);
 
         toolbar.setTitle(getString(R.string.search) + ": " + keyword);
 
@@ -87,13 +96,19 @@ public class SearchActivity extends AppCompatActivity {
         rcvUser.setLayoutManager(new LinearLayoutManager(this));
         rcvUser.addItemDecoration(div);
 
+        //Comment
+        commentAdapter = new CommentCardAdapter();
+        rcvComment.setAdapter(commentAdapter);
+        rcvComment.setLayoutManager(new LinearLayoutManager(this));
+        rcvComment.addItemDecoration(div);
+
         initializeUI();
 
     }
 
     private void initializeUI() {
         new Thread(() -> {
-            CountDownLatch latch = new CountDownLatch(2);
+            CountDownLatch latch = new CountDownLatch(3);
 
             //帖子搜索结果
             TangyuanApplication.getApi().searchPostByKeyword(keyword).enqueue(new Callback<List<PostMetadata>>() {
@@ -149,6 +164,30 @@ public class SearchActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<List<User>> call, Throwable throwable) {
+
+                }
+            });
+
+            //评论搜索结果
+            TangyuanApplication.getApi().searchCommentByKeyword(keyword).enqueue(new Callback<List<Comment>>() {
+                @Override
+                public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                    if (response.code() == 200 && response.body() != null) {
+                        List<Comment> comments = response.body();
+                        runOnUiThread(() -> textCommentSearchTitle.setText(textCommentSearchTitle.getText() + ": " + response.body().size()));
+                        ApiHelper.getInfoFastAsync(comments, new ApiHelper.CommentInfoConstructor(), result -> {
+                            runOnUiThread(() -> commentAdapter.replaceDataset(result));
+                            latch.countDown();
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            textCommentSearchTitle.setText(R.string.no_comment_result);
+                        });
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Comment>> call, Throwable throwable) {
 
                 }
             });

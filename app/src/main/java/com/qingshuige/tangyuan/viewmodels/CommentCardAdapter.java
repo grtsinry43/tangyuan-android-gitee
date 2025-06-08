@@ -123,6 +123,11 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
         notifyDataSetChanged();
     }
 
+    public void replaceDataset(List<CommentInfo> list) {
+        comments = list;
+        notifyDataSetChanged();
+    }
+
     public void clearData() {
         int size = comments.size();
         comments.clear();
