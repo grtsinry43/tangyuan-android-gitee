@@ -1,8 +1,11 @@
 package com.qingshuige.tangyuan.viewmodels;
 
+import com.qingshuige.tangyuan.network.Comment;
+
 import java.util.Date;
 
 public class CommentInfo {
+    private Comment comment;
     private String userAvatarGuid;
     private String userNickname;
     private String commentText;
@@ -11,7 +14,8 @@ public class CommentInfo {
     private boolean hasReplies;
     private int userId;
 
-    public CommentInfo(String userAvatarGuid, String userNickname, String commentText, Date commentDateTime, int commentId, boolean hasReplies, int userId) {
+    public CommentInfo(Comment comment, String userAvatarGuid, String userNickname, String commentText, Date commentDateTime, int commentId, boolean hasReplies, int userId) {
+        this.comment = comment;
 
         this.userAvatarGuid = userAvatarGuid;
         this.userNickname = userNickname;
@@ -48,5 +52,9 @@ public class CommentInfo {
 
     public int getUserId() {
         return userId;
+    }
+
+    public Comment getComment() {
+        return comment;
     }
 }

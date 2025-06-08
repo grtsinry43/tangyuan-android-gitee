@@ -27,10 +27,13 @@ import java.util.List;
 
 public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.ViewHolder> {
     private List<CommentInfo> comments;
+
     private ItemActionListener onReplyButtonClickListener;
     private ItemActionListener onTextClickListener;
     private ItemActionListener onItemHoldListener;
     private ItemActionListener onAvatarClickListener;
+
+    private boolean isReplyButtonVisible;
 
     public CommentCardAdapter() {
         comments = new ArrayList<>();
@@ -83,7 +86,7 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
             return false;
         });
         //Replies
-        holder.getButtonSeeReplies().setVisibility(info.isHasReplies() ? View.VISIBLE : View.GONE);
+        holder.getButtonSeeReplies().setVisibility((info.isHasReplies() && isReplyButtonVisible) ? View.VISIBLE : View.GONE);
         holder.getButtonSeeReplies().setOnClickListener(view -> {
             if (onReplyButtonClickListener != null) {
                 onReplyButtonClickListener.onAction(info);
@@ -148,6 +151,10 @@ public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.
 
     public void setOnAvatarClickListener(ItemActionListener onAvatarClickListener) {
         this.onAvatarClickListener = onAvatarClickListener;
+    }
+
+    public void setReplyButtonVisible(boolean replyButtonVisible) {
+        isReplyButtonVisible = replyButtonVisible;
     }
 
     public interface ItemActionListener {

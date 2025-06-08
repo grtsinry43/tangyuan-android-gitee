@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,14 @@ import java.util.List;
 public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHolder> {
     List<UserInfo> userInfos;
     Context context;
+
+    private ItemActionListener onUserClickListener;
+    private ItemActionListener onFollowButtonClickListener;
+
+    public UserCardAdapter(Context context) {
+        userInfos = new ArrayList<>();
+        this.context = context;
+    }
 
     @NonNull
     @Override
@@ -47,6 +56,14 @@ public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHo
 
         //isFollowed
         holder.getBtnFollow().setText(context.getString(ui.isFollowed() ? R.string.followed : R.string.follow));
+
+        //点击事件
+        if (onUserClickListener != null) {
+            holder.getRoot().setOnClickListener(view -> onUserClickListener.onAction(ui));
+        }
+        if (onFollowButtonClickListener != null) {
+            holder.getBtnFollow().setOnClickListener(view -> onFollowButtonClickListener.onAction(ui));
+        }
     }
 
     @Override
@@ -59,15 +76,23 @@ public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    public UserCardAdapter(Context context) {
-        userInfos = new ArrayList<>();
-        this.context = context;
+    public void setOnUserClickListener(ItemActionListener onUserClickListener) {
+        this.onUserClickListener = onUserClickListener;
+    }
+
+    public void setOnFollowButtonClickListener(ItemActionListener onFollowButtonClickListener) {
+        this.onFollowButtonClickListener = onFollowButtonClickListener;
+    }
+
+    public interface ItemActionListener {
+        void onAction(UserInfo info);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imgAvatar;
         private TextView textNickname;
         private MaterialButton btnFollow;
+        private LinearLayout root;
 
         public ViewHolder(@NonNull View view) {
             super(view);
@@ -75,6 +100,7 @@ public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHo
             imgAvatar = view.findViewById(R.id.imgAvatar);
             textNickname = view.findViewById(R.id.textNickname);
             btnFollow = view.findViewById(R.id.btnFollow);
+            root = view.findViewById(R.id.lnlUserCardRoot);
         }
 
         public ImageView getImgAvatar() {
@@ -87,6 +113,10 @@ public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHo
 
         public MaterialButton getBtnFollow() {
             return btnFollow;
+        }
+
+        public LinearLayout getRoot() {
+            return root;
         }
     }
 }

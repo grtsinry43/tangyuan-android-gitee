@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -117,6 +118,9 @@ public class ApiHelper {
             } catch (InterruptedException e) {
                 hasException.set(true);
             }
+
+            //去除因错误产生的null
+            finalList.removeIf(Objects::isNull);
 
             //判断是否出错，如果出错就报错
             if (hasException.get()) {
@@ -282,7 +286,8 @@ public class ApiHelper {
                         api.getSubComment(commentId).enqueue(new Callback<List<Comment>>() {
                             @Override
                             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
-                                CommentInfo info = new CommentInfo(user.avatarGuid,
+                                CommentInfo info = new CommentInfo(comment,
+                                        user.avatarGuid,
                                         user.nickName,
                                         comment.content,
                                         comment.commentDateTime,
@@ -376,9 +381,9 @@ public class ApiHelper {
             if (TangyuanApplication.getTokenManager().getToken() != null) {
                 //已登录
                 //TODO: 目前没有关注功能，也就无从判断是否关注
-                return new UserInfo(source, true);
+                return new UserInfo(source, false);
             } else {
-                return new UserInfo(source, true);
+                return new UserInfo(source, false);
             }
         }
     }
@@ -390,7 +395,8 @@ public class ApiHelper {
             try {
                 User user = TangyuanApplication.getApi().getUser(source.userId).execute().body();
                 boolean hasReply = TangyuanApplication.getApi().getSubComment(source.commentId).execute().code() != 404;
-                return new CommentInfo(user.avatarGuid,
+                return new CommentInfo(source,
+                        user.avatarGuid,
                         user.nickName,
                         source.content,
                         source.commentDateTime,

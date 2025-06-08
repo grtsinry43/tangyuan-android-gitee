@@ -85,25 +85,35 @@ public class SearchActivity extends AppCompatActivity {
 
         //Post
         postAdapter = new PostCardAdapter();
-        postAdapter.setOnItemClickListener(this::startPostActivity);
+        postAdapter.setOnItemClickListener(postId -> startPostActivity(postId, 0));
         rcvPost.setAdapter(postAdapter);
         rcvPost.addItemDecoration(div);
         rcvPost.setLayoutManager(new LinearLayoutManager(this));
 
         //User
         userAdapter = new UserCardAdapter(this);
+        userAdapter.setOnUserClickListener(info -> startUserActivity(info.getUser().userId));
         rcvUser.setAdapter(userAdapter);
         rcvUser.setLayoutManager(new LinearLayoutManager(this));
         rcvUser.addItemDecoration(div);
 
         //Comment
         commentAdapter = new CommentCardAdapter();
+        commentAdapter.setReplyButtonVisible(false);
+        commentAdapter.setOnAvatarClickListener(info -> startUserActivity(info.getUserId()));
+        commentAdapter.setOnTextClickListener(info -> startPostActivity(info.getComment().postId, info.getCommentId()));
         rcvComment.setAdapter(commentAdapter);
         rcvComment.setLayoutManager(new LinearLayoutManager(this));
         rcvComment.addItemDecoration(div);
 
         initializeUI();
 
+    }
+
+    private void startUserActivity(int userId) {
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra("userId", userId);
+        startActivity(intent);
     }
 
     private void initializeUI() {
@@ -177,13 +187,13 @@ public class SearchActivity extends AppCompatActivity {
                         runOnUiThread(() -> textCommentSearchTitle.setText(textCommentSearchTitle.getText() + ": " + response.body().size()));
                         ApiHelper.getInfoFastAsync(comments, new ApiHelper.CommentInfoConstructor(), result -> {
                             runOnUiThread(() -> commentAdapter.replaceDataset(result));
-                            latch.countDown();
                         });
                     } else {
                         runOnUiThread(() -> {
                             textCommentSearchTitle.setText(R.string.no_comment_result);
                         });
                     }
+                    latch.countDown();
                 }
 
                 @Override
@@ -209,9 +219,10 @@ public class SearchActivity extends AppCompatActivity {
         return true;
     }
 
-    private void startPostActivity(int postId) {
+    private void startPostActivity(int postId, int commentId) {
         Intent intent = new Intent(this, PostActivity.class);
         intent.putExtra("postId", postId);
+        intent.putExtra("commentId", commentId);
         startActivity(intent);
     }
 }
