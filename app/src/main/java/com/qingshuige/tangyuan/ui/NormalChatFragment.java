@@ -103,24 +103,33 @@ public class NormalChatFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                List<PostMetadata> metadatas = TangyuanApplication.getApi().phtPostMetadata(1, adapter.getAllPostIds()).execute().body();
-                if (metadatas != null) {
-                    ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
-                        if (result != null) {
-                            new Handler(Looper.getMainLooper()).post(() -> {
-                                ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(result);
-                                recyclerView.scrollToPosition(0);
-                            });
-                        } else {
-                            new Handler(Looper.getMainLooper()).post(() -> {
-                                Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
-                            });
-                        }
+                Response<List<PostMetadata>> response = TangyuanApplication.getApi().phtPostMetadata(1, adapter.getAllPostIds()).execute();
+                if (response.code() == 200) {
+                    List<PostMetadata> metadatas = response.body();
+                    if (metadatas != null) {
+                        ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
+                            if (result != null) {
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(result);
+                                    recyclerView.scrollToPosition(0);
+                                });
+                            } else {
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                            swp.setRefreshing(false);
+                        });
+
+                    } else {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                        });
                         swp.setRefreshing(false);
-                    });
-                } else {
+                    }
+                } else if (response.code() == 404) {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.no_post_to_show, Toast.LENGTH_SHORT).show();
                     });
                     swp.setRefreshing(false);
                 }
@@ -131,37 +140,6 @@ public class NormalChatFragment extends Fragment {
                 swp.setRefreshing(false);
             }
         }).start();
-
-        /*老代码
-        TangyuanApplication.getApi().getRandomPostMetadata(expectedCount).enqueue(new Callback<List<PostMetadata>>() {
-            @Override
-            public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                if (response.code() == 200 && response.body() != null) {
-                    List<PostMetadata> metadatas = response.body();
-                    //对于每一条帖子……
-                    for (PostMetadata m : metadatas) {
-                        if (m.sectionId == 1) {
-                            ApiHelper.getPostInfoByIdAsync(m.postId, result -> {
-                                if (result != null) {
-                                    getActivity().runOnUiThread(() -> {
-                                        ((PostCardAdapter) recyclerView.getAdapter()).prependData(result);
-                                    });
-                                }
-                            });
-                        }
-                    }
-                }
-                swp.setRefreshing(false);
-
-
-            }
-
-            @Override
-            public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                Log.i("TY", "Error: " + throwable.toString());
-            }
-        });
-         */
     }
 
     @Override

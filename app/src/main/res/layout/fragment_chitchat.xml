@@ -1,8 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/chitchat_recyclerview"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swpChitChat"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp" />
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chitchat_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="always"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbars="vertical" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="40dp"
+            android:backgroundTint="@color/nanohanacha_gold"
+            android:contentDescription="@string/top"
+            android:src="@drawable/ic_refresh"
+            android:tint="@color/lynx_white" />
+    </RelativeLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

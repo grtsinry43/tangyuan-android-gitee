@@ -103,4 +103,5 @@
     <string name="followed">已关注</string>
     <string name="no_user_result">用户无结果</string>
     <string name="no_comment_result">无评论结果</string>
+    <string name="no_post_to_show">没有足够的帖子可供显示。</string>
 </resources>
