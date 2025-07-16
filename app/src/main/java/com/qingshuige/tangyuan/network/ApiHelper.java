@@ -131,6 +131,7 @@ public class ApiHelper {
         }).start();
     }
 
+    @Deprecated
     public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
         new Thread(() -> {
             int threadCount = 10;//默认10线程
@@ -174,6 +175,8 @@ public class ApiHelper {
                 hasException.set(true);
             }
 
+            finalList.removeIf(Objects::isNull);
+
             //判断是否出错，如果出错就报错
             if (hasException.get()) {
                 callback.onComplete(null);
@@ -183,6 +186,7 @@ public class ApiHelper {
         }).start();
     }
 
+    @Deprecated
     public static void getNotificationInfoFastAsync(List<NewNotification> notifications, Context context, ApiCallback<List<NotificationInfo>> callback) {
         new Thread(() -> {
             int threadCount = 5;//默认5线程
@@ -225,6 +229,9 @@ public class ApiHelper {
             } catch (InterruptedException e) {
                 hasException.set(true);
             }
+
+            //去null
+            finalList.removeIf(Objects::isNull);
 
             //判断是否出错，如果出错就报错
             if (hasException.get()) {
