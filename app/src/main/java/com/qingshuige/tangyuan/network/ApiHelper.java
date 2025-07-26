@@ -75,7 +75,6 @@ public class ApiHelper {
         }
     }
 
-    //TODO: 尽快迁移到通用方法
     public static <S, I> void getInfoFastAsync(List<S> source, InfoConstructable<S, I> constructor, ApiCallback<List<I>> callback) {
         new Thread(() -> {
             int threadCount = 10;//默认10线程
@@ -131,155 +130,6 @@ public class ApiHelper {
         }).start();
     }
 
-    @Deprecated
-    public static void getPostInfoByMetadataFastAsync(List<PostMetadata> metadata, ApiCallback<List<PostInfo>> callback) {
-        new Thread(() -> {
-            int threadCount = 10;//默认10线程
-            CountDownLatch latch = new CountDownLatch(threadCount);
-            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
-            List<PostInfo> finalList = Collections.synchronizedList(new ArrayList<>());
-
-            List<List<PostMetadata>> lists = new ArrayList<>();
-            for (int i = 0; i < threadCount; i++) {
-                lists.add(new ArrayList<>());
-            }
-
-            //分派任务
-            for (int i = 0; i < metadata.size(); i++) {
-                lists.get(i % threadCount).add(metadata.get(i));
-            }
-
-            AtomicBoolean hasException = new AtomicBoolean(false);
-
-            //开始执行每个列表的异步任务
-            for (List<PostMetadata> l : lists) {
-                executor.submit(() -> {
-                    try {
-                        for (PostMetadata n : l) {
-                            PostInfo info = getPostInfoById(n.postId); //注意到这个方法是同步的
-                            finalList.add(info);
-                        }
-                    } catch (Exception e) {
-                        hasException.set(true);
-                        latch.countDown();
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            }
-
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                hasException.set(true);
-            }
-
-            finalList.removeIf(Objects::isNull);
-
-            //判断是否出错，如果出错就报错
-            if (hasException.get()) {
-                callback.onComplete(null);
-            } else {
-                callback.onComplete(finalList);
-            }
-        }).start();
-    }
-
-    @Deprecated
-    public static void getNotificationInfoFastAsync(List<NewNotification> notifications, Context context, ApiCallback<List<NotificationInfo>> callback) {
-        new Thread(() -> {
-            int threadCount = 5;//默认5线程
-            CountDownLatch latch = new CountDownLatch(threadCount);
-            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-
-            List<NotificationInfo> finalList = Collections.synchronizedList(new ArrayList<>());
-
-            List<List<NewNotification>> lists = new ArrayList<>();
-            for (int i = 0; i < threadCount; i++) {
-                lists.add(new ArrayList<>());
-            }
-
-            //分派任务
-            for (int i = 0; i < notifications.size(); i++) {
-                lists.get(i % threadCount).add(notifications.get(i));
-            }
-
-            AtomicBoolean hasException = new AtomicBoolean(false);
-
-            //开始执行每个列表的异步任务
-            for (List<NewNotification> l : lists) {
-                executor.submit(() -> {
-                    try {
-                        for (NewNotification n : l) {
-                            NotificationInfo info = constructNotificationInfo(n, context); //注意到这个方法是同步的
-                            finalList.add(info);
-                        }
-                    } catch (Exception e) {
-                        hasException.set(true);
-                        latch.countDown();
-                    } finally {
-                        latch.countDown();
-                    }
-                });
-            }
-
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                hasException.set(true);
-            }
-
-            //去null
-            finalList.removeIf(Objects::isNull);
-
-            //判断是否出错，如果出错就报错
-            if (hasException.get()) {
-                callback.onComplete(null);
-            } else {
-                callback.onComplete(finalList);
-            }
-        }).start();
-    }
-
-    private static NotificationInfo constructNotificationInfo(NewNotification n, Context context) {
-        try {
-            switch (n.type) {
-                case "comment":
-                    //断言sourceType是comment，所以直接调用获取评论的API
-                    Comment c = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
-                    User u = TangyuanApplication.getApi().getUser(c.userId).execute().body();
-                    return new NotificationInfo(n,
-                            u.nickName,
-                            context.getString(R.string.comment),
-                            c.content,
-                            u.avatarGuid,
-                            c.postId,
-                            u.userId,
-                            context.getColor(R.color.mazarine_blue));
-                case "reply":
-                    //断言sourceType是comment，所以直接调用获取评论的API
-                    Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
-                    User uu = TangyuanApplication.getApi().getUser(cc.userId).execute().body();
-                    return new NotificationInfo(n,
-                            uu.nickName,
-                            context.getString(R.string.reply),
-                            cc.content,
-                            uu.avatarGuid,
-                            cc.postId,
-                            uu.userId,
-                            context.getColor(R.color.nanohanacha_gold));
-                case "mention":
-                    return null;
-                case "notice":
-                    return null;
-                default:
-                    return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
 
     public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
         api.getComment(commentId).enqueue(new Callback<Comment>() {
@@ -441,6 +291,55 @@ public class ApiHelper {
                         source.commentId,
                         hasReply,
                         user.userId);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
+
+    public static class NotificationInfoConstructor implements InfoConstructable<NewNotification, NotificationInfo> {
+
+        Context context;
+
+        public NotificationInfoConstructor(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public NotificationInfo getInfo(NewNotification n) {
+            try {
+                switch (n.type) {
+                    case "comment":
+                        //断言sourceType是comment，所以直接调用获取评论的API
+                        Comment c = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
+                        User u = TangyuanApplication.getApi().getUser(c.userId).execute().body();
+                        return new NotificationInfo(n,
+                                u.nickName,
+                                context.getString(R.string.comment),
+                                c.content,
+                                u.avatarGuid,
+                                c.postId,
+                                u.userId,
+                                context.getColor(R.color.mazarine_blue));
+                    case "reply":
+                        //断言sourceType是comment，所以直接调用获取评论的API
+                        Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
+                        User uu = TangyuanApplication.getApi().getUser(cc.userId).execute().body();
+                        return new NotificationInfo(n,
+                                uu.nickName,
+                                context.getString(R.string.reply),
+                                cc.content,
+                                uu.avatarGuid,
+                                cc.postId,
+                                uu.userId,
+                                context.getColor(R.color.nanohanacha_gold));
+                    case "mention":
+                        return null;
+                    case "notice":
+                        return null;
+                    default:
+                        return null;
+                }
             } catch (Exception e) {
                 return null;
             }

@@ -126,11 +126,9 @@ public class SearchActivity extends AppCompatActivity {
                 public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                     if (response.code() == 200 && response.body() != null) {
                         runOnUiThread(() -> textPostSearchTitle.setText(textPostSearchTitle.getText() + ": " + response.body().size()));
-                        ApiHelper.getPostInfoByMetadataFastAsync(response.body(), result -> {
+                        ApiHelper.getInfoFastAsync(response.body(), new ApiHelper.PostInfoConstructor(), result -> {
                             if (result != null) {
-                                runOnUiThread(() -> {
-                                    postAdapter.replaceDataSet(result);
-                                });
+                                runOnUiThread(() -> postAdapter.replaceDataSet(result));
                             }
                         });
                     } else {

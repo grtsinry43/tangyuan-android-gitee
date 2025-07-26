@@ -83,7 +83,7 @@ public class MessageFragment extends Fragment {
                 public void onResponse(Call<List<NewNotification>> call, Response<List<NewNotification>> response) {
                     if (response.code() == 200 && response.body() != null) {
                         List<NewNotification> notifications = response.body();
-                        ApiHelper.getNotificationInfoFastAsync(notifications, MessageFragment.this.getContext(), result -> {
+                        ApiHelper.getInfoFastAsync(notifications, new ApiHelper.NotificationInfoConstructor(getContext()), result -> {
                             if (result != null) {
                                 //排序
                                 result.sort((notificationInfo, t1) -> t1.getNotification().createDate.compareTo(notificationInfo.getNotification().createDate));

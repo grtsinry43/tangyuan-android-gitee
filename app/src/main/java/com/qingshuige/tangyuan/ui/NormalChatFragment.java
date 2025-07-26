@@ -107,18 +107,18 @@ public class NormalChatFragment extends Fragment {
                 if (response.code() == 200) {
                     List<PostMetadata> metadatas = response.body();
                     if (metadatas != null) {
-                        ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
+                        ApiHelper.getInfoFastAsync(metadatas, new ApiHelper.PostInfoConstructor(), result -> {
                             if (result != null) {
                                 new Handler(Looper.getMainLooper()).post(() -> {
                                     ((PostCardAdapter) recyclerView.getAdapter()).prependDataset(result);
                                     recyclerView.scrollToPosition(0);
                                 });
                             } else {
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
-                                });
+                                new Handler(Looper.getMainLooper()).post(() ->
+                                        Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show());
                             }
-                            swp.setRefreshing(false);
+                            new Handler(Looper.getMainLooper()).post(() ->
+                                    swp.setRefreshing(false));
                         });
 
                     } else {

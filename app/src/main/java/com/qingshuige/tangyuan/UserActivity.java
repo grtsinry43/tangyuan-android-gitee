@@ -132,12 +132,10 @@ public class UserActivity extends AppCompatActivity {
             public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
                 List<PostMetadata> metadatas = response.body();
 
-                ApiHelper.getPostInfoByMetadataFastAsync(metadatas, result -> {
+                ApiHelper.getInfoFastAsync(metadatas, new ApiHelper.PostInfoConstructor(), result -> {
                     if (result != null) {
                         result.sort((postInfo, t1) -> t1.getPostDate().compareTo(postInfo.getPostDate()));
-                        runOnUiThread(() -> {
-                            ((PostCardAdapter) postList.getAdapter()).replaceDataSet(result);
-                        });
+                        runOnUiThread(() -> ((PostCardAdapter) postList.getAdapter()).replaceDataSet(result));
                     } else {
                         runOnUiThread(() ->
                                 Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
