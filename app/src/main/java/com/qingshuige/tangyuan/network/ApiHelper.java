@@ -105,7 +105,6 @@ public class ApiHelper {
                         }
                     } catch (Exception e) {
                         hasException.set(true);
-                        latch.countDown();
                     } finally {
                         latch.countDown();
                     }
