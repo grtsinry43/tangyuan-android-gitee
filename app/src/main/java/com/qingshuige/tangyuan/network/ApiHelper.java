@@ -113,6 +113,7 @@ public class ApiHelper {
 
             try {
                 latch.await();
+                executor.shutdown();
             } catch (InterruptedException e) {
                 hasException.set(true);
             }
