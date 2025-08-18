@@ -11,8 +11,8 @@ android {
         applicationId = "com.qingshuige.tangyuan"
         minSdk = 28
         targetSdk = 35
-        versionCode = 111
-        versionName = "1.1.1 秦花"
+        versionCode = 112
+        versionName = "1.1.2 秦花"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
