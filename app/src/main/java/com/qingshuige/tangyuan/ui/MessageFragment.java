@@ -87,10 +87,12 @@ public class MessageFragment extends Fragment {
                             if (result != null) {
                                 //排序
                                 result.sort((notificationInfo, t1) -> t1.getNotification().createDate.compareTo(notificationInfo.getNotification().createDate));
-                                getActivity().runOnUiThread(() -> {
-                                    adapter.setDataset(result);
-                                    swpMessage.setRefreshing(false);
-                                });
+                                if (getActivity() != null) {
+                                    getActivity().runOnUiThread(() -> {
+                                        adapter.setDataset(result);
+                                        swpMessage.setRefreshing(false);
+                                    });
+                                }
                             }
                         });
                     }
