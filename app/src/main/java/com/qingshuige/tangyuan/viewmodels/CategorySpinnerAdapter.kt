@@ -1,50 +1,40 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.network.Category
 
-import androidx.annotation.NonNull;
+class CategorySpinnerAdapter(
+    context: Context,
+    resource: Int,
+    private val items: List<Category>
+) : ArrayAdapter<Category>(context, resource, items) {
 
-import com.qingshuige.tangyuan.R;
-import com.qingshuige.tangyuan.network.Category;
+    private val inflater = LayoutInflater.from(context)
 
-import java.util.List;
-
-public class CategorySpinnerAdapter extends ArrayAdapter<Category> {
-    private Context context;
-    private List<Category> items;
-
-    public CategorySpinnerAdapter(@NonNull Context context, int resource, @NonNull List<Category> objects) {
-        super(context, resource, objects);
-        this.context = context;
-        this.items = objects;
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return super.getView(position, convertView, parent)
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+        return createCustomView(position, convertView, parent)
     }
 
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        return createCustomView(position, convertView, parent);
-    }
-
-    private View createCustomView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.view_spinner_category, parent, false);
-
-        TextView name = view.findViewById(R.id.textCategoryName);
-        TextView disc = view.findViewById(R.id.textCategoryDisc);
-
-        name.setText(items.get(position).baseName);
-        disc.setText(items.get(position).baseDescription);
-
-        return view;
+    private fun createCustomView(position: Int, convertView: View?, parent: ViewGroup): View {
+        val view = convertView ?: inflater.inflate(R.layout.view_spinner_category, parent, false)
+        
+        val nameTextView = view.findViewById<TextView>(R.id.textCategoryName)
+        val descTextView = view.findViewById<TextView>(R.id.textCategoryDisc)
+        
+        val category = items[position]
+        nameTextView.text = category.baseName
+        descTextView.text = category.baseDescription
+        
+        return view
     }
 }

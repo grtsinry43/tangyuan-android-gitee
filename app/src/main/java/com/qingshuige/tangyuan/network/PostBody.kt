@@ -1,9 +1,9 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-public class PostBody {
-    public int postId;
-    public String textContent;
-    public String image1UUID;
-    public String image2UUID;
-    public String image3UUID;
-}
+data class PostBody(
+    var postId: Int = 0,
+    var textContent: String? = null,
+    var image1UUID: String? = null,
+    var image2UUID: String? = null,
+    var image3UUID: String? = null
+)

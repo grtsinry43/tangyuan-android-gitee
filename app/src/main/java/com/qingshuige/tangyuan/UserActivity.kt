@@ -1,188 +1,170 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.Intent
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+//import androidx.activity.EdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.qingshuige.tangyuan.data.CircleTransform
+import com.qingshuige.tangyuan.data.DataTools
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.qingshuige.tangyuan.network.PostMetadata
+import com.qingshuige.tangyuan.network.User
+import com.qingshuige.tangyuan.viewmodels.PostCardAdapter
+import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class UserActivity : AppCompatActivity() {
 
-import com.google.android.material.chip.Chip;
-import com.qingshuige.tangyuan.data.CircleTransform;
-import com.qingshuige.tangyuan.data.DataTools;
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.PostMetadata;
-import com.qingshuige.tangyuan.network.User;
-import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
-import com.squareup.picasso.Picasso;
+    private lateinit var postList: RecyclerView
+    private lateinit var avatarView: ImageView
+    private lateinit var nicknameView: TextView
+    private lateinit var bioView: TextView
+    private lateinit var pgBar: ProgressBar
+    private lateinit var chipRegion: Chip
+    private lateinit var chipEmail: Chip
+    private var userId: Int = 0
+    private lateinit var tm: TokenManager
+    private lateinit var menu: Menu
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class UserActivity extends AppCompatActivity {
-
-    private RecyclerView postList;
-    private ImageView avatarView;
-    private TextView nicknameView;
-    private TextView bioView;
-    private ProgressBar pgBar;
-    private Chip chipRegion;
-    private Chip chipEmail;
-
-    private int userId;
-    private TokenManager tm;
-
-    private Menu menu;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_user);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        EdgeToEdge.enable(this)
+        setContentView(R.layout.activity_user)
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
 
-        setSupportActionBar(findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
 
-        postList = findViewById(R.id.postList);
-        avatarView = findViewById(R.id.avatarView);
-        nicknameView = findViewById(R.id.nicknameTextView);
-        bioView = findViewById(R.id.bioTextView);
-        pgBar = findViewById(R.id.pgBar);
+        postList = findViewById(R.id.postList)
+        avatarView = findViewById(R.id.avatarView)
+        nicknameView = findViewById(R.id.nicknameTextView)
+        bioView = findViewById(R.id.bioTextView)
+        pgBar = findViewById(R.id.pgBar)
+        chipRegion = findViewById(R.id.chipRegion)
+        chipEmail = findViewById(R.id.chipEmail)
 
-        chipRegion = findViewById(R.id.chipRegion);
-        chipEmail = findViewById(R.id.chipEmail);
+        userId = intent.getIntExtra("userId", 0)
+        tm = TangyuanApplication.getTokenManager()
 
-        userId = getIntent().getIntExtra("userId", 0);
-        tm = TangyuanApplication.getTokenManager();
-
-        initializeUI();
+        initializeUI()
     }
 
-    private void initializeUI() {
+    private fun initializeUI() {
         //显示所发帖子
-        PostCardAdapter adapter = new PostCardAdapter();
-        adapter.setOnItemClickListener(postId -> {
-            Intent intent = new Intent(this, PostActivity.class);
-            intent.putExtra("postId", postId);
-            startActivity(intent);
-        });
-        DividerItemDecoration div = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        postList.addItemDecoration(div);
-        postList.setLayoutManager(new LinearLayoutManager(this));
-        postList.setAdapter(adapter);
+        val adapter = PostCardAdapter()
+        adapter.setOnItemClickListener { postId ->
+            val intent = Intent(this, PostActivity::class.java)
+            intent.putExtra("postId", postId)
+            startActivity(intent)
+        }
+        val div = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        val layoutManager = LinearLayoutManager(this)
+        postList.addItemDecoration(div)
+        postList.layoutManager = LinearLayoutManager(this)
+        postList.adapter = adapter
 
-        updateProfile();
+        updateProfile()
         ///初始刷新
-        updateRecyclerView(userId);
+        updateRecyclerView(userId)
     }
 
-    private void updateProfile() {
-        TangyuanApplication.getApi().getUser(userId).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                User user = response.body();
-                runOnUiThread(() -> {
+    private fun updateProfile() {
+        TangyuanApplication.getApi().getUser(userId).enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                val user = response.body()!!
+                runOnUiThread {
                     Picasso.get()
-                            .load(ApiHelper.getFullImageURL(user.avatarGuid))
-                            .transform(new CircleTransform())
-                            .into(avatarView);
-                    nicknameView.setText(user.nickName);
-                    bioView.setText(user.bio);
-                    chipRegion.setText(user.isoRegionName);
-                    chipEmail.setText(user.email);
-                });
+                        .load(ApiHelper.getFullImageURL(user.avatarGuid))
+                        .transform(CircleTransform())
+                        .into(avatarView)
+                    nicknameView.text = user.nickName
+                    bioView.text = user.bio
+                    chipRegion.text = user.isoRegionName
+                    chipEmail.text = user.email
+                }
             }
 
-            @Override
-            public void onFailure(Call<User> call, Throwable throwable) {
-                runOnUiThread(() ->
-                        Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
+            override fun onFailure(call: Call<User>, throwable: Throwable) {
+                runOnUiThread {
+                    Toast.makeText(this@UserActivity, R.string.network_error, Toast.LENGTH_SHORT).show()
+                }
             }
-        });
+        })
     }
 
-    private void updateRecyclerView(int userId) {
-        TangyuanApplication.getApi().getMetadatasByUserID(userId).enqueue(new Callback<List<PostMetadata>>() {
-            @Override
-            public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
-                List<PostMetadata> metadatas = response.body();
+    private fun updateRecyclerView(userId: Int) {
+        TangyuanApplication.getApi().getMetadatasByUserID(userId).enqueue(object : Callback<List<PostMetadata>> {
+            override fun onResponse(call: Call<List<PostMetadata>>, response: Response<List<PostMetadata>>) {
+                val metadatas = response.body()
 
-                ApiHelper.getInfoFastAsync(metadatas, new ApiHelper.PostInfoConstructor(), result -> {
+                ApiHelper.getInfoFastAsync(metadatas!!, ApiHelper.PostInfoConstructor()) { result ->
                     if (result != null) {
-                        result.sort((postInfo, t1) -> t1.getPostDate().compareTo(postInfo.getPostDate()));
-                        runOnUiThread(() -> ((PostCardAdapter) postList.getAdapter()).replaceDataSet(result));
+                        val sortedResult = result.sortedWith { postInfo, t1 -> t1.postDate.compareTo(postInfo.postDate) }
+                        runOnUiThread { (postList.adapter as PostCardAdapter).replaceDataSet(sortedResult) }
                     } else {
-                        runOnUiThread(() ->
-                                Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
+                        runOnUiThread {
+                            Toast.makeText(this@UserActivity, R.string.network_error, Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    runOnUiThread(() -> pgBar.setVisibility(View.GONE));
-                });
+                    runOnUiThread { pgBar.visibility = View.GONE }
+                }
             }
 
-            @Override
-            public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                runOnUiThread(() ->
-                        Toast.makeText(UserActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show());
+            override fun onFailure(call: Call<List<PostMetadata>>, throwable: Throwable) {
+                runOnUiThread {
+                    Toast.makeText(this@UserActivity, R.string.network_error, Toast.LENGTH_SHORT).show()
+                }
             }
-        });
+        })
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menuEditProfile) {
-            Intent intent = new Intent(this, UserProfileEditActivity.class);
-            intent.putExtra("userId", userId);
-            startActivity(intent);
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.menuEditProfile) {
+            val intent = Intent(this, UserProfileEditActivity::class.java)
+            intent.putExtra("userId", userId)
+            startActivity(intent)
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_user_profile_menu, menu);
-        this.menu = menu;
-        if (tm.getToken() != null && DataTools.decodeJwtTokenUserId(tm.getToken()) == userId) {
-            menu.findItem(R.id.menuEditProfile).setVisible(true);
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_user_profile_menu, menu)
+        this.menu = menu
+        if (tm.token != null && DataTools.decodeJwtTokenUserId(tm.token!!) == userId) {
+            menu.findItem(R.id.menuEditProfile).isVisible = true
         }
 
-        return true;
+        return true
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateProfile();
+    override fun onResume() {
+        super.onResume()
+        updateProfile()
     }
 }

@@ -75,6 +75,25 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.photoview)
     implementation(libs.swiperefreshlayout)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    
+    // Compose BOM - 统一管理Compose版本
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
+    implementation(libs.compose.activity)
+    implementation(libs.compose.viewmodel)
+    implementation(libs.compose.navigation)
+    
+    // Image loading for Compose
+    implementation(libs.coil.compose)
+    
+    // 调试工具
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

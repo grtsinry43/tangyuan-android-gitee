@@ -1,54 +1,36 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Menu;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.gson.JsonObject;
-import com.qingshuige.tangyuan.data.DataTools;
-import com.qingshuige.tangyuan.databinding.ActivityMainBinding;
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.PostMetadata;
-import com.qingshuige.tangyuan.network.User;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.http.FieldMap;
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuItemCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import com.google.android.material.navigation.NavigationView
+import com.google.gson.JsonObject
+import com.qingshuige.tangyuan.data.DataTools
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.qingshuige.tangyuan.network.PostMetadata
+import com.qingshuige.tangyuan.network.User
+import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import androidx.navigation.findNavController
+import androidx.core.net.toUri
 
 /*
  *
@@ -58,185 +40,183 @@ import retrofit2.http.FieldMap;
  *              ——卡尔·马克思
  */
 
-public class MainActivity extends AppCompatActivity {
+class MainActivity : AppCompatActivity() {
 
-    private AppBarConfiguration mAppBarConfiguration;
-    ///private ActivityMainBinding binding;
-    private TokenManager tm;
-    private View navHeaderView;
+    private lateinit var mAppBarConfiguration: AppBarConfiguration
+    private lateinit var tm: TokenManager
+    private lateinit var navHeaderView: View
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        EdgeToEdge.enable(this);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-        ///binding = ActivityMainBinding.inflate(getLayoutInflater());
-        tm = TangyuanApplication.getTokenManager();
+        tm = TangyuanApplication.getTokenManager()
 
-        //设置内容
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main)
 
-        ///setSupportActionBar(binding.appBarMain.toolbar);
-        setSupportActionBar(findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar))
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navHeaderView = navigationView.getHeaderView(0);
+        val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navHeaderView = navigationView.getHeaderView(0)
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_normalchat, R.id.nav_chitchat, R.id.nav_message, R.id.nav_about)
-                .setOpenableLayout(drawer)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
+        mAppBarConfiguration = AppBarConfiguration.Builder(
+            R.id.nav_normalchat, R.id.nav_chitchat, R.id.nav_message, R.id.nav_about
+        )
+            .setOpenableLayout(drawer)
+            .build()
+        val navController = this.findNavController(R.id.nav_host_fragment_content_main)
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration)
+        NavigationUI.setupWithNavController(navigationView, navController)
 
-        navHeaderView.findViewById(R.id.navAvatarView).setOnClickListener(view -> {
-            if (tm.getToken() == null) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
+        navHeaderView.findViewById<View>(R.id.navAvatarView).setOnClickListener {
+            if (tm.token == null) {
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                startActivity(intent)
             } else {
-                Intent intent = new Intent(MainActivity.this, UserActivity.class);
-                intent.putExtra("userId", DataTools.decodeJwtTokenUserId(tm.getToken()));
-                startActivity(intent);
-            }
-        });
-
-        //蒲公英更新
-        //apiKey:133d8c604b4d0772723a007a9ad213f7
-        //appKey:123a9eba5d424ab9088069505ffeb1de
-        Map<String, String> params = new HashMap<>();
-        params.put("_api_key", "133d8c604b4d0772723a007a9ad213f7");
-        params.put("appKey", "123a9eba5d424ab9088069505ffeb1de");
-        try {
-            params.put("buildVersion", getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        TangyuanApplication.getApi().checkUpdate(params).enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (response.body().getAsJsonObject("data").get("buildHaveNewVersion").getAsBoolean()) {
-                    runOnUiThread(() -> {
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("糖原公测阶段")
-                                .setMessage("检测到新版本，请及时更新。")
-                                .setPositiveButton("下载", (dialogInterface, i) -> {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse(response.body().getAsJsonObject("data").get("downloadURL").getAsString()));
-                                    // 启动浏览器
-                                    startActivity(intent);
-                                })
-                                .show();
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable throwable) {
-
-            }
-        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_bar, menu);
-
-        //SearchView
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menuSearch));
-        searchView.setQueryHint(getString(R.string.please_enter_keyword));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                intent.putExtra("keyword", query);
-                startActivity(intent);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.new_post_button) {
-            //判断是否登录
-            if (tm.getToken() == null) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(this, NewPostActivity.class);
-                startActivity(intent);
+                val intent = Intent(this@MainActivity, UserActivity::class.java)
+                intent.putExtra("userId", DataTools.decodeJwtTokenUserId(tm.token!!))
+                startActivity(intent)
             }
         }
-        if (item.getItemId() == R.id.menuNotice) {
-            TangyuanApplication.getApi().getNotice().enqueue(new Callback<PostMetadata>() {
-                @Override
-                public void onResponse(Call<PostMetadata> call, Response<PostMetadata> response) {
-                    if (response.code() == 200) {
-                        ApiHelper.getPostInfoByIdAsync(response.body().postId, result -> {
-                            Intent intent = new Intent(MainActivity.this, PostActivity.class);
-                            intent.putExtra("postId", result.getPostId());
-                            startActivity(intent);
-                        });
+
+        // 蒲公英更新
+        val params = hashMapOf<String, String>().apply {
+            put("_api_key", "133d8c604b4d0772723a007a9ad213f7")
+            put("appKey", "123a9eba5d424ab9088069505ffeb1de")
+            try {
+                put("buildVersion", packageManager.getPackageInfo(packageName, 0).versionName)
+            } catch (e: PackageManager.NameNotFoundException) {
+                throw RuntimeException(e)
+            }
+        }
+
+        TangyuanApplication.getApi().checkUpdate(params).enqueue(object : Callback<JsonObject> {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                val data = response.body()?.getAsJsonObject("data")
+                if (data?.get("buildHaveNewVersion")?.asBoolean == true) {
+                    runOnUiThread {
+                        AlertDialog.Builder(this@MainActivity)
+                            .setTitle("糖原公测阶段")
+                            .setMessage("检测到新版本，请及时更新。")
+                            .setPositiveButton("下载") { _, _ ->
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.data = data.get("downloadURL").asString.toUri()
+                                startActivity(intent)
+                            }
+                            .show()
                     }
                 }
+            }
 
-                @Override
-                public void onFailure(Call<PostMetadata> call, Throwable throwable) {
-                    Toast.makeText(MainActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
+            override fun onFailure(call: Call<JsonObject>, throwable: Throwable) {
+                // Handle failure
+            }
+        })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.action_bar, menu)
+
+        val searchView = MenuItemCompat.getActionView(menu.findItem(R.id.menuSearch)) as SearchView
+        searchView.queryHint = getString(R.string.please_enter_keyword)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                val intent = Intent(this@MainActivity, SearchActivity::class.java)
+                intent.putExtra("keyword", query)
+                startActivity(intent)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+        })
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.new_post_button -> {
+                if (tm.token == null) {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this, NewPostActivity::class.java)
+                    startActivity(intent)
                 }
-            });
+            }
+
+            R.id.menuNotice -> {
+                TangyuanApplication.getApi().getNotice().enqueue(object : Callback<PostMetadata> {
+                    override fun onResponse(
+                        call: Call<PostMetadata>,
+                        response: Response<PostMetadata>
+                    ) {
+                        if (response.code() == 200) {
+                            response.body()?.let { postMetadata ->
+                                ApiHelper.getPostInfoByIdAsync(postMetadata.postId) { result ->
+                                    val intent = Intent(this@MainActivity, PostActivity::class.java)
+                                    intent.putExtra("postId", result?.postId)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<PostMetadata>, throwable: Throwable) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.network_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //更新navHeader
-        updateUserStatus();
+    override fun onResume() {
+        super.onResume()
+        updateUserStatus()
     }
 
-    private void updateUserStatus() {
-        if (tm.getToken() != null) {
-            int userId = DataTools.decodeJwtTokenUserId(tm.getToken());
-            TangyuanApplication.getApi().getUser(userId).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    User user = response.body();
-                    runOnUiThread(() -> {
-                        Picasso.get()
+    private fun updateUserStatus() {
+        val token = tm.token
+        if (token != null) {
+            val userId = DataTools.decodeJwtTokenUserId(token)
+            TangyuanApplication.getApi().getUser(userId).enqueue(object : Callback<User> {
+                override fun onResponse(call: Call<User>, response: Response<User>) {
+                    val user = response.body()
+                    if (user != null) {
+                        runOnUiThread {
+                            Picasso.get()
                                 .load(ApiHelper.getFullImageURL(user.avatarGuid))
                                 .resize(100, 0)
                                 .centerCrop()
-                                .into((ImageView) navHeaderView.findViewById(R.id.navAvatarView));
-                        ((TextView) navHeaderView.findViewById(R.id.navNicknameView)).setText(user.nickName);
-                        ((TextView) navHeaderView.findViewById(R.id.navBioView)).setText(user.bio);
-                    });
+                                .into(navHeaderView.findViewById<ImageView>(R.id.navAvatarView))
+                            navHeaderView.findViewById<TextView>(R.id.navNicknameView).text =
+                                user.nickName
+                            navHeaderView.findViewById<TextView>(R.id.navBioView).text = user.bio
+                        }
+                    }
                 }
 
-                @Override
-                public void onFailure(Call<User> call, Throwable throwable) {
-                    runOnUiThread(() -> ((TextView) navHeaderView.findViewById(R.id.navNicknameView)).setText(R.string.network_error));
+                override fun onFailure(call: Call<User>, throwable: Throwable) {
+                    runOnUiThread {
+                        navHeaderView.findViewById<TextView>(R.id.navNicknameView)
+                            .setText(R.string.network_error)
+                    }
                 }
-            });
+            })
         }
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = this.findNavController(R.id.nav_host_fragment_content_main)
+        return NavigationUI.navigateUp(
+            navController,
+            mAppBarConfiguration
+        ) || super.onSupportNavigateUp()
     }
 }

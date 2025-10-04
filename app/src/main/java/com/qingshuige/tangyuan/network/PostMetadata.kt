@@ -1,13 +1,12 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.Date
 
-public class PostMetadata {
-    public int postId;
-    public int userId;
-    public Date postDateTime;
-    public int sectionId;
-    public int categoryId;
-    public boolean isVisible;
-}
+data class PostMetadata(
+    val postId: Int = 0,
+    val userId: Int = 0,
+    val postDateTime: Date? = null,
+    val sectionId: Int = 0,
+    val categoryId: Int = 0,
+    val isVisible: Boolean = false
+)

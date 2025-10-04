@@ -1,9 +1,9 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-public class CreateUserDto {
-    public String avatarGuid;
-    public String isoRegionName;
-    public String nickName;
-    public String password;
-    public String phoneNumber;
-}
+data class CreateUserDto(
+    var avatarGuid: String? = null,
+    var isoRegionName: String? = null,
+    var nickName: String? = null,
+    var password: String? = null,
+    var phoneNumber: String? = null
+)

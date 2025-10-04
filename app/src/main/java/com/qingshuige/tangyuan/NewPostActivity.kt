@@ -1,86 +1,69 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
+//import androidx.activity.EdgeToEdge
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import com.qingshuige.tangyuan.data.DataTools
+import com.qingshuige.tangyuan.data.MediaTools
+import com.qingshuige.tangyuan.network.Category
+import com.qingshuige.tangyuan.network.CreatPostMetadataDto
+import com.qingshuige.tangyuan.network.PostBody
+import com.qingshuige.tangyuan.viewmodels.CategorySpinnerAdapter
+import com.squareup.picasso.Picasso
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+class NewPostActivity : AppCompatActivity() {
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
-import com.qingshuige.tangyuan.data.DataTools;
-import com.qingshuige.tangyuan.data.MediaTools;
-import com.qingshuige.tangyuan.network.Category;
-import com.qingshuige.tangyuan.network.CreatPostMetadataDto;
-import com.qingshuige.tangyuan.network.PostBody;
-import com.qingshuige.tangyuan.viewmodels.CategorySpinnerAdapter;
-import com.squareup.picasso.Picasso;
+    private lateinit var textEdit: EditText
+    private lateinit var byteCounter: TextView
+    private lateinit var pgBar: ProgressBar
+    private lateinit var imageView1: ImageView
+    private lateinit var imageView2: ImageView
+    private lateinit var imageView3: ImageView
+    private lateinit var spinnerSection: Spinner
+    private lateinit var spinnerCategory: Spinner
+    private lateinit var menu: Menu
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+    private lateinit var es: ExecutorService
+    private lateinit var handler: Handler
+    private lateinit var tm: TokenManager
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class NewPostActivity extends AppCompatActivity {
-
-    private EditText textEdit;
-    private TextView byteCounter;
-    private ProgressBar pgBar;
-
-    private ImageView imageView1;
-    private ImageView imageView2;
-    private ImageView imageView3;
-    private Spinner spinnerSection;
-    private Spinner spinnerCategory;
-    private Menu menu;
-
-    private ExecutorService es;
-    private Handler handler;
-
-    private TokenManager tm;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_new_post);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        EdgeToEdge.enable(this)
+        setContentView(R.layout.activity_new_post)
         /*
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -88,293 +71,292 @@ public class NewPostActivity extends AppCompatActivity {
             return insets;
         });
         */
-        setSupportActionBar(findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
 
-        textEdit = (EditText) findViewById(R.id.textEdit);
-        byteCounter = (TextView) findViewById(R.id.byteCounter);
-        pgBar = findViewById(R.id.progressBar);
-        imageView1 = (ImageView) findViewById(R.id.imageView1);
-        imageView2 = (ImageView) findViewById(R.id.imageView2);
-        imageView3 = (ImageView) findViewById(R.id.imageView3);
-        spinnerSection = findViewById(R.id.spinnerSection);
-        spinnerCategory = findViewById(R.id.spinnerCategory);
+        textEdit = findViewById(R.id.textEdit)
+        byteCounter = findViewById(R.id.byteCounter)
+        pgBar = findViewById(R.id.progressBar)
+        imageView1 = findViewById(R.id.imageView1)
+        imageView2 = findViewById(R.id.imageView2)
+        imageView3 = findViewById(R.id.imageView3)
+        spinnerSection = findViewById(R.id.spinnerSection)
+        spinnerCategory = findViewById(R.id.spinnerCategory)
 
-        es = Executors.newSingleThreadExecutor();
-        handler = new Handler(Looper.getMainLooper());
-        tm = TangyuanApplication.getTokenManager();
+        es = Executors.newSingleThreadExecutor()
+        handler = Handler(Looper.getMainLooper())
+        tm = TangyuanApplication.getTokenManager()
 
-        textEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+        textEdit.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                byteCounter.setText(textEdit.getText().length() + " / 200");
-                if (textEdit.getText().length() > 200) {
-                    byteCounter.setTextColor(getColor(R.color.nanohanacha_gold));
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                byteCounter.text = "${textEdit.text.length} / 200"
+                if (textEdit.text.length > 200) {
+                    byteCounter.setTextColor(getColor(R.color.nanohanacha_gold))
                 } else {
-                    byteCounter.setTextColor(getColor(R.color.electromagnetic));
+                    byteCounter.setTextColor(getColor(R.color.electromagnetic))
                 }
             }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
+            override fun afterTextChanged(editable: Editable) {}
+        })
 
-        imageView1.setOnClickListener(new ImageViewOnClickListener());
+        imageView1.setOnClickListener(ImageViewOnClickListener())
 
-        //板块选择
-        ArrayAdapter<String> sectionAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                new String[]{getString(R.string.menu_normalchat), getString(R.string.menu_chitchat)});
-        sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSection.setAdapter(sectionAdapter);
+        // 板块选择
+        val sectionAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            arrayOf(getString(R.string.menu_normalchat), getString(R.string.menu_chitchat))
+        )
+        sectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerSection.adapter = sectionAdapter
 
-        //领域选择
-        TangyuanApplication.getApi().getAllCategories().enqueue(new Callback<List<Category>>() {
-            @Override
-            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+        // 领域选择
+        TangyuanApplication.getApi().getAllCategories().enqueue(object : Callback<List<Category>> {
+            override fun onResponse(call: Call<List<Category>>, response: Response<List<Category>>) {
                 if (response.code() == 200) {
-                    ArrayAdapter<Category> categoryAdapter = new CategorySpinnerAdapter(
-                            NewPostActivity.this,
-                            android.R.layout.simple_spinner_item,
-                            response.body()
-                    );
-                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerCategory.setAdapter(categoryAdapter);
+                    val categoryAdapter = CategorySpinnerAdapter(
+                        this@NewPostActivity,
+                        android.R.layout.simple_spinner_item,
+                        response.body()!!
+                    )
+                    categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinnerCategory.adapter = categoryAdapter
                 } else {
-                    new AlertDialog.Builder(NewPostActivity.this)
-                            .setTitle(R.string.network_error)
-                            .setMessage(R.string.failed_to_fetch_categories)
-                            .create().show();
-                    NewPostActivity.this.finish();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Category>> call, Throwable throwable) {
-                new AlertDialog.Builder(NewPostActivity.this)
+                    AlertDialog.Builder(this@NewPostActivity)
                         .setTitle(R.string.network_error)
                         .setMessage(R.string.failed_to_fetch_categories)
-                        .create().show();
-                NewPostActivity.this.finish();
-            }
-        });
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_new_post_menu, menu);
-        this.menu = menu;
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //选择图片
-        if (item.getItemId() == R.id.image_button) {
-            //假如imageView有空闲
-            if (imageView1.getDrawable() == null ||
-                    imageView2.getDrawable() == null ||
-                    imageView3.getDrawable() == null) {
-                //选择图片
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
-            }
-        }
-
-        //发帖
-        if (item.getItemId() == R.id.send_post_button) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                View view = getCurrentFocus();
-                if (view != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        .create().show()
+                    this@NewPostActivity.finish()
                 }
             }
 
-            //检查必要条件
-            if (!(textEdit.getText().length() > 0)) {
-                Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show();
-            } else if (!(textEdit.getText().length() < 200)) {
-                Toast.makeText(this, R.string.text_is_too_long, Toast.LENGTH_SHORT).show();
-            } else if (spinnerCategory.getAdapter() == null) {
-                Toast.makeText(this, R.string.waiting_for_loading_categories, Toast.LENGTH_SHORT).show();
-            } else if (((Category) spinnerCategory.getSelectedItem()).categoryId == 0) {
-                new AlertDialog.Builder(this)
+            override fun onFailure(call: Call<List<Category>>, throwable: Throwable) {
+                AlertDialog.Builder(this@NewPostActivity)
+                    .setTitle(R.string.network_error)
+                    .setMessage(R.string.failed_to_fetch_categories)
+                    .create().show()
+                this@NewPostActivity.finish()
+            }
+        })
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.activity_new_post_menu, menu)
+        this.menu = menu
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // 选择图片
+        if (item.itemId == R.id.image_button) {
+            // 假如imageView有空闲
+            if (imageView1.drawable == null ||
+                imageView2.drawable == null ||
+                imageView3.drawable == null
+            ) {
+                // 选择图片
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(intent, 1)
+            }
+        }
+
+        // 发帖
+        if (item.itemId == R.id.send_post_button) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            imm?.let {
+                currentFocus?.let { view ->
+                    it.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+            }
+
+            // 检查必要条件
+            when {
+                textEdit.text.length <= 0 -> {
+                    Toast.makeText(this, R.string.text_is_empty, Toast.LENGTH_SHORT).show()
+                }
+                textEdit.text.length >= 200 -> {
+                    Toast.makeText(this, R.string.text_is_too_long, Toast.LENGTH_SHORT).show()
+                }
+                spinnerCategory.adapter == null -> {
+                    Toast.makeText(this, R.string.waiting_for_loading_categories, Toast.LENGTH_SHORT).show()
+                }
+                (spinnerCategory.selectedItem as Category).categoryId == 0 -> {
+                    AlertDialog.Builder(this)
                         .setMessage(R.string.sending_post_no_category)
                         .setTitle(R.string.message)
-                        .setPositiveButton(R.string.yes, (dialogInterface, i) ->
-                                sendPostAsync(NewPostActivity.this))
+                        .setPositiveButton(R.string.yes) { _, _ ->
+                            sendPostAsync(this@NewPostActivity)
+                        }
                         .setNegativeButton(R.string.no, null)
                         .create()
-                        .show();
-            } else {
-                sendPostAsync(this);
+                        .show()
+                }
+                else -> {
+                    sendPostAsync(this)
+                }
             }
         }
 
-        return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item)
     }
 
-    private void sendPostAsync(Context context) {
-        menu.findItem(R.id.send_post_button).setEnabled(false);
-        pgBar.setVisibility(View.VISIBLE);
+    private fun sendPostAsync(context: Context) {
+        menu.findItem(R.id.send_post_button).isEnabled = false
+        pgBar.visibility = View.VISIBLE
 
-        es.execute(() -> {
+        es.execute {
             try {
-                //1.上传图片
-                List<String> guids = new ArrayList<>();
-                List<ImageView> imageViewList = new ArrayList<>();
-                imageViewList.add(imageView1);
-                imageViewList.add(imageView2);
-                imageViewList.add(imageView3);//这个List只是为了foreach方便
-                for (ImageView v : imageViewList) {
-                    if (v.getDrawable() != null) {
-                        Bitmap bitmap = MediaTools.compressToSize(NewPostActivity.this,
-                                ((BitmapDrawable) v.getDrawable()).getBitmap(),
-                                1.5f);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                        byte[] bytes = stream.toByteArray();
-                        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
-                        MultipartBody.Part part =
-                                MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
-                        String guid =
-                                new ArrayList<>(TangyuanApplication.getApi().postImage(part).execute().body().values())
-                                        .get(0);
-                        guids.add(guid);
+                // 1.上传图片
+                val guids = mutableListOf<String>()
+                val imageViewList = listOf(imageView1, imageView2, imageView3)
+                
+                for (v in imageViewList) {
+                    v.drawable?.let { drawable ->
+                        val bitmap = MediaTools.compressToSize(
+                            this@NewPostActivity,
+                            (drawable as BitmapDrawable).bitmap,
+                            1.5f
+                        )
+                        val stream = ByteArrayOutputStream()
+                        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                        val bytes = stream.toByteArray()
+                        val requestBody = RequestBody.create("image/jpeg".toMediaTypeOrNull(), bytes)
+                        val part = MultipartBody.Part.createFormData("file", "image.jpg", requestBody)
+                        val guid = TangyuanApplication.getApi().postImage(part).execute().body()!!.values.first()
+                        guids.add(guid)
                     }
                 }
 
-                //2.上传元数据
-                int postId;
-                CreatPostMetadataDto metadataDto = new CreatPostMetadataDto();
-                metadataDto.userId = DataTools.decodeJwtTokenUserId(tm.getToken());
-                metadataDto.postDateTime = new Date();
-                metadataDto.sectionId = spinnerSection.getSelectedItemPosition() + 1;
-                metadataDto.categoryId = ((Category) spinnerCategory.getSelectedItem()).categoryId;
-                metadataDto.isVisible = true;
-                postId = new ArrayList<>(TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body().values())
-                        .get(0);
+                // 2.上传元数据
+                val metadataDto = CreatPostMetadataDto().apply {
+                    userId = DataTools.decodeJwtTokenUserId(tm.token!!)
+                    postDateTime = Date()
+                    sectionId = spinnerSection.selectedItemPosition + 1
+                    categoryId = (spinnerCategory.selectedItem as Category).categoryId
+                    isVisible = true
+                }
+                val postId = TangyuanApplication.getApi().postPostMetadata(metadataDto).execute().body()!!.values.first()
 
-                //3.上传Body
-                PostBody body = new PostBody();
-                body.postId = postId;
-                body.textContent = DataTools.deleteBlankLines(textEdit.getText().toString());
-                if (!guids.isEmpty()) {
-                    body.image1UUID = guids.get(0);
-                    if (guids.size() >= 2) {
-                        body.image2UUID = guids.get(1);
-                    }
-                    if (guids.size() == 3) {
-                        body.image3UUID = guids.get(2);
+                // 3.上传Body
+                val body = PostBody().apply {
+                    this.postId = postId
+                    textContent = DataTools.deleteBlankLines(textEdit.text.toString())
+                    if (guids.isNotEmpty()) {
+                        image1UUID = guids[0]
+                        if (guids.size >= 2) {
+                            image2UUID = guids[1]
+                        }
+                        if (guids.size == 3) {
+                            image3UUID = guids[2]
+                        }
                     }
                 }
-                TangyuanApplication.getApi().postPostBody(body).execute();
+                TangyuanApplication.getApi().postPostBody(body).execute()
 
-                //4.完成
-                finish();
-                handler.post(() -> {
-                    Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show();
-                    context.startActivity(new Intent(context, PostActivity.class).putExtra("postId", postId));
-                });
-            } catch (Exception e) {
-                handler.post(() -> {
-                    Snackbar.make(findViewById(R.id.imageLayout),
-                            getString(R.string.send_post_error),
-                            BaseTransientBottomBar.LENGTH_LONG).show();
-                    ((ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("error", e.getLocalizedMessage()));
-                    menu.findItem(R.id.send_post_button).setEnabled(true);
-                    pgBar.setVisibility(View.GONE);
-                });
+                // 4.完成
+                finish()
+                handler.post {
+                    Toast.makeText(context, R.string.post_sent, Toast.LENGTH_SHORT).show()
+                    context.startActivity(Intent(context, PostActivity::class.java).putExtra("postId", postId))
+                }
+            } catch (e: Exception) {
+                handler.post {
+                    Snackbar.make(
+                        findViewById(R.id.imageLayout),
+                        getString(R.string.send_post_error),
+                        BaseTransientBottomBar.LENGTH_LONG
+                    ).show()
+                    (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                        .setPrimaryClip(ClipData.newPlainText("error", e.localizedMessage))
+                    menu.findItem(R.id.send_post_button).isEnabled = true
+                    pgBar.visibility = View.GONE
+                }
             }
-        });
-
+        }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 1://选择图片
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            1 -> { // 选择图片
                 if (resultCode == RESULT_OK && data != null) {
-                    //轮流填充三个imageView
-                    if (imageView1.getDrawable() == null) {
-                        Picasso.get()
-                                .load(data.getData())
+                    // 轮流填充三个imageView
+                    when {
+                        imageView1.drawable == null -> {
+                            Picasso.get()
+                                .load(data.data)
                                 .resize(4000, 0)
                                 .centerCrop()
-                                .into(imageView1);
-                        break;
-                    } else if (imageView2.getDrawable() == null) {
-                        Picasso.get()
-                                .load(data.getData())
+                                .into(imageView1)
+                        }
+                        imageView2.drawable == null -> {
+                            Picasso.get()
+                                .load(data.data)
                                 .resize(4000, 0)
                                 .centerCrop()
-                                .into(imageView2);
-                        break;
-                    } else if (imageView3.getDrawable() == null) {
-                        Picasso.get()
-                                .load(data.getData())
+                                .into(imageView2)
+                        }
+                        imageView3.drawable == null -> {
+                            Picasso.get()
+                                .load(data.data)
                                 .resize(4000, 0)
                                 .centerCrop()
-                                .into(imageView3);
-                        break;
+                                .into(imageView3)
+                        }
                     }
                 }
-                break;
-        }
-    }
-
-    private class ImageViewOnClickListener implements View.OnClickListener {
-        private ImageView imageView;
-
-        @Override
-        public void onClick(View view) {
-            imageView = (ImageView) view;
-            if (imageView.getDrawable() != null) {
-                imageView.setImageDrawable(null);
             }
         }
     }
 
+    private inner class ImageViewOnClickListener : View.OnClickListener {
+        override fun onClick(view: View) {
+            val imageView = view as ImageView
+            if (imageView.drawable != null) {
+                imageView.setImageDrawable(null)
+            }
+        }
+    }
 
-    /**
-     * @param context
-     * @param uri
-     * @return 图片大小Byte数。
-     */
-    static long getImageSize(Context context, Uri uri) {
-        Cursor cursor = null;
-        try {
-            // 查询文件大小的列
-            String[] projection = {OpenableColumns.SIZE};
-            cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                int sizeColumnIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                if (sizeColumnIndex >= 0) {
-                    return cursor.getLong(sizeColumnIndex); // 返回文件大小（字节）
+    companion object {
+        /**
+         * @param context
+         * @param uri
+         * @return 图片大小Byte数。
+         */
+        fun getImageSize(context: Context, uri: Uri): Long {
+            var cursor: Cursor? = null
+            return try {
+                // 查询文件大小的列
+                val projection = arrayOf(OpenableColumns.SIZE)
+                cursor = context.contentResolver.query(uri, projection, null, null, null)
+                if (cursor != null && cursor.moveToFirst()) {
+                    val sizeColumnIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                    if (sizeColumnIndex >= 0) {
+                        cursor.getLong(sizeColumnIndex) // 返回文件大小（字节）
+                    } else {
+                        -1L
+                    }
+                } else {
+                    -1L
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
+            } catch (e: Exception) {
+                e.printStackTrace()
+                -1L // 获取失败返回-1
+            } finally {
+                cursor?.close()
             }
         }
-        return -1; // 获取失败返回-1
     }
-
 }

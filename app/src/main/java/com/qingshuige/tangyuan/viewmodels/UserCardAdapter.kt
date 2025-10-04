@@ -1,122 +1,82 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.data.CircleTransform
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.squareup.picasso.Picasso
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class UserCardAdapter(private val context: Context) :
+    RecyclerView.Adapter<UserCardAdapter.ViewHolder>() {
 
-import com.google.android.material.button.MaterialButton;
-import com.qingshuige.tangyuan.R;
-import com.qingshuige.tangyuan.data.CircleTransform;
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.User;
-import com.squareup.picasso.Picasso;
+    private var userInfos = mutableListOf<UserInfo>()
+    private var onUserClickListener: ItemActionListener? = null
+    private var onFollowButtonClickListener: ItemActionListener? = null
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class UserCardAdapter extends RecyclerView.Adapter<UserCardAdapter.ViewHolder> {
-    List<UserInfo> userInfos;
-    Context context;
-
-    private ItemActionListener onUserClickListener;
-    private ItemActionListener onFollowButtonClickListener;
-
-    public UserCardAdapter(Context context) {
-        userInfos = new ArrayList<>();
-        this.context = context;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.view_user_card, parent, false)
+        return ViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public UserCardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_user_card, parent, false);
-        return new UserCardAdapter.ViewHolder(v);
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val userInfo = userInfos[position]
 
-    @Override
-    public void onBindViewHolder(@NonNull UserCardAdapter.ViewHolder holder, int position) {
-        UserInfo ui = userInfos.get(position);
-
-        //Avatar
+        // 头像加载
         Picasso.get()
-                .load(ApiHelper.getFullImageURL(ui.getUser().avatarGuid))
-                .resize(200, 0)
-                .transform(new CircleTransform())
-                .into(holder.getImgAvatar());
+            .load(ApiHelper.getFullImageURL(userInfo.user.avatarGuid))
+            .resize(200, 0)
+            .transform(CircleTransform())
+            .into(holder.imgAvatar)
 
-        //Nickname
-        holder.getTextNickname().setText(ui.getUser().nickName);
+        // 昵称
+        holder.textNickname.text = userInfo.user.nickName
 
-        //isFollowed
-        holder.getBtnFollow().setText(context.getString(ui.isFollowed() ? R.string.followed : R.string.follow));
+        // 关注状态
+        val followTextRes = if (userInfo.isFollowed) R.string.followed else R.string.follow
+        holder.btnFollow.setText(followTextRes)
 
-        //点击事件
-        if (onUserClickListener != null) {
-            holder.getRoot().setOnClickListener(view -> onUserClickListener.onAction(ui));
+        // 点击事件
+        holder.root.setOnClickListener {
+            onUserClickListener?.onAction(userInfo)
         }
-        if (onFollowButtonClickListener != null) {
-            holder.getBtnFollow().setOnClickListener(view -> onFollowButtonClickListener.onAction(ui));
+
+        holder.btnFollow.setOnClickListener {
+            onFollowButtonClickListener?.onAction(userInfo)
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return userInfos.size();
+    override fun getItemCount(): Int = userInfos.size
+
+    fun replaceDataset(list: List<UserInfo>) {
+        userInfos = list.toMutableList()
+        notifyDataSetChanged()
     }
 
-    public void replaceDataset(List<UserInfo> list) {
-        userInfos = list;
-        notifyDataSetChanged();
+    fun setOnUserClickListener(listener: ItemActionListener) {
+        this.onUserClickListener = listener
     }
 
-    public void setOnUserClickListener(ItemActionListener onUserClickListener) {
-        this.onUserClickListener = onUserClickListener;
+    fun setOnFollowButtonClickListener(listener: ItemActionListener) {
+        this.onFollowButtonClickListener = listener
     }
 
-    public void setOnFollowButtonClickListener(ItemActionListener onFollowButtonClickListener) {
-        this.onFollowButtonClickListener = onFollowButtonClickListener;
+    fun interface ItemActionListener {
+        fun onAction(info: UserInfo)
     }
 
-    public interface ItemActionListener {
-        void onAction(UserInfo info);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imgAvatar;
-        private TextView textNickname;
-        private MaterialButton btnFollow;
-        private LinearLayout root;
-
-        public ViewHolder(@NonNull View view) {
-            super(view);
-
-            imgAvatar = view.findViewById(R.id.imgAvatar);
-            textNickname = view.findViewById(R.id.textNickname);
-            btnFollow = view.findViewById(R.id.btnFollow);
-            root = view.findViewById(R.id.lnlUserCardRoot);
-        }
-
-        public ImageView getImgAvatar() {
-            return imgAvatar;
-        }
-
-        public TextView getTextNickname() {
-            return textNickname;
-        }
-
-        public MaterialButton getBtnFollow() {
-            return btnFollow;
-        }
-
-        public LinearLayout getRoot() {
-            return root;
-        }
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imgAvatar: ImageView = itemView.findViewById(R.id.imgAvatar)
+        val textNickname: TextView = itemView.findViewById(R.id.textNickname)
+        val btnFollow: MaterialButton = itemView.findViewById(R.id.btnFollow)
+        val root: LinearLayout = itemView.findViewById(R.id.lnlUserCardRoot)
     }
 }

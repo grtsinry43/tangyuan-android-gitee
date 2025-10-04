@@ -1,13 +1,13 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.util.Date;
+import java.util.Date
 
-public class Comment {
-    public int commentId;
-    public int parentCommentId;
-    public int userId;
-    public int postId;
-    public String content;
-    public String imageGuid;
-    public Date commentDateTime;
-}
+data class Comment(
+    var commentId: Int = 0,
+    var parentCommentId: Int = 0,
+    var userId: Int = 0,
+    var postId: Int = 0,
+    var content: String? = null,
+    var imageGuid: String? = null,
+    var commentDateTime: Date? = null
+)

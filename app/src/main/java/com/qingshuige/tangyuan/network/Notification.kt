@@ -1,14 +1,14 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.util.Date;
+import java.util.Date
 
-public class Notification {
-    public int notificationId;
-    public int targetUserId;
-    public int targetPostId;
-    public int targetCommentId;
-    public int sourceCommentId;
-    public int sourceUserId;
-    public boolean isRead;
-    public Date notificationDateTime;
-}
+data class Notification(
+    var notificationId: Int = 0,
+    var targetUserId: Int = 0,
+    var targetPostId: Int = 0,
+    var targetCommentId: Int = 0,
+    var sourceCommentId: Int = 0,
+    var sourceUserId: Int = 0,
+    var isRead: Boolean = false,
+    var notificationDateTime: Date? = null
+)

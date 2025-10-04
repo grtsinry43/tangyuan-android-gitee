@@ -1,11 +1,11 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.util.Date;
+import java.util.Date
 
-public class CreatPostMetadataDto {
-    public boolean isVisible;
-    public Date postDateTime;
-    public int sectionId;
-    public int categoryId;
-    public int userId;
-}
+data class CreatPostMetadataDto(
+    var isVisible: Boolean = false,
+    var postDateTime: Date? = null,
+    var sectionId: Int = 0,
+    var categoryId: Int = 0,
+    var userId: Int = 0
+)

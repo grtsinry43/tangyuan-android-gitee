@@ -1,12 +1,12 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-public class User {
-    public int userId;
-    public String nickName;
-    public String phoneNumber;
-    public String isoRegionName;
-    public String email;
-    public String bio;
-    public String avatarGuid;
-    public String password;
-}
+data class User(
+    var userId: Int = 0,
+    var nickName: String = "",
+    var phoneNumber: String = "",
+    var isoRegionName: String = "",
+    var email: String = "",
+    var bio: String = "",
+    var avatarGuid: String = "",
+    var password: String = ""
+)

@@ -1,13 +1,13 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.util.Date;
+import java.util.Date
 
-public class NewNotification {
-    public int notificationId;
-    public String type;
-    public int targetUserId;
-    public int sourceId;
-    public String sourceType;
-    public boolean isRead;
-    public Date createDate;
-}
+data class NewNotification(
+    var notificationId: Int = 0,
+    var type: String? = null,
+    var targetUserId: Int = 0,
+    var sourceId: Int = 0,
+    var sourceType: String? = null,
+    var isRead: Boolean = false,
+    var createDate: Date? = null
+)

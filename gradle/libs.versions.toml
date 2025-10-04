@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.0"
+agp = "8.12.3"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
@@ -16,6 +16,9 @@ kotlin = "1.9.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.8.0"
 composeBom = "2024.04.01"
+composeNavigation = "2.7.4"
+composeHilt = "1.1.0"
+coil = "2.5.0"
 activity = "1.8.0"
 picasso = "2.71828"
 securityCrypto = "1.1.0-alpha06"
@@ -25,6 +28,7 @@ ucrop = "2.2.8"
 loggingInterceptor = "5.0.0-alpha.14"
 photoview = "2.0.0"
 swiperefreshlayout = "1.1.0"
+coroutines = "1.7.3"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -58,6 +62,25 @@ ucrop = { group = "com.github.yalantis", name = "ucrop", version.ref = "ucrop" }
 logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "loggingInterceptor" }
 photoview = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoview" }
 swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
+
+# Compose Navigation
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+
+# Compose integration with existing libraries
+compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelKtx" }
+
+# Image loading for Compose (replacement for Picasso)
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

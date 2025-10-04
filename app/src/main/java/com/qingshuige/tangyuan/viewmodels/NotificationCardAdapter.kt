@@ -1,148 +1,85 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.GridLayout
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.data.CircleTransform
+import com.qingshuige.tangyuan.data.DataTools
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.squareup.picasso.Picasso
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class NotificationCardAdapter : RecyclerView.Adapter<NotificationCardAdapter.ViewHolder>() {
 
-import com.qingshuige.tangyuan.R;
-import com.qingshuige.tangyuan.data.CircleTransform;
-import com.qingshuige.tangyuan.data.DataTools;
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.squareup.picasso.Picasso;
+    private var messages = mutableListOf<NotificationInfo>()
+    private var onItemClickListener: ItemActionListener? = null
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-public class NotificationCardAdapter extends RecyclerView.Adapter<NotificationCardAdapter.ViewHolder> {
-
-    List<NotificationInfo> messages;
-
-
-    private ItemActionListener onItemClickListener;
-
-    public NotificationCardAdapter() {
-        messages = new ArrayList<>();
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_message_card, parent, false)
+        return ViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.view_message_card, parent, false));
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val info = messages[position]
 
-    @Override
-    public void onBindViewHolder(@NonNull NotificationCardAdapter.ViewHolder holder, int position) {
-        NotificationInfo info = messages.get(position);
-
-        //Avatar
+        // 头像
         Picasso.get()
-                .load(ApiHelper.getFullImageURL(info.getAvatarGuid()))
-                .resize(200, 0)
-                .centerCrop()
-                .transform(new CircleTransform())
-                .into(holder.getImgAvatar());
-        //Title
-        holder.getTextTitle().setText(info.getTitle());
-        //Type
-        holder.getTextType().setText(info.getType());
-        holder.getTextType().setTextColor(info.getTypeColor());
-        //Indicator
-        holder.getIdcIsRead().setVisibility(info.getNotification().isRead ? View.GONE : View.VISIBLE);
-        //Message
-        holder.getTextMessage().setText(info.getMessage());
-        //DateTime
-        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getNotification().createDate, holder.getContext()));
-        //MainLayout
-        holder.getMainLayout().setOnClickListener(view -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemAction(info);
-            }
-        });
+            .load(ApiHelper.getFullImageURL(info.avatarGuid))
+            .resize(200, 0)
+            .centerCrop()
+            .transform(CircleTransform())
+            .into(holder.imgAvatar)
+
+        // 标题
+        holder.textTitle.text = info.title
+
+        // 类型
+        holder.textType.text = info.type
+        holder.textType.setTextColor(info.typeColor)
+
+        // 未读指示器
+        holder.idcIsRead.visibility = if (info.notification?.isRead == true) View.GONE else View.VISIBLE
+
+        // 消息内容
+        holder.textMessage.text = info.message
+
+        // 时间
+        info.notification?.createDate?.let { date ->
+            holder.textDateTime.text = DataTools.getLocalFriendlyDateTime(date, holder.itemView.context)
+        }
+
+        // 点击事件
+        holder.mainLayout.setOnClickListener {
+            onItemClickListener?.onItemAction(info)
+        }
     }
 
-    @Override
-    public int getItemCount() {
-        return messages.size();
+    override fun getItemCount(): Int = messages.size
+
+    fun setDataset(dataset: List<NotificationInfo>) {
+        messages = dataset.toMutableList()
+        notifyDataSetChanged()
     }
 
-    public void setDataset(List<NotificationInfo> dataset) {
-        messages = dataset;
-        notifyDataSetChanged();
+    fun setOnItemClickListener(listener: ItemActionListener) {
+        this.onItemClickListener = listener
     }
 
-    public void setOnItemClickListener(ItemActionListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    fun interface ItemActionListener {
+        fun onItemAction(info: NotificationInfo)
     }
 
-    public interface ItemActionListener {
-        void onItemAction(NotificationInfo info);
-    }
-
-    static class ViewHolder extends RecyclerView.ViewHolder {
-
-        private ImageView imgAvatar;
-        private TextView textTitle;
-        private TextView textMessage;
-        private TextView textDateTime;
-        private GridLayout mainLayout;
-        private View idcIsRead;
-        private TextView textType;
-
-        private Context context;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            imgAvatar = itemView.findViewById(R.id.imgAvatar);
-            textTitle = itemView.findViewById(R.id.textTitle);
-            textMessage = itemView.findViewById(R.id.textMessage);
-            textDateTime = itemView.findViewById(R.id.textDateTime);
-            mainLayout = itemView.findViewById(R.id.mainLayout);
-            idcIsRead = itemView.findViewById(R.id.idcIsRead);
-            textType = itemView.findViewById(R.id.textType);
-
-            context = itemView.getContext();
-        }
-
-        public ImageView getImgAvatar() {
-            return imgAvatar;
-        }
-
-        public TextView getTextTitle() {
-            return textTitle;
-        }
-
-        public TextView getTextMessage() {
-            return textMessage;
-        }
-
-        public TextView getTextDateTime() {
-            return textDateTime;
-        }
-
-        public Context getContext() {
-            return context;
-        }
-
-        public GridLayout getMainLayout() {
-            return mainLayout;
-        }
-
-        public View getIdcIsRead() {
-            return idcIsRead;
-        }
-
-        public TextView getTextType() {
-            return textType;
-        }
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imgAvatar: ImageView = itemView.findViewById(R.id.imgAvatar)
+        val textTitle: TextView = itemView.findViewById(R.id.textTitle)
+        val textMessage: TextView = itemView.findViewById(R.id.textMessage)
+        val textDateTime: TextView = itemView.findViewById(R.id.textDateTime)
+        val mainLayout: GridLayout = itemView.findViewById(R.id.mainLayout)
+        val idcIsRead: View = itemView.findViewById(R.id.idcIsRead)
+        val textType: TextView = itemView.findViewById(R.id.textType)
     }
 }

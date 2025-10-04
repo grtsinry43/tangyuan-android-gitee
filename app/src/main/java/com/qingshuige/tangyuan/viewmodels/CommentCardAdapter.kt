@@ -1,213 +1,139 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.GridLayout
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.data.CircleTransform
+import com.qingshuige.tangyuan.data.DataTools
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.squareup.picasso.Picasso
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class CommentCardAdapter : RecyclerView.Adapter<CommentCardAdapter.ViewHolder>() {
 
-import com.google.android.material.button.MaterialButton;
-import com.qingshuige.tangyuan.R;
-import com.qingshuige.tangyuan.data.CircleTransform;
-import com.qingshuige.tangyuan.data.DataTools;
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.Comment;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+    private var comments = mutableListOf<CommentInfo>()
+    private var onReplyButtonClickListener: ItemActionListener? = null
+    private var onTextClickListener: ItemActionListener? = null
+    private var onItemHoldListener: ItemActionListener? = null
+    private var onAvatarClickListener: ItemActionListener? = null
+    private var isReplyButtonVisible = true
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-public class CommentCardAdapter extends RecyclerView.Adapter<CommentCardAdapter.ViewHolder> {
-    private List<CommentInfo> comments;
-
-    private ItemActionListener onReplyButtonClickListener;
-    private ItemActionListener onTextClickListener;
-    private ItemActionListener onItemHoldListener;
-    private ItemActionListener onAvatarClickListener;
-
-    private boolean isReplyButtonVisible = true;
-
-    public CommentCardAdapter() {
-        comments = new ArrayList<>();
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.view_comment_card, parent, false)
+        return ViewHolder(view)
     }
 
-    @NonNull
-    @Override
-    public CommentCardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_comment_card, parent, false);
-        return new ViewHolder(v);
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val info = comments[position]
 
-    @Override
-    public void onBindViewHolder(@NonNull CommentCardAdapter.ViewHolder holder, int position) {
-        CommentInfo info = comments.get(position);
+        // 主布局长按事件
+        holder.main.setOnLongClickListener {
+            onItemHoldListener?.onAction(info)
+            true
+        }
 
-        //MainLayout
-        holder.getMain().setOnLongClickListener(view -> {
-            if (onItemHoldListener != null) {
-                onItemHoldListener.onAction(info);
-                return true;
-            }
-            return false;
-        });
-        //Avatar
+        // 头像
         Picasso.get()
-                .load(ApiHelper.getFullImageURL(info.getUserAvatarGuid()))
-                .resize(200, 0)
-                .centerCrop()
-                .placeholder(R.drawable.img_placeholder)
-                .transform(new CircleTransform())
-                .into(holder.getAvatar());
-        if (onAvatarClickListener != null) {
-            holder.getAvatar().setOnClickListener(view -> onAvatarClickListener.onAction(info));
-        }
-        //Nickname
-        holder.getTextNickname().setText(info.getUserNickname());
-        //Text
-        holder.getTextComment().setText(info.getCommentText());
-        holder.getTextComment().setOnClickListener(view -> {
-            if (onTextClickListener != null) {
-                onTextClickListener.onAction(info);
-            }
-        });
-        holder.getTextComment().setOnLongClickListener(view -> {
-            if (onItemHoldListener != null) {
-                onItemHoldListener.onAction(info);
-                return true;
-            }
-            return false;
-        });
-        //Replies
-        holder.getButtonSeeReplies().setVisibility((info.isHasReplies() && isReplyButtonVisible) ? View.VISIBLE : View.GONE);
-        holder.getButtonSeeReplies().setOnClickListener(view -> {
-            if (onReplyButtonClickListener != null) {
-                onReplyButtonClickListener.onAction(info);
-            }
-        });
-        //DateTime
-        holder.getTextDateTime().setText(DataTools.getLocalFriendlyDateTime(info.getCommentDateTime(), holder.getContext()));
-    }
+            .load(ApiHelper.getFullImageURL(info.userAvatarGuid))
+            .resize(200, 0)
+            .centerCrop()
+            .placeholder(R.drawable.img_placeholder)
+            .transform(CircleTransform())
+            .into(holder.avatar)
 
-    @Override
-    public int getItemCount() {
-        return comments.size();
-    }
-
-    public int getPositionOf(CommentInfo info) {
-        return comments.indexOf(info);
-    }
-
-    public void appendData(CommentInfo info) {
-        for (CommentInfo c : comments) {
-            if (c.getCommentId() == info.getCommentId()) {
-                return;
-            }
-        }
-        comments.add(info);
-        notifyItemInserted(comments.size() - 1);
-        sortByDateAscending();
-    }
-
-    public void sortByDateAscending() {
-        comments.sort(new Comparator<CommentInfo>() {
-            @Override
-            public int compare(CommentInfo commentInfo, CommentInfo t1) {
-                return commentInfo.getCommentDateTime().compareTo(t1.getCommentDateTime());
-            }
-        });
-        notifyDataSetChanged();
-    }
-
-    public void replaceDataset(List<CommentInfo> list) {
-        comments = list;
-        notifyDataSetChanged();
-    }
-
-    public void clearData() {
-        int size = comments.size();
-        comments.clear();
-        notifyItemRangeRemoved(0, size);
-    }
-
-    public void setOnReplyButtonClickListener(ItemActionListener listener) {
-        onReplyButtonClickListener = listener;
-    }
-
-    public void setOnTextClickListener(ItemActionListener onTextClickListener) {
-        this.onTextClickListener = onTextClickListener;
-    }
-
-    public void setOnItemHoldListener(ItemActionListener listener) {
-        this.onItemHoldListener = listener;
-    }
-
-    public void setOnAvatarClickListener(ItemActionListener onAvatarClickListener) {
-        this.onAvatarClickListener = onAvatarClickListener;
-    }
-
-    public void setReplyButtonVisible(boolean replyButtonVisible) {
-        isReplyButtonVisible = replyButtonVisible;
-    }
-
-    public interface ItemActionListener {
-        void onAction(CommentInfo info);
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView avatar;
-        private TextView textNickname;
-        private TextView textComment;
-        private TextView textDateTime;
-        private MaterialButton buttonSeeReplies;
-        private GridLayout main;
-        private Context context;
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            avatar = itemView.findViewById(R.id.avatar);
-            textNickname = itemView.findViewById(R.id.textNickname);
-            textComment = itemView.findViewById(R.id.textCommentText);
-            textDateTime = itemView.findViewById(R.id.textDateTime);
-            buttonSeeReplies = itemView.findViewById(R.id.buttonSeeReplies);
-            context = itemView.getContext();
-            main = itemView.findViewById(R.id.main);
+        holder.avatar.setOnClickListener {
+            onAvatarClickListener?.onAction(info)
         }
 
-        public ImageView getAvatar() {
-            return avatar;
+        // 昵称
+        holder.textNickname.text = info.userNickname
+
+        // 评论内容
+        holder.textComment.text = info.commentText
+        holder.textComment.setOnClickListener {
+            onTextClickListener?.onAction(info)
+        }
+        holder.textComment.setOnLongClickListener {
+            onItemHoldListener?.onAction(info)
+            true
         }
 
-        public TextView getTextNickname() {
-            return textNickname;
+        // 回复按钮
+        val shouldShowReplies = info.isHasReplies && isReplyButtonVisible
+        holder.buttonSeeReplies.visibility = if (shouldShowReplies) View.VISIBLE else View.GONE
+        holder.buttonSeeReplies.setOnClickListener {
+            onReplyButtonClickListener?.onAction(info)
         }
 
-        public TextView getTextComment() {
-            return textComment;
-        }
+        // 时间
+        holder.textDateTime.text = DataTools.getLocalFriendlyDateTime(info.commentDateTime, holder.itemView.context)
+    }
 
-        public TextView getTextDateTime() {
-            return textDateTime;
-        }
+    override fun getItemCount(): Int = comments.size
 
-        public MaterialButton getButtonSeeReplies() {
-            return buttonSeeReplies;
-        }
+    fun getPositionOf(info: CommentInfo): Int = comments.indexOf(info)
 
-        public Context getContext() {
-            return context;
+    fun appendData(info: CommentInfo) {
+        // 检查是否已存在
+        if (comments.any { it.commentId == info.commentId }) {
+            return
         }
+        comments.add(info)
+        notifyItemInserted(comments.size - 1)
+        sortByDateAscending()
+    }
 
-        public GridLayout getMain() {
-            return main;
-        }
+    fun sortByDateAscending() {
+        comments.sortBy { it.commentDateTime }
+        notifyDataSetChanged()
+    }
+
+    fun replaceDataset(list: List<CommentInfo>) {
+        comments = list.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun clearData() {
+        val size = comments.size
+        comments.clear()
+        notifyItemRangeRemoved(0, size)
+    }
+
+    fun setOnReplyButtonClickListener(listener: ItemActionListener) {
+        onReplyButtonClickListener = listener
+    }
+
+    fun setOnTextClickListener(listener: ItemActionListener) {
+        this.onTextClickListener = listener
+    }
+
+    fun setOnItemHoldListener(listener: ItemActionListener) {
+        this.onItemHoldListener = listener
+    }
+
+    fun setOnAvatarClickListener(listener: ItemActionListener) {
+        this.onAvatarClickListener = listener
+    }
+
+    fun setReplyButtonVisible(replyButtonVisible: Boolean) {
+        isReplyButtonVisible = replyButtonVisible
+    }
+
+    fun interface ItemActionListener {
+        fun onAction(info: CommentInfo)
+    }
+
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val avatar: ImageView = itemView.findViewById(R.id.avatar)
+        val textNickname: TextView = itemView.findViewById(R.id.textNickname)
+        val textComment: TextView = itemView.findViewById(R.id.textCommentText)
+        val textDateTime: TextView = itemView.findViewById(R.id.textDateTime)
+        val buttonSeeReplies: MaterialButton = itemView.findViewById(R.id.buttonSeeReplies)
+        val main: GridLayout = itemView.findViewById(R.id.main)
     }
 }

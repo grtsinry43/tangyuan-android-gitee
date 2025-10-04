@@ -1,347 +1,326 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.Log;
-
-import com.qingshuige.tangyuan.R;
-import com.qingshuige.tangyuan.TangyuanApplication;
-import com.qingshuige.tangyuan.viewmodels.CommentInfo;
-import com.qingshuige.tangyuan.viewmodels.NotificationInfo;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
-import com.qingshuige.tangyuan.viewmodels.UserInfo;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.*;
+import android.content.Context
+import android.graphics.Bitmap
+import android.util.Log
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.TangyuanApplication
+import com.qingshuige.tangyuan.viewmodels.CommentInfo
+import com.qingshuige.tangyuan.viewmodels.NotificationInfo
+import com.qingshuige.tangyuan.viewmodels.PostInfo
+import com.qingshuige.tangyuan.viewmodels.UserInfo
+import kotlinx.coroutines.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.util.concurrent.ConcurrentHashMap
+import java.util.Date
 
 /**
- * 对一些常用但复杂的Api调用进行封装，方便使用。
+ * 对一些常用但复杂的 Api 调用进行封装，方便使用。
  */
-public class ApiHelper {
+object ApiHelper {
 
-    private static final ApiInterface api = TangyuanApplication.getApi();
+    private val api: ApiInterface = TangyuanApplication.getApi()
+    private const val THREAD_COUNT = 10
+    private const val TAG = "TYAPP"
 
     /**
-     * 根据给定PostID，返回PostInfo，然后呼叫回调并传送PostInfo对象。此方法可以立即返回。
-     *
-     * @param postId   需要获取的PostID。
-     * @param callback 取得PostID后呼叫的回调，接受获取的PostInfo对象。
+     * 根据给定 PostID，返回 PostInfo，然后呼叫回调并传送 PostInfo 对象。此方法可以立即返回。
      */
-    public static void getPostInfoByIdAsync(int postId, ApiCallback<PostInfo> callback) {
-        new Thread(() -> {
-            PostInfo info = getPostInfoById(postId);
-            callback.onComplete(info);
-        }).start();
-    }
-
-    public static PostInfo getPostInfoById(int postId) {
-        try {
-            PostMetadata metadata = api.getPostMetadata(postId).execute().body();
-            PostBody body = api.getPostBody(postId).execute().body();
-            User user = api.getUser(metadata.userId).execute().body();
-            Category category = api.getCategory(metadata.categoryId).execute().body();
-
-            PostInfo info = new PostInfo(
-                    postId,
-                    user.userId,
-                    user.nickName,
-                    user.avatarGuid,
-                    metadata.postDateTime,
-                    body.textContent,
-                    body.image1UUID,
-                    body.image2UUID,
-                    body.image3UUID,
-                    metadata.sectionId,
-                    category.categoryId,
-                    category.baseName);
-
-            return info;
-        } catch (Exception e) {
-            Log.w("TYAPP", "getPostInfoErr: " + e.getMessage());
-            return null;
+    fun getPostInfoByIdAsync(postId: Int, callback: ApiCallback<PostInfo>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val info = getPostInfoById(postId)
+            withContext(Dispatchers.Main) {
+                callback.onComplete(info)
+            }
         }
     }
 
-    public static <S, I> void getInfoFastAsync(List<S> source, InfoConstructable<S, I> constructor, ApiCallback<List<I>> callback) {
-        new Thread(() -> {
-            int threadCount = 10;//默认10线程
-            CountDownLatch latch = new CountDownLatch(threadCount);
-            ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+    fun getPostInfoById(postId: Int): PostInfo? {
+        return try {
+            val metadata = api.getPostMetadata(postId).execute().body() ?: return null
+            val body = api.getPostBody(postId).execute().body() ?: return null
+            val user = api.getUser(metadata.userId).execute().body() ?: return null
+            val category = api.getCategory(metadata.categoryId).execute().body() ?: return null
 
-            List<I> finalList = Collections.synchronizedList(new ArrayList<>());
+            PostInfo(
+                postId = postId,
+                userId = user.userId,
+                userNickname = user.nickName,
+                userAvatarGUID = user.avatarGuid,
+                postDate = metadata.postDateTime ?: Date(),
+                textContent = body.textContent ?: "",
+                image1GUID = body.image1UUID,
+                image2GUID = body.image2UUID,
+                image3GUID = body.image3UUID,
+                sectionId = metadata.sectionId,
+                categoryId = category.categoryId,
+                categoryName = category.baseName ?: ""
+            )
+        } catch (e: Exception) {
+            Log.w(TAG, "getPostInfoErr: ${e.message}")
+            null
+        }
+    }
 
-            List<List<S>> lists = new ArrayList<>();
-            for (int i = 0; i < threadCount; i++) {
-                lists.add(new ArrayList<>());
-            }
+    fun <S, I> getInfoFastAsync(
+        source: List<S>,
+        constructor: InfoConstructable<S, I>,
+        callback: ApiCallback<List<I>>
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val results = ConcurrentHashMap<Int, I>()
+                val jobs = mutableListOf<Job>()
 
-            //分派任务
-            for (int i = 0; i < source.size(); i++) {
-                lists.get(i % threadCount).add(source.get(i));
-            }
-
-            AtomicBoolean hasException = new AtomicBoolean(false);
-
-            //开始执行每个列表的异步任务
-            for (List<S> l : lists) {
-                executor.submit(() -> {
-                    try {
-                        for (S n : l) {
-                            I info = constructor.getInfo(n); //注意到这个方法是同步的
-                            finalList.add(info);
+                // 使用协程替代线程池，更高效的并发处理
+                source.chunked((source.size + THREAD_COUNT - 1) / THREAD_COUNT)
+                    .forEachIndexed { chunkIndex, chunk ->
+                        val job = launch {
+                            chunk.forEachIndexed { itemIndex, item ->
+                                try {
+                                    val info = constructor.getInfo(item)
+                                    if (info != null) {
+                                        results[chunkIndex * chunk.size + itemIndex] = info
+                                    }
+                                } catch (e: Exception) {
+                                    Log.w(TAG, "Error processing item: ${e.message}")
+                                }
+                            }
                         }
-                    } catch (Exception e) {
-                        hasException.set(true);
-                    } finally {
-                        latch.countDown();
+                        jobs.add(job)
                     }
-                });
-            }
 
-            try {
-                latch.await();
-                executor.shutdown();
-            } catch (InterruptedException e) {
-                hasException.set(true);
-            }
+                // 等待所有任务完成
+                jobs.joinAll()
 
-            //去除因错误产生的null
-            finalList.removeIf(Objects::isNull);
+                // 按原始顺序返回结果
+                val finalList = results.toSortedMap().values.toList()
 
-            //判断是否出错，如果出错就报错
-            if (hasException.get()) {
-                callback.onComplete(null);
-            } else {
-                callback.onComplete(finalList);
+                withContext(Dispatchers.Main) {
+                    callback.onComplete(finalList)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "getInfoFastAsync error: ${e.message}")
+                withContext(Dispatchers.Main) {
+                    callback.onComplete(emptyList())
+                }
             }
-        }).start();
+        }
     }
 
+    fun getCommentInfoByIdAsync(commentId: Int, callback: ApiCallback<CommentInfo>) {
+        api.getComment(commentId).enqueue(object : Callback<Comment> {
+            override fun onResponse(call: Call<Comment>, response: Response<Comment>) {
+                val comment = response.body() ?: return
 
-    public static void getCommentInfoByIdAsync(int commentId, ApiCallback<CommentInfo> callback) {
-        api.getComment(commentId).enqueue(new Callback<Comment>() {
-            @Override
-            public void onResponse(Call<Comment> call, Response<Comment> response) {
-                Comment comment = response.body();
-                api.getUser(comment.userId).enqueue(new Callback<User>() {
-                    @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        User user = response.body();
-                        api.getSubComment(commentId).enqueue(new Callback<List<Comment>>() {
-                            @Override
-                            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
-                                CommentInfo info = new CommentInfo(comment,
-                                        user.avatarGuid,
-                                        user.nickName,
-                                        comment.content,
-                                        comment.commentDateTime,
-                                        commentId,
-                                        response.code() != 404,
-                                        user.userId);
-                                callback.onComplete(info);
+                api.getUser(comment.userId).enqueue(object : Callback<User> {
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        val user = response.body() ?: return
+
+                        api.getSubComment(commentId).enqueue(object : Callback<List<Comment>> {
+                            override fun onResponse(
+                                call: Call<List<Comment>>,
+                                response: Response<List<Comment>>
+                            ) {
+                                val info = CommentInfo(
+                                    comment = comment,
+                                    userAvatarGuid = user.avatarGuid,
+                                    userNickname = user.nickName,
+                                    commentText = comment.content ?: "",
+                                    commentDateTime = comment.commentDateTime ?: Date(),
+                                    commentId = commentId,
+                                    isHasReplies = response.code() != 404,
+                                    userId = user.userId
+                                )
+                                callback.onComplete(info)
                             }
 
-                            @Override
-                            public void onFailure(Call<List<Comment>> call, Throwable throwable) {
-
+                            override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
+                                Log.e(TAG, "Failed to get sub comments: ${t.message}")
                             }
-                        });
+                        })
                     }
 
-                    @Override
-                    public void onFailure(Call<User> call, Throwable throwable) {
-
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+                        Log.e(TAG, "Failed to get user: ${t.message}")
                     }
-                });
+                })
             }
 
-            @Override
-            public void onFailure(Call<Comment> call, Throwable throwable) {
-
+            override fun onFailure(call: Call<Comment>, t: Throwable) {
+                Log.e(TAG, "Failed to get comment: ${t.message}")
             }
-        });
+        })
     }
 
-    public static String getFullImageURL(String imageGuid) {
-        return TangyuanApplication.getCoreDomain() + "images/" + imageGuid + ".jpg";
+    fun getFullImageURL(imageGuid: String): String {
+        return "${TangyuanApplication.coreDomain}images/$imageGuid.jpg"
     }
 
-    public static void judgeIfUserExistsAsync(String phoneNumber, ApiCallback<Boolean> callback) {
-        LoginDto dto = new LoginDto();
-        dto.phoneNumber = phoneNumber;
-        dto.password = "d25402a3-83b3-4e7f-a17e-2fa6dbda3d92";//谁设这个密码也是天才级别的
-        api.login(dto).enqueue(new Callback<Map<String, String>>() {
-            @Override
-            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                switch (response.code()) {
-                    case 400:
-                        callback.onComplete(true);
-                        break;
-                    case 404:
-                        callback.onComplete(false);
-                        break;
+    fun judgeIfUserExistsAsync(phoneNumber: String, callback: ApiCallback<Boolean>) {
+        val dto = LoginDto(
+            phoneNumber = phoneNumber,
+            password = "d25402a3-83b3-4e7f-a17e-2fa6dbda3d92" // TODO: 移除硬编码密码
+        )
+
+        api.login(dto).enqueue(object : Callback<Map<String, String>> {
+            override fun onResponse(
+                call: Call<Map<String, String>>,
+                response: Response<Map<String, String>>
+            ) {
+                when (response.code()) {
+                    400 -> callback.onComplete(true)
+                    404 -> callback.onComplete(false)
+                    else -> callback.onComplete(null)
                 }
             }
 
-            @Override
-            public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-                callback.onComplete(null);
+            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                Log.e(TAG, "Failed to check user existence: ${t.message}")
+                callback.onComplete(null)
             }
-        });
+        })
     }
 
-    public static void updateBitmapAsync(Bitmap bitmap, ApiCallback callback) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] bytes = stream.toByteArray();
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), bytes);
-        MultipartBody.Part part =
-                MultipartBody.Part.createFormData("file", "image.jpg", requestBody);
-        TangyuanApplication.getApi().postImage(part).enqueue(new Callback<Map<String, String>>() {
-            @Override
-            public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                callback.onComplete(response.body().values().iterator().next());
+    fun updateBitmapAsync(bitmap: Bitmap, callback: ApiCallback<String>) {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val bytes = stream.toByteArray()
+        val requestBody = bytes.toRequestBody("image/jpeg".toMediaType())
+        val part = MultipartBody.Part.createFormData("file", "image.jpg", requestBody)
+
+        api.postImage(part).enqueue(object : Callback<Map<String, String>> {
+            override fun onResponse(
+                call: Call<Map<String, String>>,
+                response: Response<Map<String, String>>
+            ) {
+                val result = response.body()?.values?.firstOrNull()
+                callback.onComplete(result)
             }
 
-            @Override
-            public void onFailure(Call<Map<String, String>> call, Throwable throwable) {
-
+            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
+                Log.e(TAG, "Failed to upload image: ${t.message}")
+                callback.onComplete(null)
             }
-        });
+        })
     }
 
-    public interface InfoConstructable<S, I> {
-        I getInfo(S source);
+    fun interface InfoConstructable<S, I> {
+        fun getInfo(source: S): I?
     }
 
-    public interface ApiCallback<T> {
-        void onComplete(T result);
+    fun interface ApiCallback<T> {
+        fun onComplete(result: T?)
     }
 
-    public static class PostInfoConstructor implements InfoConstructable<PostMetadata, PostInfo> {
+    class PostInfoConstructor : InfoConstructable<PostMetadata, PostInfo> {
+        override fun getInfo(source: PostMetadata): PostInfo? {
+            return try {
+                val metadata = api.getPostMetadata(source.postId).execute().body() ?: return null
+                val body = api.getPostBody(source.postId).execute().body() ?: return null
+                val user = api.getUser(metadata.userId).execute().body() ?: return null
+                val category = api.getCategory(metadata.categoryId).execute().body() ?: return null
 
-        @Override
-        public PostInfo getInfo(PostMetadata source) {
-            try {
-                PostMetadata metadata = api.getPostMetadata(source.postId).execute().body();
-                PostBody body = api.getPostBody(source.postId).execute().body();
-                User user = api.getUser(metadata.userId).execute().body();
-                Category category = api.getCategory(metadata.categoryId).execute().body();
-
-                PostInfo info = new PostInfo(
-                        source.postId,
-                        user.userId,
-                        user.nickName,
-                        user.avatarGuid,
-                        metadata.postDateTime,
-                        body.textContent,
-                        body.image1UUID,
-                        body.image2UUID,
-                        body.image3UUID,
-                        metadata.sectionId,
-                        category.categoryId,
-                        category.baseName);
-
-                return info;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
-
-    public static class UserInfoConstructor implements InfoConstructable<User, UserInfo> {
-
-        @Override
-        public UserInfo getInfo(User source) {
-            if (TangyuanApplication.getTokenManager().getToken() != null) {
-                //已登录
-                //TODO: 目前没有关注功能，也就无从判断是否关注
-                return new UserInfo(source, false);
-            } else {
-                return new UserInfo(source, false);
+                PostInfo(
+                    postId = source.postId,
+                    userId = user.userId,
+                    userNickname = user.nickName,
+                    userAvatarGUID = user.avatarGuid,
+                    postDate = metadata.postDateTime ?: Date(),
+                    textContent = body.textContent ?: "",
+                    image1GUID = body.image1UUID,
+                    image2GUID = body.image2UUID,
+                    image3GUID = body.image3UUID,
+                    sectionId = metadata.sectionId,
+                    categoryId = category.categoryId,
+                    categoryName = category.baseName ?: ""
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "Error constructing PostInfo: ${e.message}")
+                null
             }
         }
     }
 
-    public static class CommentInfoConstructor implements InfoConstructable<Comment, CommentInfo> {
+    class UserInfoConstructor : InfoConstructable<User, UserInfo> {
+        override fun getInfo(source: User): UserInfo {
+            // TODO: 实现关注功能判断逻辑
+            return UserInfo(source, false)
+        }
+    }
 
-        @Override
-        public CommentInfo getInfo(Comment source) {
-            try {
-                User user = TangyuanApplication.getApi().getUser(source.userId).execute().body();
-                boolean hasReply = TangyuanApplication.getApi().getSubComment(source.commentId).execute().code() != 404;
-                return new CommentInfo(source,
-                        user.avatarGuid,
-                        user.nickName,
-                        source.content,
-                        source.commentDateTime,
-                        source.commentId,
-                        hasReply,
-                        user.userId);
-            } catch (Exception e) {
-                return null;
+    class CommentInfoConstructor : InfoConstructable<Comment, CommentInfo> {
+        override fun getInfo(source: Comment): CommentInfo? {
+            return try {
+                val user = api.getUser(source.userId).execute().body() ?: return null
+                val hasReply = api.getSubComment(source.commentId).execute().code() != 404
+
+                CommentInfo(
+                    comment = source,
+                    userAvatarGuid = user.avatarGuid,
+                    userNickname = user.nickName,
+                    commentText = source.content ?: "",
+                    commentDateTime = source.commentDateTime ?: Date(),
+                    commentId = source.commentId,
+                    isHasReplies = hasReply,
+                    userId = user.userId
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "Error constructing CommentInfo: ${e.message}")
+                null
             }
         }
     }
 
-    public static class NotificationInfoConstructor implements InfoConstructable<NewNotification, NotificationInfo> {
+    class NotificationInfoConstructor(private val context: Context) :
+        InfoConstructable<NewNotification, NotificationInfo> {
+        override fun getInfo(n: NewNotification): NotificationInfo? {
+            return try {
+                when (n.type) {
+                    "comment" -> {
+                        val comment = api.getComment(n.sourceId).execute().body() ?: return null
+                        val user = api.getUser(comment.userId).execute().body() ?: return null
 
-        Context context;
+                        NotificationInfo(
+                            notification = n,
+                            title = user.nickName,
+                            type = context.getString(R.string.comment),
+                            message = comment.content ?: "",
+                            avatarGuid = user.avatarGuid,
+                            relatedPostId = comment.postId,
+                            relatedUserId = user.userId,
+                            typeColor = context.getColor(R.color.mazarine_blue)
+                        )
+                    }
 
-        public NotificationInfoConstructor(Context context) {
-            this.context = context;
-        }
+                    "reply" -> {
+                        val comment = api.getComment(n.sourceId).execute().body() ?: return null
+                        val user = api.getUser(comment.userId).execute().body() ?: return null
 
-        @Override
-        public NotificationInfo getInfo(NewNotification n) {
-            try {
-                switch (n.type) {
-                    case "comment":
-                        //断言sourceType是comment，所以直接调用获取评论的API
-                        Comment c = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
-                        User u = TangyuanApplication.getApi().getUser(c.userId).execute().body();
-                        return new NotificationInfo(n,
-                                u.nickName,
-                                context.getString(R.string.comment),
-                                c.content,
-                                u.avatarGuid,
-                                c.postId,
-                                u.userId,
-                                context.getColor(R.color.mazarine_blue));
-                    case "reply":
-                        //断言sourceType是comment，所以直接调用获取评论的API
-                        Comment cc = TangyuanApplication.getApi().getComment(n.sourceId).execute().body();
-                        User uu = TangyuanApplication.getApi().getUser(cc.userId).execute().body();
-                        return new NotificationInfo(n,
-                                uu.nickName,
-                                context.getString(R.string.reply),
-                                cc.content,
-                                uu.avatarGuid,
-                                cc.postId,
-                                uu.userId,
-                                context.getColor(R.color.nanohanacha_gold));
-                    case "mention":
-                        return null;
-                    case "notice":
-                        return null;
-                    default:
-                        return null;
+                        NotificationInfo(
+                            notification = n,
+                            title = user.nickName,
+                            type = context.getString(R.string.reply),
+                            message = comment.content ?: "",
+                            avatarGuid = user.avatarGuid,
+                            relatedPostId = comment.postId,
+                            relatedUserId = user.userId,
+                            typeColor = context.getColor(R.color.nanohanacha_gold)
+                        )
+                    }
+
+                    "mention", "notice" -> null // TODO: 实现这些类型的处理
+                    else -> null
                 }
-            } catch (Exception e) {
-                return null;
+            } catch (e: Exception) {
+                Log.w(TAG, "Error constructing NotificationInfo: ${e.message}")
+                null
             }
         }
     }

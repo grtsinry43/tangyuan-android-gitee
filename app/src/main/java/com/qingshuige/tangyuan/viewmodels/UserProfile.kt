@@ -1,34 +1,22 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
 
 /**
  * 用户资料
  */
-public class UserProfile {
+data class UserProfile(
     /**
-     * 用户唯一ID
+     * 用户唯一 ID
      */
-    private int userId;
+    val userId: Int = 0,
 
     /**
      * 用户昵称
      */
-    private String nickname;
+    val nickname: String? = null,
 
     /**
      * 用户个性签名
      */
-    private String bio;
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-}
+    val bio: String? = null
+)

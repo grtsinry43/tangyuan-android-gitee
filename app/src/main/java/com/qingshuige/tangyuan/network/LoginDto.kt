@@ -1,6 +1,6 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-public class LoginDto {
-    public String password;
-    public String phoneNumber;
-}
+data class LoginDto(
+    var password: String? = null,
+    var phoneNumber: String? = null
+)

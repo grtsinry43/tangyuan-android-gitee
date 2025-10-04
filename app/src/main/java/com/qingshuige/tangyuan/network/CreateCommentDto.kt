@@ -1,12 +1,12 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import java.util.Date;
+import java.util.Date
 
-public class CreateCommentDto {
-    public Date commentDateTime;
-    public String content;
-    public String imageGuid;
-    public long parentCommentId;
-    public long postId;
-    public long userId;
-}
+data class CreateCommentDto(
+    var commentDateTime: Date? = null,
+    var content: String? = null,
+    var imageGuid: String? = null,
+    var parentCommentId: Long = 0,
+    var postId: Long = 0,
+    var userId: Long = 0
+)

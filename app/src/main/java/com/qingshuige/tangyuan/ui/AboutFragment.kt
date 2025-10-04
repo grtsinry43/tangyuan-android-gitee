@@ -1,47 +1,43 @@
-package com.qingshuige.tangyuan.ui;
+package com.qingshuige.tangyuan.ui
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.content.pm.PackageManager
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.qingshuige.tangyuan.R
+import com.qingshuige.tangyuan.databinding.FragmentAboutBinding
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+class AboutFragment : Fragment() {
+    private var binding: FragmentAboutBinding? = null
 
-import com.qingshuige.tangyuan.*;
-import com.qingshuige.tangyuan.databinding.FragmentAboutBinding;
+    private var textVersion: TextView? = null
 
-import org.w3c.dom.Text;
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentAboutBinding.inflate(inflater, container, false)
+        val root: View = binding!!.getRoot()
 
-public class AboutFragment extends Fragment {
+        textVersion = root.findViewById<TextView>(R.id.textVersion)
 
-    private FragmentAboutBinding binding;
+        textVersion!!.text = this.appVersionName
 
-    private TextView textVersion;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentAboutBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        textVersion = root.findViewById(R.id.textVersion);
-
-        textVersion.setText(getAppVersionName());
-
-        return root;
+        return root
     }
 
-    private String getAppVersionName() {
-        try {
-            // 使用 getActivity() 获取上下文来访问 PackageManager
-            PackageInfo packageInfo = getActivity().getPackageManager()
-                    .getPackageInfo(getActivity().getPackageName(), 0);
-            return "v" + packageInfo.versionName; // 返回版本名
-        } catch (PackageManager.NameNotFoundException e) {
-            return getString(R.string.unknown_version); // 如果获取失败，返回默认值
+    private val appVersionName: String
+        get() {
+            try {
+                // 使用 getActivity() 获取上下文来访问 PackageManager
+                val packageInfo = requireActivity().packageManager
+                    .getPackageInfo(requireActivity().packageName, 0)
+                return "v" + packageInfo.versionName // 返回版本名
+            } catch (e: PackageManager.NameNotFoundException) {
+                return getString(R.string.unknown_version) // 如果获取失败，返回默认值
+            }
         }
-    }
 }

@@ -1,15 +1,11 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
-import androidx.annotation.NonNull;
-
-public class Category {
-    public int categoryId;
-    public String baseName;
-    public String baseDescription;
-
-    @NonNull
-    @Override
-    public String toString() {
-        return baseName;
+data class Category(
+    var categoryId: Int = 0,
+    var baseName: String? = null,
+    var baseDescription: String? = null
+) {
+    override fun toString(): String {
+        return baseName!!
     }
 }

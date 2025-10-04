@@ -1,163 +1,138 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
+//import androidx.activity.EdgeToEdge
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.qingshuige.tangyuan.network.ApiHelper
+import com.qingshuige.tangyuan.network.Category
+import com.qingshuige.tangyuan.network.PostMetadata
+import com.qingshuige.tangyuan.viewmodels.PostCardAdapter
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class CategoryActivity : AppCompatActivity() {
 
-import com.qingshuige.tangyuan.network.ApiHelper;
-import com.qingshuige.tangyuan.network.Category;
-import com.qingshuige.tangyuan.network.PostMetadata;
-import com.qingshuige.tangyuan.viewmodels.PostCardAdapter;
-import com.qingshuige.tangyuan.viewmodels.PostInfo;
+    private lateinit var textCategoryName: TextView
+    private lateinit var text24hNewPosts: TextView
+    private lateinit var textTotalPosts: TextView
+    private lateinit var textCategoryDisc: TextView
+    private lateinit var rcvPosts: RecyclerView
+    private lateinit var pgBar: ProgressBar
 
-import java.util.ArrayList;
-import java.util.List;
+    private lateinit var adapter: PostCardAdapter
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+    private var categoryId: Int = 0
 
-public class CategoryActivity extends AppCompatActivity {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+//        EdgeToEdge.enable(this)
+        setContentView(R.layout.activity_category)
 
-    private TextView textCategoryName;
-    private TextView text24hNewPosts;
-    private TextView textTotalPosts;
-    private TextView textCategoryDisc;
-    private RecyclerView rcvPosts;
-    private ProgressBar pgBar;
+        setSupportActionBar(findViewById(R.id.toolbar))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
 
-    private PostCardAdapter adapter;
+        textCategoryName = findViewById(R.id.textCategoryName)
+        text24hNewPosts = findViewById(R.id.text24hNewPost)
+        textTotalPosts = findViewById(R.id.textTotalPost)
+        textCategoryDisc = findViewById(R.id.textCategoryDisc)
+        rcvPosts = findViewById(R.id.rcvCategoryPosts)
+        pgBar = findViewById(R.id.pgBar)
 
-    private int categoryId;
+        categoryId = intent.getIntExtra("categoryId", 0)
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_category);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
+        adapter = PostCardAdapter()
+        adapter.setOnItemClickListener { postId ->
+            val intent = Intent(this@CategoryActivity, PostActivity::class.java)
+            intent.putExtra("postId", postId)
+            startActivity(intent)
+        }
+        adapter.setCategoryVisible(false)
+        rcvPosts.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        rcvPosts.layoutManager = LinearLayoutManager(this)
+        rcvPosts.adapter = adapter
 
-        setSupportActionBar(findViewById(R.id.toolbar));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        textCategoryName = findViewById(R.id.textCategoryName);
-        text24hNewPosts = findViewById(R.id.text24hNewPost);
-        textTotalPosts = findViewById(R.id.textTotalPost);
-        textCategoryDisc = findViewById(R.id.textCategoryDisc);
-        rcvPosts = findViewById(R.id.rcvCategoryPosts);
-        pgBar = findViewById(R.id.pgBar);
-
-        categoryId = getIntent().getIntExtra("categoryId", 0);
-
-        //设置RecyclerView
-        adapter = new PostCardAdapter();
-        adapter.setOnItemClickListener(postId -> {
-            Intent intent = new Intent(CategoryActivity.this, PostActivity.class);
-            intent.putExtra("postId", postId);
-            startActivity(intent);
-        });
-        adapter.setCategoryVisible(false);
-        rcvPosts.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rcvPosts.setLayoutManager(new LinearLayoutManager(this));
-        rcvPosts.setAdapter(adapter);
-
-        initializeUI();
+        initializeUI()
     }
 
-    private void initializeUI() {
-        //名字和描述
-        TangyuanApplication.getApi().getCategory(categoryId).enqueue(new Callback<Category>() {
-            @Override
-            public void onResponse(Call<Category> call, Response<Category> response) {
+    private fun initializeUI() {
+        // 名字和描述
+        TangyuanApplication.getApi().getCategory(categoryId).enqueue(object : Callback<Category> {
+            override fun onResponse(call: Call<Category>, response: Response<Category>) {
                 if (response.code() == 200 && response.body() != null) {
-                    textCategoryName.setText(response.body().baseName);
-                    textCategoryDisc.setText(response.body().baseDescription);
+                    val category = response.body()!!
+                    textCategoryName.text = category.baseName
+                    textCategoryDisc.text = category.baseDescription
                 }
             }
 
-            @Override
-            public void onFailure(Call<Category> call, Throwable throwable) {
-                alertAndFinish();
+            override fun onFailure(call: Call<Category>, throwable: Throwable) {
+                alertAndFinish()
             }
-        });
+        })
 
-        //24小时新帖数
-        TangyuanApplication.getApi().get24hNewPostCountByCategoryId(categoryId).enqueue(new Callback<Integer>() {
-            @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+        // 24小时新帖数
+        TangyuanApplication.getApi().get24hNewPostCountByCategoryId(categoryId).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 if (response.code() == 200 && response.body() != null) {
-                    text24hNewPosts.setText(getString(R.string._24hpost) + response.body());
+                    text24hNewPosts.text = getString(R.string._24hpost) + response.body()
                 }
             }
 
-            @Override
-            public void onFailure(Call<Integer> call, Throwable throwable) {
-                alertAndFinish();
+            override fun onFailure(call: Call<Int>, throwable: Throwable) {
+                alertAndFinish()
             }
-        });
+        })
 
-        //总帖数
-        TangyuanApplication.getApi().getPostCountOfCategory(categoryId).enqueue(new Callback<Integer>() {
-            @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
-                textTotalPosts.setText(getString(R.string.total_post_count) + response.body());
+        // 总帖数
+        TangyuanApplication.getApi().getPostCountOfCategory(categoryId).enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                textTotalPosts.text = getString(R.string.total_post_count) + response.body()
             }
 
-            @Override
-            public void onFailure(Call<Integer> call, Throwable throwable) {
-                alertAndFinish();
+            override fun onFailure(call: Call<Int>, throwable: Throwable) {
+                alertAndFinish()
             }
-        });
+        })
 
-        //帖子
-        TangyuanApplication.getApi().getAllMetadatasByCategoryId(categoryId).enqueue(new Callback<List<PostMetadata>>() {
-            @Override
-            public void onResponse(Call<List<PostMetadata>> call, Response<List<PostMetadata>> response) {
+        // 帖子
+        TangyuanApplication.getApi().getAllMetadatasByCategoryId(categoryId).enqueue(object : Callback<List<PostMetadata>> {
+            override fun onResponse(call: Call<List<PostMetadata>>, response: Response<List<PostMetadata>>) {
                 if (response.code() == 200 && response.body() != null) {
-                    List<PostMetadata> metadatas = response.body();
-                    ApiHelper.getInfoFastAsync(metadatas, new ApiHelper.PostInfoConstructor(), result -> {
+                    val metadatas = response.body()!!
+                    ApiHelper.getInfoFastAsync(metadatas, ApiHelper.PostInfoConstructor()) { result ->
                         if (result != null) {
-                            runOnUiThread(() -> {
-                                adapter.replaceDataSet(result);
-                                pgBar.setVisibility(View.GONE);
-                            });
+                            runOnUiThread {
+                                adapter.replaceDataSet(result)
+                                pgBar.visibility = View.GONE
+                            }
                         }
-                    });
+                    }
                 } else {
-                    alertAndFinish();
+                    alertAndFinish()
                 }
             }
 
-            @Override
-            public void onFailure(Call<List<PostMetadata>> call, Throwable throwable) {
-                alertAndFinish();
+            override fun onFailure(call: Call<List<PostMetadata>>, throwable: Throwable) {
+                alertAndFinish()
             }
-        });
+        })
     }
 
-    private void alertAndFinish() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.network_error)
-                .setMessage(R.string.failed_to_load_category)
-                .setPositiveButton(R.string.ok, (dialogInterface, i) -> runOnUiThread(this::finish))
-                .create().show();
+    private fun alertAndFinish() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.network_error)
+            .setMessage(R.string.failed_to_load_category)
+            .setPositiveButton(R.string.ok) { _, _ -> runOnUiThread { finish() } }
+            .create().show()
     }
 }

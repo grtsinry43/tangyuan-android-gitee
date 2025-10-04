@@ -1,34 +1,32 @@
-package com.qingshuige.tangyuan;
+package com.qingshuige.tangyuan
 
-import android.content.SharedPreferences;
+import android.content.SharedPreferences
+import com.qingshuige.tangyuan.TangyuanApplication.Companion.getSharedPreferences
+import androidx.core.content.edit
 
-public class TokenManager {
-    private SharedPreferences prefs;
+class TokenManager {
+    private val prefs: SharedPreferences
 
-    public TokenManager() {
-        prefs = TangyuanApplication.getSharedPreferences();
+    init {
+        prefs = getSharedPreferences()
     }
 
-    public String getToken() {
-        return prefs.getString("JwtToken", null);
-    }
+    var token: String?
+        get() = prefs.getString("JwtToken", null)
+        set(token) {
+            prefs.edit { putString("JwtToken", token) }
+        }
 
-    public String getPhoneNumber() {
-        return prefs.getString("phoneNumber", null);
-    }
+    val phoneNumber: String?
+        get() = prefs.getString("phoneNumber", null)
 
-    public String getPassword() {
-        return prefs.getString("password", null);
-    }
+    val password: String?
+        get() = prefs.getString("password", null)
 
-    public void setToken(String token) {
-        prefs.edit().putString("JwtToken", token).apply();
-    }
-
-    public void setPhoneNumberAndPassword(String phoneNumber, String password) {
-        prefs.edit()
-                .putString("phoneNumber", phoneNumber)
+    fun setPhoneNumberAndPassword(phoneNumber: String?, password: String?) {
+        prefs.edit {
+            putString("phoneNumber", phoneNumber)
                 .putString("password", password)
-                .apply();
+        }
     }
 }

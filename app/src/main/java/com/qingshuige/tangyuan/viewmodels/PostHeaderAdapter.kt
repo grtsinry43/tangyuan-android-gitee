@@ -1,31 +1,21 @@
-package com.qingshuige.tangyuan.viewmodels;
+package com.qingshuige.tangyuan.viewmodels
 
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class PostHeaderAdapter : RecyclerView.Adapter<PostHeaderAdapter.ViewHolder>() {
 
-public class PostHeaderAdapter extends RecyclerView.Adapter<PostHeaderAdapter.ViewHolder> {
-    @NonNull
-    @Override
-    public PostHeaderAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        // TODO: 实现具体的布局
+        return ViewHolder(View(parent.context))
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull PostHeaderAdapter.ViewHolder holder, int position) {
-
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        // TODO: 实现数据绑定
     }
 
-    @Override
-    public int getItemCount() {
-        return 0;
-    }
+    override fun getItemCount(): Int = 0
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-    }
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

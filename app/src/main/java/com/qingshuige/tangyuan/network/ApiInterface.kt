@@ -1,139 +1,134 @@
-package com.qingshuige.tangyuan.network;
+package com.qingshuige.tangyuan.network
 
+import com.google.gson.JsonObject
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Url
 
-import com.google.gson.*;
-
-import java.util.List;
-import java.util.Map;
-
-import okhttp3.MultipartBody;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.PUT;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
-import retrofit2.http.Url;
-
-//用于Retrofit
-public interface ApiInterface {
-
+// 用于 Retrofit
+interface ApiInterface {
     @GET("post/metadata/{id}")
-    Call<PostMetadata> getPostMetadata(@Path("id") int id);
+    fun getPostMetadata(@Path("id") id: Int): Call<PostMetadata>
 
     @GET("post/body/{id}")
-    Call<PostBody> getPostBody(@Path("id") int id);
+    fun getPostBody(@Path("id") id: Int): Call<PostBody>
 
     @GET("user/{id}")
-    Call<User> getUser(@Path("id") int id);
+    fun getUser(@Path("id") id: Int): Call<User>
 
     @GET("post/metadata/user/{id}")
-    Call<List<PostMetadata>> getMetadatasByUserID(@Path("id") int userId);
+    fun getMetadatasByUserID(@Path("id") userId: Int): Call<List<PostMetadata>>
 
-    @Deprecated
+    @Deprecated("Use phtPostMetadata instead")
     @GET("post/metadata/random/{count}")
-    Call<List<PostMetadata>> getRandomPostMetadata(@Path("count") int count);
+    fun getRandomPostMetadata(@Path("count") count: Int): Call<List<PostMetadata>>
 
     @POST("philotaxis/postmetadata/{sectionId}")
-    Call<List<PostMetadata>> phtPostMetadata(@Path("sectionId") int sectionId, @Body List<Integer> exceptedIds);
+    fun phtPostMetadata(
+        @Path("sectionId") sectionId: Int,
+        @Body exceptedIds: List<Int>
+    ): Call<List<PostMetadata>>
 
     @POST("post/metadata")
-    Call<Map<String, Integer>> postPostMetadata(@Body CreatPostMetadataDto metadata);
+    fun postPostMetadata(@Body metadata: CreatPostMetadataDto): Call<Map<String, Int>>
 
     @POST("post/body")
-    Call<ResponseBody> postPostBody(@Body PostBody body);
+    fun postPostBody(@Body body: PostBody): Call<ResponseBody>
 
     @GET("post/metadata/notice")
-    Call<PostMetadata> getNotice();
+    fun getNotice(): Call<PostMetadata>
 
     @POST("user")
-    Call<ResponseBody> postUser(@Body CreateUserDto user);
+    fun postUser(@Body user: CreateUserDto): Call<ResponseBody>
 
     @DELETE("post/{id}")
-    Call<ResponseBody> deletePost(@Path("id") int postId);
+    fun deletePost(@Path("id") postId: Int): Call<ResponseBody>
 
     @PUT("user/{id}")
-    Call<ResponseBody> putUser(@Path("id") int id, @Body User userInfo);
+    fun putUser(@Path("id") id: Int, @Body userInfo: User): Call<ResponseBody>
 
     @GET("comment/post/{postId}")
-    Call<List<Comment>> getCommentForPost(@Path("postId") int postId);
+    fun getCommentForPost(@Path("postId") postId: Int): Call<List<Comment>>
 
     @GET("comment/{id}")
-    Call<Comment> getComment(@Path("id") int id);
+    fun getComment(@Path("id") id: Int): Call<Comment>
 
     @GET("comment/sub/{parentCommentId}")
-    Call<List<Comment>> getSubComment(@Path("parentCommentId") int parentCommentId);
+    fun getSubComment(@Path("parentCommentId") parentCommentId: Int): Call<List<Comment>>
 
     @DELETE("comment/{id}")
-    Call<ResponseBody> deleteComment(@Path("id") int commentId);
+    fun deleteComment(@Path("id") commentId: Int): Call<ResponseBody>
 
     @Multipart
     @POST("image/uploadjpg")
-    Call<Map<String, String>> postImage(@Part MultipartBody.Part file);
+    fun postImage(@Part file: MultipartBody.Part): Call<Map<String, String>>
 
     @POST("auth/login")
-    Call<Map<String, String>> login(@Body LoginDto loginDto);
+    fun login(@Body loginDto: LoginDto): Call<Map<String, String>>
 
-    @Deprecated
+    @Deprecated("Use getAllNotificationsByUserId instead")
     @GET("notification/user/{userId}")
-    Call<List<Notification>> getAllUnreadNotificationsOf(@Path("userId") int userId);
+    fun getAllUnreadNotificationsOf(@Path("userId") userId: Int): Call<List<Notification>>
 
-    @Deprecated
+    @Deprecated("Use markNewNotificationAsRead instead")
     @GET("notification/mark/{notificationId}")
-    Call<ResponseBody> markNotificationAsRead(@Path("notificationId") int notificationId);
+    fun markNotificationAsRead(@Path("notificationId") notificationId: Int): Call<ResponseBody>
 
     @GET("newnotification/{userId}")
-    Call<List<NewNotification>> getAllNotificationsByUserId(@Path("userId") int userId);
+    fun getAllNotificationsByUserId(@Path("userId") userId: Int): Call<List<NewNotification>>
 
     @GET("newnotification/markasread/{id}")
-    Call<ResponseBody> markNewNotificationAsRead(@Path("id") int id);
+    fun markNewNotificationAsRead(@Path("id") id: Int): Call<ResponseBody>
 
     @POST("comment")
-    Call<Map<String, String>> postComment(@Body CreateCommentDto dto);
+    fun postComment(@Body dto: CreateCommentDto): Call<Map<String, String>>
 
     @GET("category/{id}")
-    Call<Category> getCategory(@Path("id") int id);
+    fun getCategory(@Path("id") id: Int): Call<Category>
 
     @GET("category/all")
-    Call<List<Category>> getAllCategories();
+    fun getAllCategories(): Call<List<Category>>
 
     @GET("category/count/{id}")
-    Call<Integer> getPostCountOfCategory(@Path("id") int id);
+    fun getPostCountOfCategory(@Path("id") id: Int): Call<Int>
 
     @GET("category/weeklynewcount/{id}")
-    Call<Integer> getWeeklyNewPostCountOfCategory(@Path("id") int id);
+    fun getWeeklyNewPostCountOfCategory(@Path("id") id: Int): Call<Int>
 
     @GET("post/metadata/category/{categoryId}")
-    Call<List<PostMetadata>> getAllMetadatasByCategoryId(@Path("categoryId") int categoryId);
+    fun getAllMetadatasByCategoryId(@Path("categoryId") categoryId: Int): Call<List<PostMetadata>>
 
     @GET("post/count/category/24h/{categoryId}")
-    Call<Integer> get24hNewPostCountByCategoryId(@Path("categoryId") int categoryId);
+    fun get24hNewPostCountByCategoryId(@Path("categoryId") categoryId: Int): Call<Int>
 
     @GET("post/count/category/7d/{categoryId}")
-    Call<Integer> get7dNewPostCountByCategoryId(@Path("categoryId") int categoryId);
+    fun get7dNewPostCountByCategoryId(@Path("categoryId") categoryId: Int): Call<Int>
 
     @GET("search/post/{keyword}")
-    Call<List<PostMetadata>> searchPostByKeyword(@Path("keyword") String keyword);
+    fun searchPostByKeyword(@Path("keyword") keyword: String): Call<List<PostMetadata>>
 
     @GET("search/user/{keyword}")
-    Call<List<User>> searchUserByKeyword(@Path("keyword") String keyword);
+    fun searchUserByKeyword(@Path("keyword") keyword: String): Call<List<User>>
 
     @GET("search/comment/{keyword}")
-    Call<List<Comment>> searchCommentByKeyword(@Path("keyword") String keyword);
+    fun searchCommentByKeyword(@Path("keyword") keyword: String): Call<List<Comment>>
 
-    /////以下为非后端方法
-
+    /* 以下为非后端方法 */
     @GET
-    Call<ResponseBody> getFromUrl(@Url String Url);
+    fun getFromUrl(@Url url: String): Call<ResponseBody>
 
     @FormUrlEncoded
     @POST("https://api.pgyer.com/apiv2/app/check")
-    Call<JsonObject> checkUpdate(@FieldMap Map<String, String> params);
-
+    fun checkUpdate(@FieldMap params: Map<String, String>): Call<JsonObject>
 }
